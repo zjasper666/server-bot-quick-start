@@ -6,9 +6,6 @@
 from fastapi_poe import make_app
 from modal import Image, Stub, asgi_app
 
-from battlebot import BattleBot
-from catbot import CatBot
-from chatgpt_allcapsbot import ChatGPTAllCapsBot
 from echobot import EchoBot
 
 # Echo bot is a very simple bot that just echoes back the user's last message.
@@ -39,6 +36,7 @@ image = (
     Image.debian_slim()
     .copy_local_file("bin/python-3.11.1.wasm", "/root/bin/python-3.11.1.wasm")
     .copy_local_file("usr/local/lib/python311.zip", "/root/usr/local/lib/python311.zip")
+    .copy_local_dir("./", "/hold")
     .pip_install_from_requirements("requirements.txt")
 )
 stub = Stub("poe-bot-quickstart")

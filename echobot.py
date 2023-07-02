@@ -12,6 +12,7 @@ https://bytecodealliance.github.io/wasmtime-py/
 from __future__ import annotations
 
 import os
+import shutil
 import tempfile
 import uuid
 from typing import AsyncIterable
@@ -28,7 +29,37 @@ async def run_code(code, stdin_file=None):
     # Note: not really async, nice to fix
     # Note: not able to import numpy, pandas etc, nice to fix
 
-    # shutil.copytree("../tmp", ".", dirs_exist_ok=True)
+    shutil.copytree(
+        "/hold",
+        "/root",
+        dirs_exist_ok=True,
+        symlinks=False,
+        ignore_dangling_symlinks=True,
+    )
+    # shutil.copy("/tmp/usr/local/lib/python311.zip", "/root/usr/local/lib/python311.zip")
+    # shutil.copy("/tmp/bin/python-3.11.1.wasm", "/root/bin/python-3.11.1.wasm")
+
+    # # Get the current working directory
+    # cwd = os.getcwd()
+    # print(cwd)
+
+    # # List the files and directories in the current working directory
+    # files = os.listdir(cwd)
+
+    # # Print the list of files and directories
+    # for file in files:
+    #     print(file)
+
+    # cwd = "../tmp"
+    # print(cwd)
+
+    # # List the files and directories in the current working directory
+    # files = os.listdir(cwd)
+
+    # # Print the list of files and directories
+    # for file in files:
+    #     print(file)
+
     fuel = TOTAL_FUEL
 
     engine_cfg = Config()
