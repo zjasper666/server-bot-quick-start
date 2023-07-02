@@ -105,6 +105,8 @@ def extract_readable_text(url):
 
 class EchoBot(PoeBot):
     async def get_response(self, query: QueryRequest) -> AsyncIterable[ServerSentEvent]:
+        print("user_statement", query.query[-1].content)
+
         if query.conversation_id not in conversation_cache:
             url = query.query[-1].content.strip()
             url = resolve_url_scheme(url)
