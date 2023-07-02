@@ -112,12 +112,12 @@ class EchoBot(PoeBot):
             url = resolve_url_scheme(url)
             yield self.replace_response_event(f"Attempting to load [{url}]({url}) ...")
             content = extract_readable_text(url)
-            content = content[:5000]  # TODO: use Tiktoken
             if content is None:
                 yield self.replace_response_event(
                     "Please submit an URL that you want to create a promoted answer for."
                 )
                 return
+            content = content[:5000]  # TODO: use Tiktoken
 
             # replace last message with the prompt
             query.query[-1].content = PROMPT_TEMPLATE.format(content=content, url=url)
