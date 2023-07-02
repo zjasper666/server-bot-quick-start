@@ -129,7 +129,7 @@ def strip_code(code):
 
 class EchoBot(PoeBot):
     async def get_response(self, query: QueryRequest) -> AsyncIterable[ServerSentEvent]:
-        print(user_statement, query.query[-1].content)
+        print("user_statement", query.query[-1].content)
         code = query.query[-1].content
         code = strip_code(code)
         captured_output, captured_error, size, data_len, fuel_consumed = await run_code(
