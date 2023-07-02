@@ -12,16 +12,14 @@ https://bytecodealliance.github.io/wasmtime-py/
 from __future__ import annotations
 
 import os
-import shutil
 import tempfile
 import uuid
 from typing import AsyncIterable
 
-from sse_starlette.sse import ServerSentEvent
-from wasmtime import Config, Engine, Linker, Module, Store, WasiConfig
-
 from fastapi_poe import PoeBot, run
 from fastapi_poe.types import QueryRequest
+from sse_starlette.sse import ServerSentEvent
+from wasmtime import Config, Engine, Linker, Module, Store, WasiConfig
 
 TOTAL_FUEL = 10_000_000_000
 
@@ -30,7 +28,7 @@ async def run_code(code, stdin_file=None):
     # Note: not really async, nice to fix
     # Note: not able to import numpy, pandas etc, nice to fix
 
-    shutil.copytree("../tmp", ".", dirs_exist_ok=True)
+    # shutil.copytree("../tmp", ".", dirs_exist_ok=True)
     fuel = TOTAL_FUEL
 
     engine_cfg = Config()
