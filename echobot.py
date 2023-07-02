@@ -62,6 +62,8 @@ This are the available emojis
 class EchoBot(PoeBot):
     async def get_response(self, query: QueryRequest) -> AsyncIterable[ServerSentEvent]:
         user_statement = query.query[-1].content
+        print("user_statement", user_statement)
+
         character_reply = ""
         async for msg in stream_request(query, "MeguminHelper", query.api_key):
             # Note: See https://poe.com/MeguminHelper for the system prompt
