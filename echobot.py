@@ -36,29 +36,6 @@ async def run_code(code, stdin_file=None):
         symlinks=False,
         ignore_dangling_symlinks=True,
     )
-    # shutil.copy("/tmp/usr/local/lib/python311.zip", "/root/usr/local/lib/python311.zip")
-    # shutil.copy("/tmp/bin/python-3.11.1.wasm", "/root/bin/python-3.11.1.wasm")
-
-    # # Get the current working directory
-    # cwd = os.getcwd()
-    # print(cwd)
-
-    # # List the files and directories in the current working directory
-    # files = os.listdir(cwd)
-
-    # # Print the list of files and directories
-    # for file in files:
-    #     print(file)
-
-    # cwd = "../tmp"
-    # print(cwd)
-
-    # # List the files and directories in the current working directory
-    # files = os.listdir(cwd)
-
-    # # Print the list of files and directories
-    # for file in files:
-    #     print(file)
 
     fuel = TOTAL_FUEL
 
@@ -152,6 +129,7 @@ def strip_code(code):
 
 class EchoBot(PoeBot):
     async def get_response(self, query: QueryRequest) -> AsyncIterable[ServerSentEvent]:
+        print(user_statement, query.query[-1].content)
         code = query.query[-1].content
         code = strip_code(code)
         captured_output, captured_error, size, data_len, fuel_consumed = await run_code(
