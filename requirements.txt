@@ -1,1 +1,6 @@
 fastapi-poe==0.0.14
+requests==2.31.0
+pdftotext
+Pillow
+openai
+pytesseract

@@ -6,11 +6,16 @@ Sample bot that echoes back messages.
 from __future__ import annotations
 
 from collections import defaultdict
+from io import BytesIO
 from typing import AsyncIterable
 
 import openai
+import pdftotext
+import pytesseract
+import requests
 from fastapi_poe import PoeBot, run
 from fastapi_poe.types import QueryRequest
+from PIL import Image
 from sse_starlette.sse import ServerSentEvent
 
 assert openai.api_key
@@ -211,8 +216,10 @@ class EchoBot(PoeBot):
             yield self.text_event(UPDATE_IMAGE_PARSING)
 
             if content_url.endswith(".pdf"):
+                print("parsing pdf", content_url)
                 success, resume_string = await parse_pdf_document_from_url(content_url)
             else:  # assume image
+                print("parsing image", content_url)
                 success, resume_string = await parse_image_document_from_url(
                     content_url
                 )
