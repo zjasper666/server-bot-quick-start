@@ -8,6 +8,9 @@ https://til.simonwillison.net/webassembly/python-in-a-wasm-sandbox
 Guide
 https://bytecodealliance.github.io/wasmtime-py/
 
+Documentation
+https://wasmlabs.dev/articles/python-wasm32-wasi/
+
 """
 from __future__ import annotations
 
