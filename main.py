@@ -40,7 +40,7 @@ bot = EchoBot()
 image = (
     Image.debian_slim()
     .apt_install("libpoppler-cpp-dev")
-    .apt_install("tesseract-ocr")
+    .apt_install("tesseract-ocr-eng")
     .pip_install_from_requirements("requirements.txt")
 ).env(
     {

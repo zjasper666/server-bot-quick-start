@@ -20,6 +20,7 @@ from sse_starlette.sse import ServerSentEvent
 
 assert openai.api_key
 
+print("version", pytesseract.get_tesseract_version())
 
 SETTINGS = {
     "report_feedback": True,
@@ -237,6 +238,7 @@ class EchoBot(PoeBot):
 
         message_history = conversation_cache[query.conversation_id]
         bot_statement = process_message_with_gpt(message_history)
+        bot_statement = bot_statement.replace("---", "\n---\n")
         yield self.text_event(bot_statement)
 
         conversation_cache[query.conversation_id].append(
