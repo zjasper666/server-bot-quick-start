@@ -8,3 +8,4 @@ scipy
 scikit-learn
 ortools
 requests
+opencv-python-headless
