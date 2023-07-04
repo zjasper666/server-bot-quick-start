@@ -4,6 +4,7 @@
 # comment/uncomment any of the following code to try out other example bots.
 
 from fastapi_poe import run
+
 from echobot import EchoBot
 
 if __name__ == "__main__":
@@ -28,4 +29,3 @@ if __name__ == "__main__":
 # but the starter example disables the key check for convenience.
 # POE_API_KEY = ""
 # app = make_app(bot, api_key=POE_API_KEY)
-
