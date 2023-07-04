@@ -1,3 +1,9 @@
 fastapi-poe==0.0.14
 ipython==8.0.1
+pandas
+matplotlib
 numpy
+beautifulsoup4
+scipy
+scikit-learn
+ortools

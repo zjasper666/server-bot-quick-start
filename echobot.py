@@ -10,18 +10,18 @@ import sys
 from io import StringIO
 from typing import AsyncIterable
 
-import traitlets.config
 from fastapi_poe import PoeBot, run
 from fastapi_poe.types import QueryRequest
 from modal import Image, Stub
 from sse_starlette.sse import ServerSentEvent
 
 image = Image.debian_slim().pip_install_from_requirements("requirements_exec.txt")
-stub = Stub("example-get-started")
+stub = Stub("run-python-code")
 
 
-@stub.function(image=image)
+@stub.function(image=image, timeout=30)
 def execute_code(code):
+    import traitlets.config
     from IPython.terminal.embed import InteractiveShellEmbed
 
     config = traitlets.config.Config()
