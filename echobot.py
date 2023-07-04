@@ -7,6 +7,7 @@ python3 echobot.py
 """
 
 import sys
+import modal
 from io import StringIO
 from typing import AsyncIterable
 
@@ -73,7 +74,11 @@ class EchoBot(PoeBot):
         code = query.query[-1].content
         code = strip_code(code)
         with stub.run():
-            captured_output = execute_code.call(code)  # need async await?
+            try:
+                captured_output = execute_code.call(code)  # need async await?
+            except modal.exception.TimeoutError:
+                yield self.text_event("Time limit exceeded.")
+                return
         reply_string = format_output(captured_output)
         if not reply_string:
             yield self.text_event("No output or error recorded.")
