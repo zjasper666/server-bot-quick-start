@@ -1,2 +1,1 @@
 fastapi-poe==0.0.14
-wasmtime==9.0.0
