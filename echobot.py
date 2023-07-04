@@ -2,20 +2,11 @@
 
 Sample bot executes your Python code.
 
-Main reference
-https://til.simonwillison.net/webassembly/python-in-a-wasm-sandbox
-
-Guide
-https://bytecodealliance.github.io/wasmtime-py/
-
-Documentation
-https://wasmlabs.dev/articles/python-wasm32-wasi/
-
+python3 echobot.py
+(assumes you already have modal set up)
 """
 
-import linecache
 import sys
-import traceback
 from io import StringIO
 from typing import AsyncIterable
 
@@ -44,45 +35,16 @@ def execute_code(code):
     sys.stdout = StringIO()
 
     # Execute the code with the silent parameter set to True
-    result = ipython.run_cell(
-        code, silent=True, store_history=False, shell_futures=False
-    )
+    _ = ipython.run_cell(code, silent=True, store_history=False, shell_futures=False)
 
     # Restore the original stdout and retrieve the captured output
     captured_output = sys.stdout.getvalue()
     sys.stdout = old_stdout
 
-    # Check if there is an error and capture the error message
-    captured_error = ""
-    result_error = result.error_before_exec or result.error_in_exec
-    if result_error is not None:
-        etype, evalue, tb = type(result_error), result_error, result_error.__traceback__
-        captured_error = "".join(traceback.format_exception(etype, evalue, tb))
-
-        # Add additional lines of context for each traceback level
-        tb_info = traceback.extract_tb(tb)
-        if result.error_in_exec:
-            captured_error += "\n\nAdditional context for each traceback level:\n"
-            for level, (filename, lineno, func, _) in enumerate(tb_info[1:], start=1):
-                context_before = max(1, lineno - 3)
-                context_after = lineno + 3
-                lines = [
-                    linecache.getline(filename, i).rstrip()
-                    for i in range(context_before, context_after + 1)
-                ]
-                formatted_lines = [
-                    f"{i}: {line}" for i, line in enumerate(lines, start=context_before)
-                ]
-                captured_error += (
-                    f"\nLevel {level} ({filename}, line {lineno}, in {func}):\n"
-                    + "\n".join(formatted_lines)
-                    + "\n"
-                )
-
-    return captured_output, captured_error
+    return captured_output
 
 
-def format_output(captured_output, captured_error) -> str:
+def format_output(captured_output, captured_error="") -> str:
     lines = []
 
     if captured_output:
@@ -110,10 +72,9 @@ class EchoBot(PoeBot):
         print("user_statement", query.query[-1].content)
         code = query.query[-1].content
         code = strip_code(code)
-        captured_output, captured_error = execute_code(code)  # need async await?
-        print(captured_output)
-        print(captured_error)
-        reply_string = format_output(captured_output, captured_error)
+        with stub.run():
+            captured_output = execute_code.call(code)  # need async await?
+        reply_string = format_output(captured_output)
         if not reply_string:
             yield self.text_event("No output or error recorded.")
             return
