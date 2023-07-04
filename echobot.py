@@ -79,6 +79,9 @@ class EchoBot(PoeBot):
             except modal.exception.TimeoutError:
                 yield self.text_event("Time limit exceeded.")
                 return
+        if len(captured_output) > 5000:
+            self.text_event("There is too much output, this is the partial output.")
+            captured_output = captured_output[:5000]
         reply_string = format_output(captured_output)
         if not reply_string:
             yield self.text_event("No output or error recorded.")
