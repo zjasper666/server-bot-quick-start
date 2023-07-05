@@ -9,3 +9,5 @@ scikit-learn
 ortools
 requests
 opencv-python-headless
+torch
+tensorflow
