@@ -20,7 +20,7 @@ image = Image.debian_slim().pip_install_from_requirements("requirements_exec.txt
 stub = Stub("run-python-code")
 
 
-@stub.function(image=image, timeout=30)
+@stub.function(image=image, timeout=30, keep_warm=1)
 def execute_code(code):
     import traitlets.config
     from IPython.terminal.embed import InteractiveShellEmbed

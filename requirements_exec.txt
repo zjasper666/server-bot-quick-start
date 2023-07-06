@@ -10,4 +10,6 @@ ortools
 requests
 opencv-python-headless
 torch
+torchvision
 tensorflow
+nltk
