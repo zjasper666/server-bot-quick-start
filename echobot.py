@@ -7,10 +7,10 @@ python3 echobot.py
 """
 
 import sys
-import modal
 from io import StringIO
 from typing import AsyncIterable
 
+import modal
 from fastapi_poe import PoeBot, run
 from fastapi_poe.types import QueryRequest
 from modal import Image, Stub
@@ -80,7 +80,9 @@ class EchoBot(PoeBot):
                 yield self.text_event("Time limit exceeded.")
                 return
         if len(captured_output) > 5000:
-            yield self.text_event("There is too much output, this is the partial output.")
+            yield self.text_event(
+                "There is too much output, this is the partial output."
+            )
             captured_output = captured_output[:5000]
         reply_string = format_output(captured_output)
         if not reply_string:
