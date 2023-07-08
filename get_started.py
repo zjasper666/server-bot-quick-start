@@ -4,7 +4,7 @@ stub = modal.Stub("example-get-started")
 
 code = """
 import os
-os._exit(00)
+os._exit(0)
 """
 
 

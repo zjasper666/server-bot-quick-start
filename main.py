@@ -3,12 +3,13 @@
 # a message back at its user and is a good starting point for your bot, but you can
 # comment/uncomment any of the following code to try out other example bots.
 
-from fastapi_poe import run
+from fastapi_poe import make_app
+from modal import Image, Stub, asgi_app
 
 from echobot import EchoBot
 
-if __name__ == "__main__":
-    run(EchoBot())
+# Echo bot is a very simple bot that just echoes back the user's last message.
+bot = EchoBot()
 
 # A sample bot that showcases the capabilities the protocol provides. Please see the
 # following link for the full set of available message commands:
@@ -29,3 +30,14 @@ if __name__ == "__main__":
 # but the starter example disables the key check for convenience.
 # POE_API_KEY = ""
 # app = make_app(bot, api_key=POE_API_KEY)
+
+# specific to hosting with modal.com
+image = Image.debian_slim().pip_install_from_requirements("requirements.txt")
+stub = Stub("poe-bot-quickstart")
+
+
+@stub.function(image=image)
+@asgi_app()
+def fastapi_app():
+    app = make_app(bot, allow_without_key=True)
+    return app

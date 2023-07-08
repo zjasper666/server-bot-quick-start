@@ -6,43 +6,18 @@ python3 echobot.py
 (assumes you already have modal set up)
 """
 
-import sys
-from io import StringIO
 from typing import AsyncIterable
 
 import modal
 from fastapi_poe import PoeBot, run
 from fastapi_poe.types import QueryRequest
-from modal import Image, Stub
+from modal import Stub
 from sse_starlette.sse import ServerSentEvent
 
-image = Image.debian_slim().pip_install_from_requirements("requirements_exec.txt")
+# https://modalbetatesters.slack.com/archives/C031Z7H15DG/p1675177408741889?thread_ts=1675174647.477169&cid=C031Z7H15DG
+modal.app._is_container_app = False
+
 stub = Stub("run-python-code")
-
-
-@stub.function(image=image, timeout=30, keep_warm=1)
-def execute_code(code):
-    import traitlets.config
-    from IPython.terminal.embed import InteractiveShellEmbed
-
-    config = traitlets.config.Config()
-    config.InteractiveShell.colors = "NoColor"
-    # config.PlainTextFormatter.max_width = 40  # not working
-    # config.InteractiveShell.width = 40  # not working
-    ipython = InteractiveShellEmbed(config=config)
-
-    # Redirect stdout temporarily to capture the output of the code snippet
-    old_stdout = sys.stdout
-    sys.stdout = StringIO()
-
-    # Execute the code with the silent parameter set to True
-    _ = ipython.run_cell(code, silent=True, store_history=False, shell_futures=False)
-
-    # Restore the original stdout and retrieve the captured output
-    captured_output = sys.stdout.getvalue()
-    sys.stdout = old_stdout
-
-    return captured_output
 
 
 def format_output(captured_output, captured_error="") -> str:
@@ -75,7 +50,8 @@ class EchoBot(PoeBot):
         code = strip_code(code)
         with stub.run():
             try:
-                captured_output = execute_code.call(code)  # need async await?
+                f = modal.Function.lookup("run-python-code-shared", "execute_code")
+                captured_output = f.call(code)  # need async await?
             except modal.exception.TimeoutError:
                 yield self.text_event("Time limit exceeded.")
                 return
