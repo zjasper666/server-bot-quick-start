@@ -45,16 +45,16 @@ def strip_code(code):
 
 class EchoBot(PoeBot):
     async def get_response(self, query: QueryRequest) -> AsyncIterable[ServerSentEvent]:
-        print("user_statement", query.query[-1].content)
+        print("user_statement")
+        print(query.query[-1].content)
         code = query.query[-1].content
         code = strip_code(code)
-        with stub.run():
-            try:
-                f = modal.Function.lookup("run-python-code-shared", "execute_code")
-                captured_output = f.call(code)  # need async await?
-            except modal.exception.TimeoutError:
-                yield self.text_event("Time limit exceeded.")
-                return
+        try:
+            f = modal.Function.lookup("run-python-code-shared", "execute_code")
+            captured_output = f.call(code)  # need async await?
+        except modal.exception.TimeoutError:
+            yield self.text_event("Time limit exceeded.")
+            return
         if len(captured_output) > 5000:
             yield self.text_event(
                 "There is too much output, this is the partial output."
