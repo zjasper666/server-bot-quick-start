@@ -6,10 +6,12 @@ python3 echobot.py
 (assumes you already have modal set up)
 """
 
+import re
 from typing import AsyncIterable
 
 import modal
 from fastapi_poe import PoeBot, run
+from fastapi_poe.client import MetaMessage, stream_request
 from fastapi_poe.types import QueryRequest
 from modal import Stub
 from sse_starlette.sse import ServerSentEvent
@@ -43,12 +45,33 @@ def strip_code(code):
     return code
 
 
+def extract_code(reply):
+    pattern = r"```python([\s\S]*?)```"
+    matches = re.findall(pattern, reply)
+    return "\n\n".join(matches)
+
+
 class EchoBot(PoeBot):
     async def get_response(self, query: QueryRequest) -> AsyncIterable[ServerSentEvent]:
         print("user_statement")
         print(query.query[-1].content)
-        code = query.query[-1].content
-        code = strip_code(code)
+
+        current_message = ""
+        async for msg in stream_request(query, "CheckPythonTool", query.api_key):
+            # Note: See https://poe.com/CheckPythonTool for the prompt
+            if isinstance(msg, MetaMessage):
+                continue
+            elif msg.is_suggested_reply:
+                yield self.suggested_reply_event(msg.text)
+            elif msg.is_replace_response:
+                yield self.replace_response_event(msg.text)
+            else:
+                current_message += msg.text
+                yield self.replace_response_event(current_message)
+
+        code = extract_code(current_message)
+        print("code")
+        print(code)
         try:
             f = modal.Function.lookup("run-python-code-shared", "execute_code")
             captured_output = f.call(code)  # need async await?
@@ -57,7 +80,7 @@ class EchoBot(PoeBot):
             return
         if len(captured_output) > 5000:
             yield self.text_event(
-                "There is too much output, this is the partial output."
+                "\n\nThere is too much output, this is the partial output.\n\n"
             )
             captured_output = captured_output[:5000]
         reply_string = format_output(captured_output)
