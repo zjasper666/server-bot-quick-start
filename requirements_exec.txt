@@ -9,6 +9,7 @@ ortools
 torch
 torchvision
 tensorflow
+spacy
 transformers
 opencv-python-headless
 nltk
@@ -17,3 +18,4 @@ requests
 beautifulsoup4
 newspaper3k
 feedparser
+sympy
