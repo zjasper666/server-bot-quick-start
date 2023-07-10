@@ -57,7 +57,7 @@ class EchoBot(PoeBot):
         print(query.query[-1].content)
 
         current_message = ""
-        async for msg in stream_request(query, "CheckPythonTool", query.api_key):
+        async for msg in stream_request(query, "matplotlibTool", query.api_key):
             # Note: See https://poe.com/CheckPythonTool for the prompt
             if isinstance(msg, MetaMessage):
                 continue
@@ -70,11 +70,22 @@ class EchoBot(PoeBot):
                 yield self.replace_response_event(current_message)
 
         code = extract_code(current_message)
+
+        if not code:
+            return
+
         print("code")
         print(code)
+        image_url = None
         try:
-            f = modal.Function.lookup("run-python-code-shared", "execute_code")
-            captured_output = f.call(code)  # need async await?
+            f = modal.Function.lookup(
+                "run-python-code-shared", "execute_code_matplotlib"
+            )
+            captured_output, image_data = f.call(code)  # need async await?
+            if image_data:
+                f = modal.Function.lookup("image-upload-shared", "upload_image")
+                image_url = f.call(image_data)
+
         except modal.exception.TimeoutError:
             yield self.text_event("Time limit exceeded.")
             return
@@ -84,10 +95,17 @@ class EchoBot(PoeBot):
             )
             captured_output = captured_output[:5000]
         reply_string = format_output(captured_output)
-        if not reply_string:
-            yield self.text_event("No output or error recorded.")
+
+        if reply_string:
+            yield self.text_event(reply_string)
+        if image_url:
+            print("image_url")
+            print(image_url)
+            yield self.text_event(f"\n\n![image]({image_url})")
+
+        if not reply_string and not image_url:
+            yield self.text_event("\n\nNo output or error recorded.")
             return
-        yield self.text_event(reply_string)
 
 
 if __name__ == "__main__":

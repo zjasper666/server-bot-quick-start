@@ -3,6 +3,8 @@
 # a message back at its user and is a good starting point for your bot, but you can
 # comment/uncomment any of the following code to try out other example bots.
 
+import os
+
 from fastapi_poe import make_app
 from modal import Image, Stub, asgi_app
 
@@ -32,12 +34,16 @@ bot = EchoBot()
 # app = make_app(bot, api_key=POE_API_KEY)
 
 # specific to hosting with modal.com
-image = Image.debian_slim().pip_install_from_requirements("requirements.txt")
+image = (
+    Image.debian_slim()
+    .pip_install_from_requirements("requirements.txt")
+    .env({"POE_API_KEY": os.environ["POE_API_KEY"]})
+)
 stub = Stub("poe-bot-quickstart")
 
 
 @stub.function(image=image)
 @asgi_app()
 def fastapi_app():
-    app = make_app(bot, allow_without_key=True)
+    app = make_app(bot, api_key=os.environ["POE_API_KEY"])
     return app
