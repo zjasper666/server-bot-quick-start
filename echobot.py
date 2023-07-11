@@ -21,5 +21,5 @@ class EchoBot(PoeBot):
     async def get_response(self, query: QueryRequest) -> AsyncIterable[ServerSentEvent]:
         last_message = query.query[-1].content
         tokens = encoding.encode(last_message)
-        last_message = " | ".join([str((encoding.decode_single_token_bytes(token), token))[1:-1] for token in tokens]) 
+        last_message = " | ".join([str((encoding.decode_single_token_bytes(token), token))[2:-1] for token in tokens]) 
         yield self.text_event(last_message)
