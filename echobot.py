@@ -72,6 +72,10 @@ class EchoBot(PoeBot):
         code = extract_code(current_message)
         print("code")
         print(code)
+
+        if not code:
+            return
+
         try:
             f = modal.Function.lookup("run-python-code-shared", "execute_code")
             captured_output = f.call(code)  # need async await?
