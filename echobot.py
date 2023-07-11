@@ -85,7 +85,7 @@ class EchoBot(PoeBot):
             captured_output = captured_output[:5000]
         reply_string = format_output(captured_output)
         if not reply_string:
-            yield self.text_event("No output or error recorded.")
+            yield self.text_event("\n\nNo output or error recorded.")
             return
         yield self.text_event(reply_string)
 
