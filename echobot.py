@@ -37,7 +37,7 @@ url_cache = {}
 
 async def parse_image_document_from_url(image_url: str) -> tuple[bool, str]:
     try:
-        response = requests.get(image_url.strip())
+        response = requests.get(image_url.strip())  # sometimes might get 429
         img = Image.open(BytesIO(response.content))
 
         custom_config = "--psm 4"
@@ -205,7 +205,7 @@ class EchoBot(PoeBot):
         user_statement: str = query.query[-1].content
         print(query.conversation_id, user_statement)
 
-        if query.conversation_id not in url_cache:
+        if True:
             # TODO: validate user_statement is not malicious
             if len(user_statement.strip().split()) > 1:
                 yield self.text_event(MULTIWORD_FAILURE_REPLY)
@@ -228,22 +228,9 @@ class EchoBot(PoeBot):
             if not success:
                 yield self.text_event(PARSE_FAILURE_REPLY)
                 return
-            yield self.text_event(UPDATE_LLM_QUERY.format(resume=content_url))
-            url_cache[query.conversation_id] = content_url
-            user_statement = RESUME_STARTING_PROMPT.format(resume_string)
 
-        conversation_cache[query.conversation_id].append(
-            {"role": "user", "content": user_statement}
-        )
-
-        message_history = conversation_cache[query.conversation_id]
-        bot_statement = process_message_with_gpt(message_history)
-        bot_statement = bot_statement.replace("---", "\n---\n")
-        yield self.text_event(bot_statement)
-
-        conversation_cache[query.conversation_id].append(
-            {"role": "assistant", "content": bot_statement}
-        )
+            yield self.text_event(resume_string)
+            print(resume_string)
 
 
 if __name__ == "__main__":
