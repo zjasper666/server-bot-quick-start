@@ -2,6 +2,8 @@
 
 Sample bot that echoes back messages.
 
+modal deploy --name MeguminWizardEx main.py
+
 """
 from __future__ import annotations
 
@@ -59,10 +61,19 @@ This are the available emojis
 """.strip()
 
 
+def redact_image_links(text):
+    pattern = r"!\[.*\]\(http.*\)"
+    redacted_text = re.sub(pattern, '', text)
+    return redacted_text
+
+
 class EchoBot(PoeBot):
     async def get_response(self, query: QueryRequest) -> AsyncIterable[ServerSentEvent]:
         user_statement = query.query[-1].content
         print("user_statement", user_statement)
+
+        for statement in query.query:
+            statement.content = redact_image_links(statement.content)
 
         character_reply = ""
         async for msg in stream_request(query, "MeguminHelper", query.api_key):
