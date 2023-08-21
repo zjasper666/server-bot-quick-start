@@ -87,6 +87,10 @@ class EchoBot(PoeBot):
 
         print("code")
         print(code)
+
+        if not code:
+            return
+
         image_url = None
         try:
             f = modal.Function.lookup(

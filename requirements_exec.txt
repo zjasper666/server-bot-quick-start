@@ -37,3 +37,4 @@ geopandas
 basemap
 tiktoken
 basemap-data-hires
+cartopy
