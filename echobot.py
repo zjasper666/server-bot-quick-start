@@ -2,6 +2,8 @@
 
 Sample bot executes your Python code.
 
+modal deploy --name matplotlib main.py
+
 python3 echobot.py
 (assumes you already have modal set up)
 """
@@ -20,6 +22,12 @@ from sse_starlette.sse import ServerSentEvent
 modal.app._is_container_app = False
 
 stub = Stub("run-python-code")
+
+
+def redact_image_links(text):
+    pattern = r"!\[.*\]\(http.*\)"
+    redacted_text = re.sub(pattern, '', text)
+    return redacted_text
 
 
 def format_output(captured_output, captured_error="") -> str:
@@ -55,6 +63,9 @@ class EchoBot(PoeBot):
     async def get_response(self, query: QueryRequest) -> AsyncIterable[ServerSentEvent]:
         print("user_statement")
         print(query.query[-1].content)
+
+        for statement in query.query:
+            statement.content = redact_image_links(statement.content)
 
         current_message = ""
         async for msg in stream_request(query, "matplotlibTool", query.api_key):
