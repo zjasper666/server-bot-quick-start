@@ -4,6 +4,8 @@
 # comment/uncomment any of the following code to try out other example bots or build on top
 # of the EchoBot.
 
+import os
+
 from fastapi_poe import make_app
 from modal import Image, Stub, asgi_app
 
@@ -35,9 +37,18 @@ bot = EchoBot()
 # bot = HuggingFaceBot("microsoft/DialoGPT-medium")
 
 # The following is setup code that is required to host with modal.com
-image = Image.debian_slim().pip_install_from_requirements("requirements.txt")
-# Rename "poe-server-bot-quick-start" to your preferred app name.
-stub = Stub("poe-server-bot-quick-start")
+image = (
+    Image.debian_slim()
+    .apt_install("libpoppler-cpp-dev")
+    .apt_install("tesseract-ocr-eng")
+    .pip_install_from_requirements("requirements.txt")
+).env(
+    {
+        "OPENAI_API_KEY": os.environ["OPENAI_API_KEY"],
+        "POE_API_KEY": os.environ["POE_API_KEY"],
+    }
+)
+stub = Stub("poe-bot-quickstart")
 
 
 @stub.function(image=image)
@@ -51,5 +62,5 @@ def fastapi_app():
     # by following the instructions at: https://modal.com/docs/guide/secrets
     # POE_ACCESS_KEY = ""
     # app = make_app(bot, access_key=POE_ACCESS_KEY)
-    app = make_app(bot, allow_without_key=True)
+    app = make_app(bot, api_key=os.environ["POE_API_KEY"])
     return app
