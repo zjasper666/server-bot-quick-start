@@ -38,6 +38,12 @@ conversation_cache = defaultdict(
 url_cache = {}
 
 
+def normalize_tmpfiles_url(url):
+    if "tmpfiles.org/" in url and "tmpfiles.org/dl/" not in url:
+        return url.replace("tmpfiles.org/", "tmpfiles.org/dl/")
+    return url
+
+
 async def parse_image_document_from_url(image_url: str) -> tuple[bool, str]:
     try:
         response = requests.get(image_url.strip())
@@ -88,15 +94,15 @@ MULTIWORD_FAILURE_REPLY = """\
 Please only send a URL.
 Do not include any other words in your reply.
 
-You can get an image URL by uploading to https://postimages.org/
+You can get an image URL by uploading to https://tmpfiles.org/
 
 These are examples of resume the bot can accept.
 
+https://tmpfiles.org/2262838/resume.pdf
+
 https://raw.githubusercontent.com/jakegut/resume/master/resume.png
 
-https://i.postimg.cc/3r0fZ5gy/resume.png
-
-See https://poe.com/huikang/1512927999933968 for an example of an interaction.
+See https://poe.com/huikang/1512928000159531 for an example of an interaction.
 
 You can also try https://poe.com/xyzFormatter for advice specifically on your bullet points.
 """
@@ -106,17 +112,15 @@ I could not load your resume.
 
 ---
 
-Please upload your resume to https://postimages.org/ and reply its direct link.
+Please upload your resume to https://tmpfiles.org/
+
+Reply this bot with the URL only.
 
 ---
 
 Please ensure that you are sending something like
 
-https://i.postimg.cc/3r0fZ5gy/resume.png
-
-rather than
-
-https://postimg.cc/LhRVHWQR/9fca0e7d
+https://tmpfiles.org/2262838/resume.pdf
 
 ---
 
@@ -204,6 +208,7 @@ class EchoBot(PoeBot):
                 return
 
             content_url = user_statement.strip()
+            content_url = normalize_tmpfiles_url(content_url)
             content_url = content_url.split("?")[0]  # remove query_params
 
             yield self.text_event(UPDATE_IMAGE_PARSING)
@@ -241,7 +246,7 @@ class EchoBot(PoeBot):
         return SettingsResponse(
             server_bot_dependencies={"any": 2},
             allow_attachments=True,
-            introduction_message="Please upload your resume to https://postimages.org/ and reply its direct link."
+            introduction_message="Please upload your resume to https://tmpfiles.org/ and reply its URL."
         )
 
 if __name__ == "__main__":
