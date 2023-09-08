@@ -16,6 +16,7 @@ import pdftotext
 import pytesseract
 import requests
 
+from docx import Document
 from fastapi_poe import PoeBot, run
 from fastapi_poe.types import QueryRequest, SettingsResponse
 from PIL import Image
@@ -45,7 +46,7 @@ async def parse_image_document_from_url(image_url: str) -> tuple[bool, str]:
 
         custom_config = "--psm 4"
         text = pytesseract.image_to_string(img, config=custom_config)
-        text = text[:2000]
+        text = text[:10000]
         return True, text
     except BaseException:
         return False, ""
@@ -57,11 +58,28 @@ async def parse_pdf_document_from_url(pdf_url: str) -> tuple[bool, str]:
         with BytesIO(response.content) as f:
             pdf = pdftotext.PDF(f)
         text = "\n\n".join(pdf)
-        text = text[:2000]
+        text = text[:10000]
         return True, text
     except requests.exceptions.MissingSchema:
         return False, ""
     except BaseException:
+        return False, ""
+
+
+async def parse_pdf_document_from_docx(docx_url: str) -> tuple[bool, str]:
+    try:
+        response = requests.get(docx_url)
+        with BytesIO(response.content) as f:
+            document = Document(f)
+        text = [p.text for p in document.paragraphs]
+        text = "\n\n".join(text)
+        text = text[:10000]
+        return True, text
+    except requests.exceptions.MissingSchema as e:
+        print(e)
+        return False, ""
+    except BaseException as e:
+        print(e)
         return False, ""
 
 
@@ -211,16 +229,18 @@ class EchoBot(PoeBot):
             if content_url.endswith(".pdf"):
                 print("parsing pdf", content_url)
                 success, resume_string = await parse_pdf_document_from_url(content_url)
+            elif content_url.endswith(".docx"):
+                print("parsing docx", content_url)
+                success, resume_string = await parse_pdf_document_from_docx(content_url)
             else:  # assume image
                 print("parsing image", content_url)
-                success, resume_string = await parse_image_document_from_url(
-                    content_url
-                )
+                success, resume_string = await parse_image_document_from_url(content_url)
 
             if not success:
                 yield self.text_event(PARSE_FAILURE_REPLY)
                 return
-            yield self.text_event(UPDATE_LLM_QUERY.format(resume=content_url))
+            yield self.replace_response_event(resume_string)
+            return
             url_cache[query.conversation_id] = content_url
             user_statement = RESUME_STARTING_PROMPT.format(resume_string)
 
