@@ -236,7 +236,7 @@ class EchoBot(PoeBot):
         message_history = conversation_cache[query.conversation_id]
         bot_statement = process_message_with_gpt(message_history)
         bot_statement = bot_statement.replace("---", "\n---\n")
-        yield self.text_event(bot_statement)
+        yield self.text_event(bot_statement[:9500])
 
         conversation_cache[query.conversation_id].append(
             {"role": "assistant", "content": bot_statement}
