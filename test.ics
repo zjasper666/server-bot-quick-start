@@ -1,0 +1,34 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//OpenAI//ChatGPT//EN
+BEGIN:VEVENT
+DTSTART:20230909T090000
+DTEND:20230909T093000
+SUMMARY:Research
+DESCRIPTION:Allocate 30 minutes for conducting research on available options.
+END:VEVENT
+BEGIN:VEVENT
+DTSTART:20230909T093000
+DTEND:20230909T100000
+SUMMARY:Financing Options
+DESCRIPTION:Allocate 30 minutes to explore various financing options.
+END:VEVENT
+BEGIN:VEVENT
+DTSTART:20230909T100000
+DTEND:20230909T103000
+SUMMARY:Finalize Documentation
+DESCRIPTION:Allocate 30 minutes to review and finalize required documentation.
+END:VEVENT
+BEGIN:VEVENT
+DTSTART:20230909T103000
+DTEND:20230909T123000
+SUMMARY:Visit Dealerships
+DESCRIPTION:Set aside 2 hours to visit different dealerships and explore available vehicles.
+END:VEVENT
+BEGIN:VEVENT
+DTSTART:20230909T123000
+DTEND:20230909T133000
+SUMMARY:Negotiate Price
+DESCRIPTION:Allocate 1 hour to negotiate the price of the desired vehicle.
+END:VEVENT
+END:VCALENDAR

@@ -2,7 +2,7 @@
 
 Sample bot executes your Python code.
 
-modal deploy --name matplotlib main.py
+modal deploy --name TaskCrusherICS main.py
 
 python3 echobot.py
 (assumes you already have modal set up)
@@ -22,6 +22,17 @@ from sse_starlette.sse import ServerSentEvent
 modal.app._is_container_app = False
 
 stub = Stub("run-python-code")
+
+from icalendar import Calendar
+import os
+
+def is_valid_ics(text):
+    try:
+        cal = Calendar.from_ical(text)
+        return True
+    except Exception as e:
+        print(f"Error: {e}")
+        return False
 
 
 def redact_image_links(text):
@@ -54,7 +65,7 @@ def strip_code(code):
 
 
 def extract_code(reply):
-    pattern = r"```python([\s\S]*?)```"
+    pattern = r"```([\s\S]*?)```"
     matches = re.findall(pattern, reply)
     return "\n\n".join(matches)
 
@@ -68,8 +79,8 @@ class EchoBot(PoeBot):
             statement.content = redact_image_links(statement.content)
 
         current_message = ""
-        async for msg in stream_request(query, "matplotlibTool", query.api_key):
-            # Note: See https://poe.com/CheckPythonTool for the prompt
+        async for msg in stream_request(query, "TaskCrusherHelper", query.api_key):
+            # Note: See https://poe.com/TaskCrusherHelper for the prompt
             if isinstance(msg, MetaMessage):
                 continue
             elif msg.is_suggested_reply:
@@ -80,47 +91,44 @@ class EchoBot(PoeBot):
                 current_message += msg.text
                 yield self.replace_response_event(current_message)
 
-        code = extract_code(current_message)
+        query.query[-1].content = current_message
 
-        if not code:
-            return
+        current_message = ""
+        async for msg in stream_request(query, "TaskCrusherMaker", query.api_key):
+            # Note: See https://poe.com/TaskCrusherMaker for the prompt
+            if isinstance(msg, MetaMessage):
+                continue
+            elif msg.is_suggested_reply:
+                yield self.suggested_reply_event(msg.text)
+            elif msg.is_replace_response:
+                yield self.replace_response_event(msg.text)
+            else:
+                current_message += msg.text
+                # yield self.replace_response_event(current_message)
+
+        print("current_message")
+        print(current_message)
+
+        code = extract_code(current_message)
 
         print("code")
         print(code)
-
-        if not code:
+        if not is_valid_ics(code):
             return
 
-        image_url = None
+        print(code)
+        file_url = None
         try:
-            f = modal.Function.lookup(
-                "run-python-code-shared", "execute_code_matplotlib"
-            )
-            captured_output, image_data = f.call(code)  # need async await?
-            if image_data:
+            if code:
                 f = modal.Function.lookup("image-upload-shared", "upload_file")
-                image_url = f.call(image_data, "image.png")
+                file_url = f.remote(code.encode(), "task.ics")
+                print("file_url")
+                print(file_url)
 
-        except modal.exception.TimeoutError:
-            yield self.text_event("Time limit exceeded.")
+            self.text_event("Here is the [ics file]({file_url})")
             return
-        if len(captured_output) > 5000:
-            yield self.text_event(
-                "\n\nThere is too much output, this is the partial output.\n\n"
-            )
-            captured_output = captured_output[:5000]
-        reply_string = format_output(captured_output)
-
-        if reply_string:
-            yield self.text_event(reply_string)
-        if image_url:
-            print("image_url")
-            print(image_url)
-            yield self.text_event(f"\n\n![image]({image_url})")
-
-        if not reply_string and not image_url:
-            yield self.text_event("\n\nNo output or error recorded.")
-            return
+        except Exception as e:
+            print(e)
 
 
 if __name__ == "__main__":
