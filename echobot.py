@@ -98,8 +98,8 @@ class EchoBot(PoeBot):
             )
             captured_output, image_data = f.call(code)  # need async await?
             if image_data:
-                f = modal.Function.lookup("image-upload-shared", "upload_image")
-                image_url = f.call(image_data)
+                f = modal.Function.lookup("image-upload-shared", "upload_file")
+                image_url = f.call(image_data, "image.png")
 
         except modal.exception.TimeoutError:
             yield self.text_event("Time limit exceeded.")

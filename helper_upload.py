@@ -29,11 +29,11 @@ stub = Stub("image-upload-shared")
 
 
 @stub.function(image=image, timeout=30)
-def upload_image(image_data):
+def upload_file(data, file_name):
     import cloudinary.uploader
 
-    with open("image.png", "wb") as f:
-        f.write(image_data)
+    with open(file_name, "wb") as f:
+        f.write(data)
 
     cloudinary.config(
         cloud_name=os.environ["CLOUDINARY_CLOUD_NAME"],
@@ -42,8 +42,8 @@ def upload_image(image_data):
     )
 
     # reject if file size is too big
-    reply = cloudinary.uploader.upload("image.png")
-    image_url = reply["secure_url"]
-    print("image_url")
-    print(image_url)
-    return image_url
+    reply = cloudinary.uploader.upload(file_name)
+    file_url = reply["secure_url"]
+    print("file_url")
+    print(file_url)
+    return file_url
