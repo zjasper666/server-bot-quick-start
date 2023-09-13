@@ -259,7 +259,7 @@ class EchoBot(PoeBot):
 
     async def get_settings(self, setting: SettingsRequest) -> SettingsResponse:
         return SettingsResponse(
-            server_bot_dependencies={"any": 2},
+            server_bot_dependencies={"ChatGPT": 2},
             allow_attachments=True,
             introduction_message="Please upload your resume to https://postimages.org/ and reply its direct link."
         )
