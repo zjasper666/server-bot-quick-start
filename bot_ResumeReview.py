@@ -129,6 +129,8 @@ class EchoBot(PoeBot):
                     f"\n\n This is the attached resume: {resume_string}"
                 )
 
+            query_message.attachments = []
+
         current_message = ""
         async for msg in stream_request(query, "ResumeReviewTool", query.api_key):
             # Note: See https://poe.com/ResumeReviewTool for the prompt
