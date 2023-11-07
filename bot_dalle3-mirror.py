@@ -185,13 +185,14 @@ class EchoBot(PoeBot):
             stub.my_dict[dict_key] = calls
             return
 
-        revised_prompt = response.data[0].revised_prompt
-        image_url = response.data[0].url
-        bot_statement += revised_prompt
+        if revised_prompt:
+            revised_prompt = response.data[0].revised_prompt
+            image_url = response.data[0].url
+            bot_statement += revised_prompt
+            yield PartialResponse(text=f"```prompt\n{revised_prompt}\n```\n\n")
 
         print(image_url)
 
-        yield PartialResponse(text=f"```prompt\n{revised_prompt}\n```\n\n")
         yield PartialResponse(text=f"![image]({image_url})")
 
         # generate suggested replies
