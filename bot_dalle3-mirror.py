@@ -8,6 +8,7 @@ ChatGPT
 """
 from __future__ import annotations
 
+import json
 import os
 import time
 from typing import AsyncIterable
@@ -21,14 +22,14 @@ from fastapi_poe.types import (
     SettingsResponse,
 )
 from modal import Dict, Image, Stub, asgi_app
-from openai import OpenAI
+from openai import BadRequestError, OpenAI
 from sse_starlette.sse import ServerSentEvent
 
 fastapi_poe.client.MAX_EVENT_COUNT = 10000
 
 DAY_IN_SECS = 24 * 60 * 60
 
-DAILY_MESSAGE_LIMIT = 3
+DAILY_MESSAGE_LIMIT = 100
 
 
 stub = Stub("poe-bot-quickstart")
@@ -65,21 +66,23 @@ class EchoBot(PoeBot):
 
         dict_key = f"dalle3-mirror-limit-{query.user_id}"
 
+        current_time = time.time()
+
         if dict_key not in stub.my_dict:
             stub.my_dict[dict_key] = []
 
         # thread safe?
         calls = stub.my_dict[dict_key]
 
-        while calls and calls[0] <= time.time() - DAY_IN_SECS:
+        while calls and calls[0] <= current_time - DAY_IN_SECS:
             del calls[0]
 
         if len(calls) >= DAILY_MESSAGE_LIMIT:
-            time_remaining = calls[0] + DAY_IN_SECS - time.time()
+            time_remaining = calls[0] + DAY_IN_SECS - current_time
             yield PartialResponse(text=prettify_time_string(time_remaining))
             return
 
-        calls.append(time.time())
+        calls.append(current_time)
         stub.my_dict[dict_key] = calls
 
         user_statement = query.query[-1].content
@@ -88,13 +91,23 @@ class EchoBot(PoeBot):
         print(stub.my_dict[dict_key])
         # TODO - get ChatGPT to rewrite the prompt
 
-        response = client.images.generate(
-            model="dall-e-3",
-            prompt=user_statement,
-            size="1024x1024",
-            quality="standard",
-            n=1,
-        )
+        try:
+            response = client.images.generate(
+                model="dall-e-3",
+                prompt=user_statement,
+                size="1024x1024",
+                quality="standard",
+                n=1,
+            )
+        except BadRequestError as error:
+            error_message = json.loads(error.response.content.decode())["error"][
+                "message"
+            ]
+            yield PartialResponse(text=error_message)
+            calls = stub.my_dict[dict_key]
+            calls.remove(current_time)
+            stub.my_dict[dict_key] = calls
+            return
 
         revised_prompt = response.data[0].revised_prompt
         image_url = response.data[0].url
