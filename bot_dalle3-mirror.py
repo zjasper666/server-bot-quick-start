@@ -27,13 +27,15 @@ from fastapi_poe.types import (
 from modal import Dict, Image, Stub, asgi_app
 from openai import BadRequestError, OpenAI
 from sse_starlette.sse import ServerSentEvent
+from copy import deepcopy
+
 
 fastapi_poe.client.MAX_EVENT_COUNT = 10000
 
 DAY_IN_SECS = 24 * 60 * 60
 
 # for non-subscribers, the message limit is defined in the bot settings
-SUBSCRIBER_DAILY_MESSAGE_LIMIT = 10
+SUBSCRIBER_DAILY_MESSAGE_LIMIT = 100
 
 
 stub = Stub("poe-bot-quickstart")
@@ -48,6 +50,8 @@ USER_FOLLOWUP_PROMPT = """
 Read my conversation.
 
 Please write a description of the image that I intend to generate.
+
+The description should only be one paragraph.
 
 Put the description inside ```prompt
 """
@@ -104,11 +108,13 @@ class EchoBot(PoeBot):
     async def get_response(
         self, request: QueryRequest
     ) -> AsyncIterable[ServerSentEvent]:
+        original_request = deepcopy(request)
         print(request.user_id)
         print(request.query[-1].content)
 
         client = OpenAI()
 
+        # check message limit
         dict_key = f"dalle3-mirror-limit-{request.user_id}"
 
         current_time = time.time()
@@ -116,7 +122,6 @@ class EchoBot(PoeBot):
         if dict_key not in stub.my_dict:
             stub.my_dict[dict_key] = []
 
-        # thread safe?
         calls = stub.my_dict[dict_key]
 
         while calls and calls[0] <= current_time - DAY_IN_SECS:
@@ -134,6 +139,9 @@ class EchoBot(PoeBot):
         calls.append(current_time)
         stub.my_dict[dict_key] = calls
 
+        bot_statement = ""
+
+        # construct instruction if this is a multiline prompt
         if len(request.query) > 2:
             # this is a multi-turn conversation
             print("len(request)", len(request.query))
@@ -150,6 +158,7 @@ class EchoBot(PoeBot):
                 yield PartialResponse(text=inferred_reply)
                 return
 
+            bot_statement += instruction + "\n\n"
             yield PartialResponse(text=f"```instruction\n{instruction}\n```\n\n")
         else:
             instruction = request.query[-1].content
@@ -157,6 +166,7 @@ class EchoBot(PoeBot):
         print(instruction)
         print(stub.my_dict[dict_key])
 
+        # generate image
         try:
             response = client.images.generate(
                 model="dall-e-3",
@@ -177,6 +187,7 @@ class EchoBot(PoeBot):
 
         revised_prompt = response.data[0].revised_prompt
         image_url = response.data[0].url
+        bot_statement += revised_prompt
 
         print(image_url)
 
@@ -184,6 +195,9 @@ class EchoBot(PoeBot):
         yield PartialResponse(text=f"![image]({image_url})")
 
         # generate suggested replies
+        request = deepcopy(original_request)
+        message = ProtocolMessage(role="bot", content=bot_statement)
+        request.query.append(message)
         message = ProtocolMessage(role="user", content=SUGGESTED_REPLIES_PROMPT)
         request.query.append(message)
 
