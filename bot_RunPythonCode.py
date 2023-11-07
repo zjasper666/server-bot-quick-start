@@ -7,6 +7,7 @@ assert False
 
 """
 
+import os
 from typing import AsyncIterable
 
 import fastapi_poe.client
@@ -78,7 +79,11 @@ class EchoBot(PoeBot):
 
 bot = EchoBot()
 
-image = Image.debian_slim().pip_install("fastapi-poe==0.0.23")
+image = (
+    Image.debian_slim()
+    .pip_install("fastapi-poe==0.0.23")
+    .env({"POE_ACCESS_KEY": os.environ["POE_ACCESS_KEY"]})
+)
 
 stub = Stub("poe-bot-quickstart")
 
@@ -86,5 +91,5 @@ stub = Stub("poe-bot-quickstart")
 @stub.function(image=image)
 @asgi_app()
 def fastapi_app():
-    app = make_app(bot, allow_without_key=True)
+    app = make_app(bot, api_key=os.environ["POE_ACCESS_KEY"])
     return app

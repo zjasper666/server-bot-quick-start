@@ -316,12 +316,7 @@ image = (
         "pytesseract==0.3.10",
         "python-docx",
     )
-).env(
-    {
-        "OPENAI_API_KEY": os.environ["OPENAI_API_KEY"],
-        "POE_ACCESS_KEY": os.environ["POE_ACCESS_KEY"],
-    }
-)
+).env({"POE_ACCESS_KEY": os.environ["POE_ACCESS_KEY"]})
 
 stub = Stub("poe-bot-quickstart")
 

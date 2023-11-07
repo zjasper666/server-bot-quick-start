@@ -62,12 +62,7 @@ image = (
     .apt_install("libpoppler-cpp-dev")
     .apt_install("tesseract-ocr-eng")
     .pip_install("fastapi-poe==0.0.23")
-).env(
-    {
-        "OPENAI_API_KEY": os.environ["OPENAI_API_KEY"],
-        "POE_ACCESS_KEY": os.environ["POE_ACCESS_KEY"],
-    }
-)
+).env({"POE_ACCESS_KEY": os.environ["POE_ACCESS_KEY"]})
 
 stub = Stub("poe-bot-quickstart")
 
