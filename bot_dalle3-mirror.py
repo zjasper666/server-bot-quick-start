@@ -10,8 +10,8 @@ from __future__ import annotations
 
 import json
 import os
-import time
 import re
+import time
 from typing import AsyncIterable
 
 import fastapi_poe.client
@@ -40,12 +40,40 @@ stub = Stub("poe-bot-quickstart")
 stub.my_dict = Dict.new()
 
 
+SUGGESTED_REPLIES_REGEX = re.compile(r"<a>(.+?)</a>", re.DOTALL)
 
-def extract_prompt(reply):
+user_allowlist = {"u-000000xy92lqvf0s6x4s2mn6so7bu4ye"}
+
+USER_FOLLOWUP_PROMPT = """
+Read my conversation.
+
+Please write a description of the image that I intend to generate.
+
+Put the description inside ```prompt
+"""
+
+SUGGESTED_REPLIES_PROMPT = """
+Read my conversation.
+
+Suggest three ways I would request for changes to the image.
+
+Each change request should be concise, and only describes what should be different.
+
+Begin each suggestion with <a> and end each suggestion with </a>.
+"""
+
+
+def extract_suggested_replies(raw_output: str) -> list[str]:
+    suggested_replies = [
+        suggestion.strip() for suggestion in SUGGESTED_REPLIES_REGEX.findall(raw_output)
+    ]
+    return suggested_replies
+
+
+def extract_prompt(reply) -> str:
     pattern = r"```prompt([\s\S]*?)```"
     matches = re.findall(pattern, reply)
     return ("\n\n".join(matches)).strip()
-
 
 
 def prettify_time_string(second) -> str:
@@ -70,17 +98,6 @@ def prettify_time_string(second) -> str:
         string += f" {second} seconds"
 
     return string
-
-
-user_allowlist = {"u-000000xy92lqvf0s6x4s2mn6so7bu4ye"}
-
-USER_FOLLOWUP_PROMPT = """
-Read my conversation.
-
-Please write a description of the image that I intend to generate.
-
-Put the description inside ```prompt
-"""
 
 
 class EchoBot(PoeBot):
@@ -166,11 +183,26 @@ class EchoBot(PoeBot):
         yield PartialResponse(text=f"```prompt\n{revised_prompt}\n```\n\n")
         yield PartialResponse(text=f"![image]({image_url})")
 
+        # generate suggested replies
+        message = ProtocolMessage(role="user", content=SUGGESTED_REPLIES_PROMPT)
+        request.query.append(message)
+
+        response_text = ""
+        async for msg in stream_request(request, "ChatGPT", request.api_key):
+            response_text += msg.text
+
+        print(response_text)
+
+        suggested_replies = extract_suggested_replies(response_text)
+
+        for suggested_reply in suggested_replies[:3]:
+            yield PartialResponse(text=suggested_reply, is_suggested_reply=True)
+
     async def get_settings(self, setting: SettingsRequest) -> SettingsResponse:
         return SettingsResponse(
             server_bot_dependencies={"ChatGPT": 2},
-            allow_attachments=False,  # to update when ready
-            introduction_message="What do you want to generate with DALL·E 3?",
+            allow_attachments=False,
+            introduction_message="What picture do you want to create with OpenAI DALL·E 3?",
         )
 
 
