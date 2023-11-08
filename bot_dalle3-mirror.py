@@ -12,6 +12,7 @@ import json
 import os
 import re
 import time
+from copy import deepcopy
 from typing import AsyncIterable
 
 import fastapi_poe.client
@@ -27,8 +28,6 @@ from fastapi_poe.types import (
 from modal import Dict, Image, Stub, asgi_app
 from openai import BadRequestError, OpenAI
 from sse_starlette.sse import ServerSentEvent
-from copy import deepcopy
-
 
 fastapi_poe.client.MAX_EVENT_COUNT = 10000
 
@@ -185,7 +184,7 @@ class EchoBot(PoeBot):
             stub.my_dict[dict_key] = calls
             return
 
-        if revised_prompt:
+        if response.data[0].revised_prompt:
             revised_prompt = response.data[0].revised_prompt
             image_url = response.data[0].url
             bot_statement += revised_prompt
