@@ -93,6 +93,7 @@ class EchoBot(PoeBot):
 
         calls.append(current_time)
         stub.my_dict[dict_key] = calls
+        print(calls)
 
         client = OpenAI()
 
@@ -106,7 +107,7 @@ class EchoBot(PoeBot):
                 openai_messages.append({"role": query.role, "content": query.content})
 
         response = client.chat.completions.create(
-            model="gpt-4", messages=openai_messages, stream=True
+            model="gpt-4-1106-preview", messages=openai_messages, stream=True
         )
 
         for chunk in response:
