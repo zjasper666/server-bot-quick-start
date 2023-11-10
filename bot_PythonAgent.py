@@ -375,6 +375,7 @@ image_exec = Image.debian_slim().pip_install(
     "yfinance",
     "dill",
     "seaborn",
+    "openpyxl",
 )
 
 stub = Stub("poe-bot-quickstart")
