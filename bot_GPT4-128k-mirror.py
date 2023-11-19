@@ -72,6 +72,11 @@ class EchoBot(PoeBot):
         print(request.user_id)
         print(request.query[-1].content)
 
+        if request.query[-1].content.startswith("[{'role': 'system', 'content':"):
+            yield PartialResponse(text="")
+            time.sleep(100)
+            return
+
         # check message limit
         dict_key = f"gpt4-mirror-token-limit-{request.user_id}"
 
@@ -83,7 +88,14 @@ class EchoBot(PoeBot):
         calls = stub.my_dict[dict_key]
 
         while calls and calls[0][0] <= current_time - DAY_IN_SECS:
-            del calls[0][0]
+            del calls[0]
+
+        token_count = sum(len(encoding.encode(query.content)) for query in request.query)
+
+        if len(calls) == 0 and token_count >= 1000:
+            print(request.user_id, len(calls), token_count)
+            yield PartialResponse(text="Please subscribe to Poe to send longer messages.\n\nIf you have subscribed, please start a new chat, send a short message, and then retry.")
+            return
 
         if (
             sum(weight for _, weight in calls) >= SUBSCRIBER_DAILY_TOKEN_LIMIT
@@ -94,7 +106,6 @@ class EchoBot(PoeBot):
             yield PartialResponse(text=prettify_time_string(time_remaining))
             return
 
-        token_count = sum(len(encoding.encode(query.content)) for query in request.query)
         calls.append((current_time, token_count))
         stub.my_dict[dict_key] = calls
         print(calls)
