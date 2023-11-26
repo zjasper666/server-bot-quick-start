@@ -32,10 +32,12 @@ from sse_starlette.sse import ServerSentEvent
 fastapi_poe.client.MAX_EVENT_COUNT = 10000
 
 DAY_IN_SECS = 24 * 60 * 60
+MINUTE_IN_SECS = 60
 
 # for non-subscribers, the message limit is defined in the bot settings
 SUBSCRIBER_DAILY_MESSAGE_LIMIT = 100
-
+GLOBAL_MINUTELY_MESSAGE_LIMIT = 2
+GLOBAL_RATE_LIMIT_DICT_KEY = "dalle3-mirror-limit-"
 
 stub = Stub("poe-bot-quickstart")
 stub.my_dict = Dict.new()
@@ -112,6 +114,27 @@ class EchoBot(PoeBot):
         print(request.query[-1].content)
 
         client = OpenAI()
+
+        current_time = time.time()
+
+        if GLOBAL_RATE_LIMIT_DICT_KEY not in stub.my_dict:
+            stub.my_dict[GLOBAL_RATE_LIMIT_DICT_KEY] = []
+
+        calls = stub.my_dict[GLOBAL_RATE_LIMIT_DICT_KEY]
+
+        while calls and calls[0] <= current_time - MINUTE_IN_SECS:
+            del calls[0]
+        
+        if (
+            len(calls) >= GLOBAL_MINUTELY_MESSAGE_LIMIT
+        ):
+            print(request.user_id, len(calls))
+            yield PartialResponse(text="The bot is experiencing high traffic, please try again later.")
+            return
+
+        calls.append(current_time)
+        stub.my_dict[GLOBAL_RATE_LIMIT_DICT_KEY] = calls
+
 
         # check message limit
         dict_key = f"dalle3-mirror-limit-{request.user_id}"

@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import os
 import time
+import random
 import tiktoken
 from typing import AsyncIterable
 
@@ -72,9 +73,13 @@ class EchoBot(PoeBot):
         print(request.user_id)
         print(request.query[-1].content)
 
-        if request.query[-1].content.startswith("[{'role': 'system', 'content':"):
+        token_count = sum(len(encoding.encode(query.content)) for query in request.query)
+
+        randval = random.randint(0, int(token_count**0.5))
+        print("randval", randval)
+        if request.query[-1].content.startswith("[{'role': '") and randval > 0:
             yield PartialResponse(text="")
-            time.sleep(100)
+            time.sleep(random.randint(0, max(10, min(100, token_count))))
             return
 
         # check message limit
@@ -89,8 +94,6 @@ class EchoBot(PoeBot):
 
         while calls and calls[0][0] <= current_time - DAY_IN_SECS:
             del calls[0]
-
-        token_count = sum(len(encoding.encode(query.content)) for query in request.query)
 
         if len(calls) == 0 and token_count >= 1000:
             print(request.user_id, len(calls), token_count)
