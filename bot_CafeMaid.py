@@ -1,6 +1,6 @@
 """
 
-BOT_NAME="CafeMaidArchetype"; modal deploy --name $BOT_NAME bot_${BOT_NAME}.py; curl -X POST https://api.poe.com/bot/fetch_settings/$BOT_NAME/$POE_ACCESS_KEY
+BOT_NAME="CafeMaid"; modal deploy --name $BOT_NAME bot_${BOT_NAME}.py; curl -X POST https://api.poe.com/bot/fetch_settings/$BOT_NAME/$POE_ACCESS_KEY
 
 """
 from __future__ import annotations
@@ -19,7 +19,32 @@ from fastapi_poe.types import (
 )
 from modal import Image, Stub, asgi_app
 
-PROMPT_TEMPLATE = """
+# function to redact images
+
+CHARACTER_CONVERSATION_SYSTEM_PROMPT = """
+You are a maid from a maid cafe.
+
+When the customer wants something, deliver it without asking specifics.
+"""
+
+
+ACTION_EXTRACTION_PROMPT_TEMPLATE = """
+Read the conversation above.
+
+Describe concisely what is the action taken by the character.
+"""
+
+SUGGESTED_REPLY_TIMEPLATE = """
+Read the conversation above.
+
+Suggest three ways I would continue the conversation.
+
+Each suggestion should be concise.
+
+Begin each suggestion with <a> and end each suggestion with </a>.
+"""
+
+IMAGE_PROMPT_TEMPLATE = """
 My prompt has full detail so no need to add more:
 Style: Anime
 Perspective: Front view
@@ -35,7 +60,13 @@ class EchoBot(PoeBot):
         self, request: QueryRequest
     ) -> AsyncIterable[PartialResponse]:
         last_message = request.query[-1].content
-        print(last_message)
+        print(request.query)
+
+        # textual reply
+
+        # action extract
+
+        # image generation
         request.query = query = [
             ProtocolMessage(
                 role="user", content=PROMPT_TEMPLATE.format(action=last_message)
@@ -44,8 +75,14 @@ class EchoBot(PoeBot):
         async for msg in stream_request(request, "DALL-E-3", request.access_key):
             yield msg
 
+        # generate suggested replies
+        
+
     async def get_settings(self, setting: SettingsRequest) -> SettingsResponse:
-        return SettingsResponse(server_bot_dependencies={"DALL-E-3": 1})
+        return SettingsResponse(
+            server_bot_dependencies={"DALL-E-3": 1},
+            introduction_message="Welcome home, Master!\nIn our café, you can enjoy delicious meals and drinks. What would you like to try?",
+        )
 
 
 image = (
