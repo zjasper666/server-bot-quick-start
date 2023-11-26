@@ -8,35 +8,15 @@ from __future__ import annotations
 
 from typing import AsyncIterable
 
-import asyncio
-import json
-from typing import AsyncIterable
-
+from fastapi_poe import PoeBot, make_app
+from fastapi_poe.client import stream_request
 from fastapi_poe.types import (
-    ContentType,
-    ErrorResponse,
-    MetaResponse,
     PartialResponse,
     QueryRequest,
-    ReportFeedbackRequest,
     SettingsRequest,
     SettingsResponse,
 )
 from modal import Image, Stub, asgi_app
-
-import random
-import re
-import textwrap
-from collections import defaultdict
-from typing import AsyncIterable
-
-import fastapi_poe.client
-from fastapi_poe import PoeBot, make_app
-from fastapi_poe.client import MetaMessage, stream_request
-from fastapi_poe.types import QueryRequest, SettingsRequest, SettingsResponse
-from modal import Image, Stub, asgi_app
-from sse_starlette.sse import ServerSentEvent
-
 
 
 class GPT35TurboAllCapsBot(PoeBot):

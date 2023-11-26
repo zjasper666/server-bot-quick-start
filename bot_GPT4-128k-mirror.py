@@ -9,12 +9,12 @@ ChatGPT
 from __future__ import annotations
 
 import os
-import time
 import random
-import tiktoken
+import time
 from typing import AsyncIterable
 
 import fastapi_poe.client
+import tiktoken
 from fastapi_poe import PoeBot, make_app
 from fastapi_poe.types import (
     PartialResponse,
@@ -73,7 +73,9 @@ class EchoBot(PoeBot):
         print(request.user_id)
         print(request.query[-1].content)
 
-        token_count = sum(len(encoding.encode(query.content)) for query in request.query)
+        token_count = sum(
+            len(encoding.encode(query.content)) for query in request.query
+        )
 
         randval = random.randint(0, int(token_count**0.5))
         print("randval", randval)
@@ -97,7 +99,9 @@ class EchoBot(PoeBot):
 
         if len(calls) == 0 and token_count >= 1000:
             print(request.user_id, len(calls), token_count)
-            yield PartialResponse(text="Please subscribe to Poe to send longer messages.\n\nIf you have subscribed, please start a new chat, send a short message, and then retry.")
+            yield PartialResponse(
+                text="Please subscribe to Poe to send longer messages.\n\nIf you have subscribed, please start a new chat, send a short message, and then retry."
+            )
             return
 
         if (
@@ -135,7 +139,9 @@ class EchoBot(PoeBot):
 
     async def get_settings(self, setting: SettingsRequest) -> SettingsResponse:
         return SettingsResponse(
-            server_bot_dependencies={}, allow_attachments=False, introduction_message=""
+            server_bot_dependencies={"GPT-4": 1},
+            allow_attachments=False,
+            introduction_message="",
         )
 
 

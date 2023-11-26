@@ -124,17 +124,16 @@ class EchoBot(PoeBot):
 
         while calls and calls[0] <= current_time - MINUTE_IN_SECS:
             del calls[0]
-        
-        if (
-            len(calls) >= GLOBAL_MINUTELY_MESSAGE_LIMIT
-        ):
+
+        if len(calls) >= GLOBAL_MINUTELY_MESSAGE_LIMIT:
             print(request.user_id, len(calls))
-            yield PartialResponse(text="The bot is experiencing high traffic, please try again later.")
+            yield PartialResponse(
+                text="The bot is experiencing high traffic, please try again later."
+            )
             return
 
         calls.append(current_time)
         stub.my_dict[GLOBAL_RATE_LIMIT_DICT_KEY] = calls
-
 
         # check message limit
         dict_key = f"dalle3-mirror-limit-{request.user_id}"
@@ -237,7 +236,7 @@ class EchoBot(PoeBot):
 
     async def get_settings(self, setting: SettingsRequest) -> SettingsResponse:
         return SettingsResponse(
-            server_bot_dependencies={"ChatGPT": 2},
+            server_bot_dependencies={"ChatGPT": 2, "DALL-E-3": 1},
             allow_attachments=False,
             introduction_message="What picture do you want to create with OpenAI DALL·E 3?",
         )
