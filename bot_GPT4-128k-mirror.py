@@ -77,12 +77,12 @@ class EchoBot(PoeBot):
             len(encoding.encode(query.content)) for query in request.query
         )
 
-        randval = random.randint(0, int(token_count**0.5))
-        print("randval", randval)
-        if request.query[-1].content.startswith("[{'role': '") and randval > 0:
-            yield PartialResponse(text="")
-            time.sleep(random.randint(0, max(10, min(100, token_count))))
-            return
+        # randval = random.randint(0, int(token_count**0.5))
+        # print("randval", randval)
+        # if request.query[-1].content.startswith("[{'role': '") and randval > 0:
+        #     yield PartialResponse(text="")
+        #     time.sleep(random.randint(0, max(10, min(100, token_count))))
+        #     return
 
         # check message limit
         dict_key = f"gpt4-mirror-token-limit-{request.user_id}"

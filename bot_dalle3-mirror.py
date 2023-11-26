@@ -36,7 +36,7 @@ MINUTE_IN_SECS = 60
 
 # for non-subscribers, the message limit is defined in the bot settings
 SUBSCRIBER_DAILY_MESSAGE_LIMIT = 100
-GLOBAL_MINUTELY_MESSAGE_LIMIT = 2
+GLOBAL_MINUTELY_MESSAGE_LIMIT = 5
 GLOBAL_RATE_LIMIT_DICT_KEY = "dalle3-mirror-limit-"
 
 stub = Stub("poe-bot-quickstart")
