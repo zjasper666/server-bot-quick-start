@@ -21,9 +21,9 @@ from modal import Image, Stub, asgi_app
 
 PROMPT_TEMPLATE = """
 My prompt has full detail so no need to add more:
-Style: Anime
-Perspective: Front view
-Personality: Welcoming and endering
+Style: anime
+Perspective: front view
+Personality: welcoming and endering
 Appearance: peach-colored hair flowing down to her shoulders styled in soft curls, sparkling blue eyes and light skin.
 Outfit: a traditional maid outfit consisting of a black dress accentuated with white frills and a white apron and matching black and white headdress
 Action: {action}
@@ -36,7 +36,7 @@ class EchoBot(PoeBot):
     ) -> AsyncIterable[PartialResponse]:
         last_message = request.query[-1].content
         print(last_message)
-        request.query = query = [
+        request.query = [
             ProtocolMessage(
                 role="user", content=PROMPT_TEMPLATE.format(action=last_message)
             )

@@ -6,6 +6,7 @@ BOT_NAME="CafeMaid"; modal deploy --name $BOT_NAME bot_${BOT_NAME}.py; curl -X P
 from __future__ import annotations
 
 import os
+import re
 from typing import AsyncIterable
 
 from fastapi_poe import PoeBot, make_app
@@ -21,18 +22,53 @@ from modal import Image, Stub, asgi_app
 
 # function to redact images
 
+
+# function to represent conversation as a string
+def stringify_conversation(messages: list[ProtocolMessage]) -> str:
+    pass
+
+
+INTRODUCTION_MESSAGE = """
+Welcome home, Master!
+
+In our café, you can enjoy delicious meals and drinks. What would you like to try?
+
+![greet](https://i.imgur.com/2HBmTnq.png)
+""".strip()
+
+
 CHARACTER_CONVERSATION_SYSTEM_PROMPT = """
 You are a maid from a maid cafe.
 
-When the customer wants something, deliver it without asking specifics.
-"""
+When the customer wants something, deliver it without asking specifics. Reply concisely.
+""".strip()
+
+
+ACTION_EXTRACTION_SYSTEM_PROMPT = """
+You will read the conversation provided by the user and describe concisely in a few words what is the action taken by the character.
+""".strip()
 
 
 ACTION_EXTRACTION_PROMPT_TEMPLATE = """
 Read the conversation above.
 
-Describe concisely what is the action taken by the character.
-"""
+Describe concisely in short phrase under five words what will the character do next.
+The concise description does not need to mention the customer, or when it happens.
+Be specific with the action (e.g. specify what is actually the birthday surprise)
+If the action was previously done (e.g. serving a steak), do not repeat the action.
+""".strip()
+
+
+IMAGE_PROMPT_TEMPLATE = """
+My prompt has full detail so no need to add more:
+Style: anime
+Perspective: front view
+Personality: welcoming and endering
+Appearance: peach-colored hair flowing down to her shoulders styled in soft curls, sparkling blue eyes and light skin.
+Outfit: a traditional maid outfit consisting of a black dress accentuated with white frills and a white apron and matching black and white headdress
+Action: {action}
+""".strip()
+
 
 SUGGESTED_REPLY_TIMEPLATE = """
 Read the conversation above.
@@ -42,17 +78,14 @@ Suggest three ways I would continue the conversation.
 Each suggestion should be concise.
 
 Begin each suggestion with <a> and end each suggestion with </a>.
-"""
-
-IMAGE_PROMPT_TEMPLATE = """
-My prompt has full detail so no need to add more:
-Style: Anime
-Perspective: Front view
-Personality: Welcoming and endering
-Appearance: peach-colored hair flowing down to her shoulders styled in soft curls, sparkling blue eyes and light skin.
-Outfit: a traditional maid outfit consisting of a black dress accentuated with white frills and a white apron and matching black and white headdress
-Action: {action}
 """.strip()
+
+
+def redact_image(queries):
+    pattern = r"!\[.*\]\(http.*\)"
+    for query in queries:
+        query.content = re.sub(pattern, "", query.content)
+    return queries
 
 
 class EchoBot(PoeBot):
@@ -60,28 +93,52 @@ class EchoBot(PoeBot):
         self, request: QueryRequest
     ) -> AsyncIterable[PartialResponse]:
         last_message = request.query[-1].content
-        print(request.query)
+        print("last_message", last_message)
 
-        # textual reply
+        # CONSTRUCT TEXTUAL REPLY
+        # redact previous images
+        # add system prompt
+        request.query = redact_image(request.query)
+        request.query = [
+            ProtocolMessage(role="system", content=CHARACTER_CONVERSATION_SYSTEM_PROMPT)
+        ] + request.query
+        last_reply = ""
+        async for msg in stream_request(request, "GPT-4", request.access_key):
+            last_reply += msg.text
+            yield msg
+        print("last_reply", last_reply)
+        request.query.append(ProtocolMessage(role="bot", content=last_reply))
 
-        # action extract
+        # EXTRACT ACTIONS
+        request.query = [
+            ProtocolMessage(role="system", content=ACTION_EXTRACTION_SYSTEM_PROMPT),
+            ProtocolMessage(role="user", content=str(request.query)),
+            ProtocolMessage(role="user", content=ACTION_EXTRACTION_PROMPT_TEMPLATE),
+        ]
+        action = ""
+        async for msg in stream_request(request, "GPT-4", request.access_key):
+            action += msg.text
+        print("action", action)
 
-        # image generation
-        request.query = query = [
+        # IMAGE GENERATION
+        request.query = [
             ProtocolMessage(
-                role="user", content=PROMPT_TEMPLATE.format(action=last_message)
+                role="user", content=IMAGE_PROMPT_TEMPLATE.format(action=action)
             )
         ]
+        yield self.text_event("\n\n")
         async for msg in stream_request(request, "DALL-E-3", request.access_key):
-            yield msg
+            if "Generating image" not in msg.text:
+                msg.is_replace_response = False
+                yield msg
 
         # generate suggested replies
-        
+        # TBC
 
     async def get_settings(self, setting: SettingsRequest) -> SettingsResponse:
         return SettingsResponse(
-            server_bot_dependencies={"DALL-E-3": 1},
-            introduction_message="Welcome home, Master!\nIn our café, you can enjoy delicious meals and drinks. What would you like to try?",
+            server_bot_dependencies={"DALL-E-3": 1, "GPT-4": 2},
+            introduction_message=INTRODUCTION_MESSAGE,
         )
 
 
