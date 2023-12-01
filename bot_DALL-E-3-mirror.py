@@ -1,6 +1,6 @@
 """
 
-BOT_NAME="dalle3-mirror"; modal deploy --name $BOT_NAME bot_${BOT_NAME}.py; curl -X POST https://api.poe.com/bot/fetch_settings/$BOT_NAME/$POE_ACCESS_KEY
+BOT_NAME="DALL-E-3-mirror"; modal deploy --name $BOT_NAME bot_${BOT_NAME}.py; curl -X POST https://api.poe.com/bot/fetch_settings/$BOT_NAME/$POE_ACCESS_KEY
 
 Test message:
 ChatGPT
@@ -105,7 +105,9 @@ def prettify_time_string(second) -> str:
     return string
 
 
-class EchoBot(PoeBot):
+class DALLE3Bot(PoeBot):
+    image_quality = "standard"
+
     async def get_response(
         self, request: QueryRequest
     ) -> AsyncIterable[ServerSentEvent]:
@@ -193,7 +195,7 @@ class EchoBot(PoeBot):
                 model="dall-e-3",
                 prompt=instruction,
                 size="1024x1024",
-                quality="standard",
+                quality=self.image_quality,
                 n=1,
             )
         except BadRequestError as error:
@@ -242,7 +244,7 @@ class EchoBot(PoeBot):
         )
 
 
-bot = EchoBot()
+bot = DALLE3Bot()
 
 image = (
     Image.debian_slim()
