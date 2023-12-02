@@ -7,12 +7,12 @@ cat
 
 """
 
+import importlib
 import os
 
 from fastapi_poe import make_app
-from modal import Stub, asgi_app, Dict
+from modal import Dict, Stub, asgi_app
 
-import importlib  
 module = importlib.import_module("bot_DALL-E-3-mirror")
 DALLE3Bot = module.DALLE3Bot
 image = module.image
@@ -24,6 +24,7 @@ stub.my_dict = Dict.new()
 
 bot = DALLE3Bot()
 bot.image_quality = "hd"
+
 
 @stub.function(image=image)
 @asgi_app()
