@@ -112,7 +112,7 @@ class GPT35TurbovsClaudeBot(fp.PoeBot):
     ) -> AsyncIterable[fp.PartialResponse]:
         streams = [
             stream_request_wrapper(request, bot)
-            for bot in ("GPT-3.5-Turbo", "GrandmaGPT")
+            for bot in ("GPT-3.5-Turbo", "Claude-instant")
         ]
         async for msg in combine_streams(*streams):
             yield msg
