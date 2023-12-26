@@ -20,13 +20,6 @@ from fastapi_poe.types import (
 )
 from modal import Image, Stub, asgi_app
 
-# function to redact images
-
-
-# function to represent conversation as a string
-def stringify_conversation(messages: list[ProtocolMessage]) -> str:
-    pass
-
 
 INTRODUCTION_MESSAGE = """
 Welcome home, Master!
@@ -38,9 +31,8 @@ In our café, you can enjoy delicious meals and drinks. What would you like to t
 
 
 CHARACTER_CONVERSATION_SYSTEM_PROMPT = """
-You are a maid from a maid cafe.
-
-When the customer wants something, deliver it without asking specifics. Reply concisely.
+You are a real cafe maid from a maid cafe, serving the customer which you will call Master.
+Your name is Sherry. In your actions, you do not pretend.
 """.strip()
 
 
@@ -52,7 +44,8 @@ You will read the conversation provided by the user and describe concisely in a 
 ACTION_EXTRACTION_PROMPT_TEMPLATE = """
 Read the conversation above.
 
-Describe concisely in short phrase under five words what will the character do next.
+Describe concisely in short phrase under five words the most important action that character has done.
+Use present tense.
 The concise description does not need to mention the customer, or when it happens.
 Be specific with the action (e.g. specify what is actually the birthday surprise)
 If the action was previously done (e.g. serving a steak), do not repeat the action.
@@ -63,7 +56,7 @@ IMAGE_PROMPT_TEMPLATE = """
 My prompt has full detail so no need to add more:
 Style: anime
 Perspective: front view
-Personality: welcoming and endering
+Personality: welcoming and endearing
 Appearance: peach-colored hair flowing down to her shoulders styled in soft curls, sparkling blue eyes and light skin.
 Outfit: a traditional maid outfit consisting of a black dress accentuated with white frills and a white apron and matching black and white headdress
 Action: {action}
@@ -102,6 +95,18 @@ def extract_suggested_replies(raw_output: str) -> list[str]:
     return suggested_replies
 
 
+def stringify_conversation(messages: list[ProtocolMessage]) -> str:
+    stringified_messages = ""
+
+    for message in messages:
+        # NB: system prompt is intentionally excluded
+        if message.role == "bot":
+            stringified_messages += f"User: {message.content}\n\n"
+        else:
+            stringified_messages += f"Character: {message.content}\n\n"
+    return stringified_messages
+
+
 class EchoBot(PoeBot):
     async def get_response(
         self, request: QueryRequest
@@ -117,12 +122,12 @@ class EchoBot(PoeBot):
             ProtocolMessage(role="system", content=CHARACTER_CONVERSATION_SYSTEM_PROMPT)
         ] + request.query
         last_reply = ""
-        async for msg in stream_request(request, "GPT-4", request.access_key):
+        async for msg in stream_request(request, "Claude-2-100k", request.access_key):
             last_reply += msg.text
             yield msg
         print("last_reply", last_reply)
         request.query.append(ProtocolMessage(role="bot", content=last_reply))
-        current_conversation_string = str(request.query)
+        current_conversation_string = stringify_conversation(request.query[1:])
 
         # EXTRACT ACTIONS
         request.query = [
@@ -165,7 +170,7 @@ class EchoBot(PoeBot):
 
     async def get_settings(self, setting: SettingsRequest) -> SettingsResponse:
         return SettingsResponse(
-            server_bot_dependencies={"DALL-E-3": 1, "GPT-4": 2, "ChatGPT": 1},
+            server_bot_dependencies={"DALL-E-3": 1, "Claude-2-100k": 1, "GPT-4": 1, "ChatGPT": 1},
             introduction_message=INTRODUCTION_MESSAGE,
         )
 
