@@ -70,10 +70,14 @@ Action: {action}
 """.strip()
 
 
-SUGGESTED_REPLY_TIMEPLATE = """
+SUGGESTED_REPLIES_SYSTEM_PROMPT = """
+You will suggest replies based on the conversation given by the user.
+"""
+
+SUGGESTED_REPLIES_USER_PROMPT = """
 Read the conversation above.
 
-Suggest three ways I would continue the conversation.
+Suggest three ways the user would continue the conversation.
 
 Each suggestion should be concise.
 
@@ -81,11 +85,21 @@ Begin each suggestion with <a> and end each suggestion with </a>.
 """.strip()
 
 
+SUGGESTED_REPLIES_REGEX = re.compile(r"<a>(.+?)</a>", re.DOTALL)
+
+
 def redact_image(queries):
     pattern = r"!\[.*\]\(http.*\)"
     for query in queries:
         query.content = re.sub(pattern, "", query.content)
     return queries
+
+
+def extract_suggested_replies(raw_output: str) -> list[str]:
+    suggested_replies = [
+        suggestion.strip() for suggestion in SUGGESTED_REPLIES_REGEX.findall(raw_output)
+    ]
+    return suggested_replies
 
 
 class EchoBot(PoeBot):
@@ -108,11 +122,12 @@ class EchoBot(PoeBot):
             yield msg
         print("last_reply", last_reply)
         request.query.append(ProtocolMessage(role="bot", content=last_reply))
+        current_conversation_string = str(request.query)
 
         # EXTRACT ACTIONS
         request.query = [
             ProtocolMessage(role="system", content=ACTION_EXTRACTION_SYSTEM_PROMPT),
-            ProtocolMessage(role="user", content=str(request.query)),
+            ProtocolMessage(role="user", content=current_conversation_string),
             ProtocolMessage(role="user", content=ACTION_EXTRACTION_PROMPT_TEMPLATE),
         ]
         action = ""
@@ -132,12 +147,25 @@ class EchoBot(PoeBot):
                 msg.is_replace_response = False
                 yield msg
 
-        # generate suggested replies
-        # TBC
+        # SUGGESTED REPLIES
+        request.query = [
+            ProtocolMessage(role="system", content=SUGGESTED_REPLIES_SYSTEM_PROMPT),
+            ProtocolMessage(role="user", content=current_conversation_string),
+            ProtocolMessage(role="user", content=SUGGESTED_REPLIES_USER_PROMPT),
+        ]
+        response_text = ""
+        async for msg in stream_request(request, "ChatGPT", request.access_key):
+            response_text += msg.text
+        print("suggested_reply", response_text)
+
+        suggested_replies = extract_suggested_replies(response_text)
+
+        for suggested_reply in suggested_replies[:3]:
+            yield PartialResponse(text=suggested_reply, is_suggested_reply=True)
 
     async def get_settings(self, setting: SettingsRequest) -> SettingsResponse:
         return SettingsResponse(
-            server_bot_dependencies={"DALL-E-3": 1, "GPT-4": 2},
+            server_bot_dependencies={"DALL-E-3": 1, "GPT-4": 2, "ChatGPT": 1},
             introduction_message=INTRODUCTION_MESSAGE,
         )
 
