@@ -149,10 +149,14 @@ class EchoBot(PoeBot):
         client = OpenAI()
 
         openai_messages = []
+        openai_messages_no_image = []
+        conversation_has_image = False
         for query in request.query:
             if query.role == "bot":
+                openai_messages_no_image.append({"role": "assistant", "content": query.content})
                 openai_messages.append({"role": "assistant", "content": [{"type": "text", "text": query.content}]})
             if query.role == "user":
+                openai_messages_no_image.append({"role": query.role, "content": query.content})
                 openai_messages.append({"role": query.role, "content": split_markdown_text_images(query.content)})
                 for attachment in query.attachments:
                     if attachment.content_type.startswith("image/"):
@@ -162,12 +166,19 @@ class EchoBot(PoeBot):
                                 'image_url': {"url" : attachment.url},
                             }
                         )
+                        conversation_has_image = True
             if query.role == "system":
+                openai_messages_no_image.append({"role": query.role, "content": query.content})
                 openai_messages.append({"role": query.role, "content": [{"type": "text", "text": query.content}]})
 
-        stream = client.chat.completions.create(
-            model="gpt-4-vision-preview", messages=openai_messages, stream=True, max_tokens=1000,
-        )
+        if conversation_has_image:
+            stream = client.chat.completions.create(
+                model="gpt-4-vision-preview", messages=openai_messages, stream=True, max_tokens=4096,
+            )
+        else:
+            stream = client.chat.completions.create(
+                model="gpt-4-1106-preview", messages=openai_messages_no_image, stream=True, max_tokens=4096,
+            )
 
         for chunk in stream:
             if chunk.choices[0].delta.content is not None:
