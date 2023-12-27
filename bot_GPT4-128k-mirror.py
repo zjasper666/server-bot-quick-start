@@ -167,6 +167,10 @@ class EchoBot(PoeBot):
                             }
                         )
                         conversation_has_image = True
+                        print(attachment.url)
+                        calls = stub.my_dict[dict_key]
+                        calls.append((current_time, 1000))
+                        stub.my_dict[dict_key] = calls
             if query.role == "system":
                 openai_messages_no_image.append({"role": query.role, "content": query.content})
                 openai_messages.append({"role": query.role, "content": [{"type": "text", "text": query.content}]})
