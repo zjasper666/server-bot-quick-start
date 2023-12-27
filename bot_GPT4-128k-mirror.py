@@ -121,25 +121,24 @@ class EchoBot(PoeBot):
         openai_messages = []
         for query in request.query:
             if query.role == "bot":
-                openai_messages.append({"role": "assistant", "content": query.content})
+                openai_messages.append({"role": "assistant", "content": [{"type": "text", "text": query.content}]})
             if query.role == "user":
-                openai_messages.append({"role": query.role, "content": query.content})
+                openai_messages.append({"role": query.role, "content": [{"type": "text", "text": query.content}]})
             if query.role == "system":
-                openai_messages.append({"role": query.role, "content": query.content})
+                openai_messages.append({"role": query.role, "content": [{"type": "text", "text": query.content}]})
 
-        response = client.chat.completions.create(
-            model="gpt-4-1106-preview", messages=openai_messages, stream=True
+        stream = client.chat.completions.create(
+            model="gpt-4-vision-preview", messages=openai_messages, stream=True, max_tokens=1000,
         )
 
-        for chunk in response:
-            if chunk.choices[0].finish_reason:
-                return
-            yield PartialResponse(text=chunk.choices[0].delta.content)
+        for chunk in stream:
+            if chunk.choices[0].delta.content is not None:
+                yield PartialResponse(text=chunk.choices[0].delta.content)
 
     async def get_settings(self, setting: SettingsRequest) -> SettingsResponse:
         return SettingsResponse(
             server_bot_dependencies={"GPT-4": 1},
-            allow_attachments=False,
+            allow_attachments=True,
             introduction_message="",
         )
 
