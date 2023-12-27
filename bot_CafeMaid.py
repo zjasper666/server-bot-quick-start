@@ -44,7 +44,8 @@ You will read the conversation provided by the user and describe concisely in a 
 ACTION_EXTRACTION_PROMPT_TEMPLATE = """
 Read the conversation above.
 
-Describe concisely in short phrase under five words the most important action that character has done.
+Describe concisely in short phrase under five words the most action that character has done.
+Prefer actions that are more important (e.g. serves coffee over takes order for coffee)
 Use present tense.
 The concise description does not need to mention the customer, or when it happens.
 Be specific with the action (e.g. specify what is actually the birthday surprise)
@@ -67,6 +68,7 @@ SUGGESTED_REPLIES_SYSTEM_PROMPT = """
 You will suggest replies based on the conversation given by the user.
 """
 
+
 SUGGESTED_REPLIES_USER_PROMPT = """
 Read the conversation above.
 
@@ -74,7 +76,7 @@ Suggest three ways the user would continue the conversation.
 
 Each suggestion should be concise.
 
-Begin each suggestion with <a> and end each suggestion with </a>.
+Begin each suggestion with <a> and end each suggestion with </a>. Do not use inverted commas.
 """.strip()
 
 
