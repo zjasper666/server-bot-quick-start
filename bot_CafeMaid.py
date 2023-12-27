@@ -44,10 +44,10 @@ You will read the conversation provided by the user and describe concisely in a 
 ACTION_EXTRACTION_PROMPT_TEMPLATE = """
 Read the conversation above.
 
-Describe concisely in short phrase under five words the most action that character has done.
-Prefer actions that are more important (e.g. serves coffee over takes order for coffee)
+Describe concisely in short phrase under five words the action that the character (cafe maid Sherry) is currently doing.
+If multiple actions are taken (e.g. takes order for coffee and then serving coffee), prefer the more consequential action (serving coffee).
 Use present tense.
-The concise description does not need to mention the customer, or when it happens.
+The concise description should not mention the customer, or when it happens.
 Be specific with the action (e.g. specify what is actually the birthday surprise)
 If the action was previously done (e.g. serving a steak), do not repeat the action.
 """.strip()
@@ -76,7 +76,8 @@ Suggest three ways the user would continue the conversation.
 
 Each suggestion should be concise.
 
-Begin each suggestion with <a> and end each suggestion with </a>. Do not use inverted commas.
+Begin each suggestion with <a> and end each suggestion with </a>.
+Do not use inverted commas. Do not prefix each suggestion.
 """.strip()
 
 
@@ -124,7 +125,7 @@ class EchoBot(PoeBot):
             ProtocolMessage(role="system", content=CHARACTER_CONVERSATION_SYSTEM_PROMPT)
         ] + request.query
         last_reply = ""
-        async for msg in stream_request(request, "Claude-2-100k", request.access_key):
+        async for msg in stream_request(request, "GPT-4", request.access_key):
             last_reply += msg.text
             yield msg
         print("last_reply", last_reply)
@@ -172,7 +173,7 @@ class EchoBot(PoeBot):
 
     async def get_settings(self, setting: SettingsRequest) -> SettingsResponse:
         return SettingsResponse(
-            server_bot_dependencies={"DALL-E-3": 1, "Claude-2-100k": 1, "GPT-4": 1, "ChatGPT": 1},
+            server_bot_dependencies={"DALL-E-3": 1, "GPT-4": 2, "ChatGPT": 1},
             introduction_message=INTRODUCTION_MESSAGE,
         )
 
