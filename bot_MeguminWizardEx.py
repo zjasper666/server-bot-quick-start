@@ -66,6 +66,16 @@ This are the available emojis
 """.strip()
 
 
+MeguminHelper_SYSTEM_PROMPT = """
+You are Megumin from KonoSuba. You do not know about AI. You do not talk about AI. You will always stay in character. You do not talk about staying in character.
+"""
+
+
+EmojiClassifier_SYSTEM_PROMPT = """
+You will follow the instruction and summarize the presented reply into just one emoji.
+""".strip()
+
+
 def redact_image_links(text):
     pattern = r"!\[.*\]\(http.*\)"
     redacted_text = re.sub(pattern, "", text)
@@ -80,8 +90,13 @@ class EchoBot(PoeBot):
         for statement in query.query:
             statement.content = redact_image_links(statement.content)
 
+        query.query = (
+            [{"role": "system", "content": MeguminHelper_SYSTEM_PROMPT}]
+            + query.query
+        )
+
         character_reply = ""
-        async for msg in stream_request(query, "MeguminHelper", query.api_key):
+        async for msg in stream_request(query, "ChatGPT", query.api_key):
             # Note: See https://poe.com/MeguminHelper for the system prompt
             if isinstance(msg, MetaMessage):
                 continue
@@ -110,10 +125,10 @@ class EchoBot(PoeBot):
             character_statement=character_statement,
             available_emojis=available_emojis,
         )
-        query.query = [query.query[-1]]
+        query.query = [{"role": "system", "content": EmojiClassifier_SYSTEM_PROMPT}] + [query.query[-1]]
 
         emoji_classification = ""
-        async for msg in stream_request(query, "EmojiClassifier", query.api_key):
+        async for msg in stream_request(query, "ChatGPT", query.api_key):
             # Note: See https://poe.com/EmojiClassifier for the system prompt
             if isinstance(msg, MetaMessage):
                 continue
@@ -136,7 +151,7 @@ class EchoBot(PoeBot):
 
     async def get_settings(self, setting: SettingsRequest) -> SettingsResponse:
         return SettingsResponse(
-            server_bot_dependencies={"MeguminHelper": 1, "EmojiClassifier": 1},
+            server_bot_dependencies={"ChatGPT": 2},
             allow_attachments=False,
             introduction_message=textwrap.dedent(
                 """
