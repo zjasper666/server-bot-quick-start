@@ -9,11 +9,13 @@ ChatGPT
 from __future__ import annotations
 
 import os
+import re
 import time
 from typing import AsyncIterable
 
 import fastapi_poe.client
 import tiktoken
+from typing import Union
 from fastapi_poe import PoeBot, make_app
 from fastapi_poe.types import (
     PartialResponse,
@@ -65,6 +67,34 @@ def prettify_time_string(second) -> str:
     return string
 
 
+def split_markdown_text_images(markdown_text) -> list[dict[str, Union(str, dict[str, str])]]:
+    # This regex will match Markdown image syntax
+    image_regex = r'!\[([^\]]*)\]\(([^\s]+)(?:\s+"([^"]+)")?\)'
+
+    # Split the text based on the regex
+    parts = re.split(image_regex, markdown_text)
+
+    # Interleave text and images
+    interleaved = []
+    i = 0
+    while i < len(parts):
+        text = parts[i]
+        if text:
+            interleaved.append({'type': 'text', 'text': text})
+        if i + 3 < len(parts):
+            alt_text, image_url, optional_title = parts[i + 1:i + 4]
+            image_info = {
+                'type': 'image_url',
+                # 'alt_text': alt_text,
+                'image_url': {"url" : image_url},
+                # 'title': optional_title or ''
+            }
+            interleaved.append(image_info)
+        i += 4
+
+    return interleaved
+
+
 class EchoBot(PoeBot):
     async def get_response(
         self, request: QueryRequest
@@ -96,12 +126,12 @@ class EchoBot(PoeBot):
         while calls and calls[0][0] <= current_time - DAY_IN_SECS:
             del calls[0]
 
-        if len(calls) == 0 and token_count >= 1000:
-            print(request.user_id, len(calls), token_count)
-            yield PartialResponse(
-                text="Please subscribe to Poe to send longer messages.\n\nIf you have subscribed, please start a new chat, send a short message, and then retry."
-            )
-            return
+        # if len(calls) == 0 and token_count >= 1000:
+        #     print(request.user_id, len(calls), token_count)
+        #     yield PartialResponse(
+        #         text="Please subscribe to Poe to send longer messages.\n\nIf you have subscribed, please start a new chat, send a short message, and then retry."
+        #     )
+        #     return
 
         if (
             sum(weight for _, weight in calls) >= SUBSCRIBER_DAILY_TOKEN_LIMIT
@@ -123,7 +153,15 @@ class EchoBot(PoeBot):
             if query.role == "bot":
                 openai_messages.append({"role": "assistant", "content": [{"type": "text", "text": query.content}]})
             if query.role == "user":
-                openai_messages.append({"role": query.role, "content": [{"type": "text", "text": query.content}]})
+                openai_messages.append({"role": query.role, "content": split_markdown_text_images(query.content)})
+                for attachment in query.attachments:
+                    if attachment.content_type.startswith("image/"):
+                        openai_messages[-1]["content"].append(
+                            {
+                                'type': 'image_url',
+                                'image_url': {"url" : attachment.url},
+                            }
+                        )
             if query.role == "system":
                 openai_messages.append({"role": query.role, "content": [{"type": "text", "text": query.content}]})
 
