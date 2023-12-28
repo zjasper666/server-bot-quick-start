@@ -19,7 +19,7 @@ import requests
 from docx import Document
 from fastapi_poe import PoeBot, make_app
 from fastapi_poe.client import MetaMessage, stream_request
-from fastapi_poe.types import QueryRequest, SettingsRequest, SettingsResponse
+from fastapi_poe.types import QueryRequest, SettingsRequest, SettingsResponse, ProtocolMessage
 from modal import Image, Stub, asgi_app
 from sse_starlette.sse import ServerSentEvent
 
@@ -131,8 +131,14 @@ class EchoBot(PoeBot):
 
             query_message.attachments = []
 
+        query.query = [
+            ProtocolMessage(
+                role="system", content=RESUME_SYSTEM_PROMPT
+            )
+        ] + query.query
+
         current_message = ""
-        async for msg in stream_request(query, "ResumeReviewTool", query.api_key):
+        async for msg in stream_request(query, "ChatGPT", query.api_key):
             # Note: See https://poe.com/ResumeReviewTool for the prompt
             if isinstance(msg, MetaMessage):
                 continue
@@ -146,7 +152,7 @@ class EchoBot(PoeBot):
 
     async def get_settings(self, setting: SettingsRequest) -> SettingsResponse:
         return SettingsResponse(
-            server_bot_dependencies={"ResumeReviewTool": 1},
+            server_bot_dependencies={"ChatGPT": 1},
             allow_attachments=True,  # to update when ready
             introduction_message="Please upload your resume (pdf, docx) and say 'Review this'.",
         )
