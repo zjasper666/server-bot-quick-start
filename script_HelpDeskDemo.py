@@ -1,6 +1,7 @@
 import os
-import requests
 import zipfile
+
+import requests
 
 # URL of the repository
 repo_url = "https://github.com/poe-platform/documentation/archive/refs/heads/main.zip"
@@ -23,7 +24,7 @@ with zipfile.ZipFile(zip_file_path, "r") as zip_ref:
             zip_ref.extract(file, extracted_dir)
 
 # Move all .md files to the root directory
-for root, dirs, files in os.walk(extracted_dir):
+for root, _, files in os.walk(extracted_dir):
     for file in files:
         if file.endswith(".md"):
             file_path = os.path.join(root, file)
@@ -49,6 +50,6 @@ article_urls = [
     "https://poe.com/api_terms",
 ]
 
-for article_url in article_urls:
+for _ in article_urls:
     # TODO: (automatically download these files and save as markdown)
     pass

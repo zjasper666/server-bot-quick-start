@@ -19,7 +19,12 @@ import requests
 from docx import Document
 from fastapi_poe import PoeBot, make_app
 from fastapi_poe.client import MetaMessage, stream_request
-from fastapi_poe.types import QueryRequest, SettingsRequest, SettingsResponse, ProtocolMessage
+from fastapi_poe.types import (
+    ProtocolMessage,
+    QueryRequest,
+    SettingsRequest,
+    SettingsResponse,
+)
 from modal import Image, Stub, asgi_app
 from sse_starlette.sse import ServerSentEvent
 
@@ -132,9 +137,7 @@ class EchoBot(PoeBot):
             query_message.attachments = []
 
         query.query = [
-            ProtocolMessage(
-                role="system", content=RESUME_SYSTEM_PROMPT
-            )
+            ProtocolMessage(role="system", content=RESUME_SYSTEM_PROMPT)
         ] + query.query
 
         current_message = ""

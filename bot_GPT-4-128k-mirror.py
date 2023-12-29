@@ -11,11 +11,10 @@ from __future__ import annotations
 import os
 import re
 import time
-from typing import AsyncIterable
+from typing import AsyncIterable, Union
 
 import fastapi_poe.client
 import tiktoken
-from typing import Union
 from fastapi_poe import PoeBot, make_app
 from fastapi_poe.types import (
     PartialResponse,
@@ -67,7 +66,9 @@ def prettify_time_string(second) -> str:
     return string
 
 
-def split_markdown_text_images(markdown_text) -> list[dict[str, Union(str, dict[str, str])]]:
+def split_markdown_text_images(
+    markdown_text,
+) -> list[dict[str, Union(str, dict[str, str])]]:
     # This regex will match Markdown image syntax
     image_regex = r'!\[([^\]]*)\]\(([^\s]+)(?:\s+"([^"]+)")?\)'
 
@@ -80,13 +81,13 @@ def split_markdown_text_images(markdown_text) -> list[dict[str, Union(str, dict[
     while i < len(parts):
         text = parts[i]
         if text:
-            interleaved.append({'type': 'text', 'text': text})
+            interleaved.append({"type": "text", "text": text})
         if i + 3 < len(parts):
-            alt_text, image_url, optional_title = parts[i + 1:i + 4]
+            alt_text, image_url, optional_title = parts[i + 1 : i + 4]
             image_info = {
-                'type': 'image_url',
+                "type": "image_url",
                 # 'alt_text': alt_text,
-                'image_url': {"url" : image_url},
+                "image_url": {"url": image_url},
                 # 'title': optional_title or ''
             }
             interleaved.append(image_info)
@@ -153,18 +154,29 @@ class EchoBot(PoeBot):
         conversation_has_image = False
         for query in request.query:
             if query.role == "bot":
-                openai_messages_no_image.append({"role": "assistant", "content": query.content})
-                openai_messages.append({"role": "assistant", "content": [{"type": "text", "text": query.content}]})
+                openai_messages_no_image.append(
+                    {"role": "assistant", "content": query.content}
+                )
+                openai_messages.append(
+                    {
+                        "role": "assistant",
+                        "content": [{"type": "text", "text": query.content}],
+                    }
+                )
             if query.role == "user":
-                openai_messages_no_image.append({"role": query.role, "content": query.content})
-                openai_messages.append({"role": query.role, "content": split_markdown_text_images(query.content)})
+                openai_messages_no_image.append(
+                    {"role": query.role, "content": query.content}
+                )
+                openai_messages.append(
+                    {
+                        "role": query.role,
+                        "content": split_markdown_text_images(query.content),
+                    }
+                )
                 for attachment in query.attachments:
                     if attachment.content_type.startswith("image/"):
                         openai_messages[-1]["content"].append(
-                            {
-                                'type': 'image_url',
-                                'image_url': {"url" : attachment.url},
-                            }
+                            {"type": "image_url", "image_url": {"url": attachment.url}}
                         )
                         conversation_has_image = True
                         print(attachment.url)
@@ -172,16 +184,29 @@ class EchoBot(PoeBot):
                         calls.append((current_time, 1000))
                         stub.my_dict[dict_key] = calls
             if query.role == "system":
-                openai_messages_no_image.append({"role": query.role, "content": query.content})
-                openai_messages.append({"role": query.role, "content": [{"type": "text", "text": query.content}]})
+                openai_messages_no_image.append(
+                    {"role": query.role, "content": query.content}
+                )
+                openai_messages.append(
+                    {
+                        "role": query.role,
+                        "content": [{"type": "text", "text": query.content}],
+                    }
+                )
 
         if conversation_has_image:
             stream = client.chat.completions.create(
-                model="gpt-4-vision-preview", messages=openai_messages, stream=True, max_tokens=4096,
+                model="gpt-4-vision-preview",
+                messages=openai_messages,
+                stream=True,
+                max_tokens=4096,
             )
         else:
             stream = client.chat.completions.create(
-                model="gpt-4-1106-preview", messages=openai_messages_no_image, stream=True, max_tokens=4096,
+                model="gpt-4-1106-preview",
+                messages=openai_messages_no_image,
+                stream=True,
+                max_tokens=4096,
             )
 
         for chunk in stream:

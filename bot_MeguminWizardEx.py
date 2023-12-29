@@ -90,10 +90,9 @@ class EchoBot(PoeBot):
         for statement in query.query:
             statement.content = redact_image_links(statement.content)
 
-        query.query = (
-            [{"role": "system", "content": MeguminHelper_SYSTEM_PROMPT}]
-            + query.query
-        )
+        query.query = [
+            {"role": "system", "content": MeguminHelper_SYSTEM_PROMPT}
+        ] + query.query
 
         character_reply = ""
         async for msg in stream_request(query, "ChatGPT", query.api_key):
@@ -125,7 +124,9 @@ class EchoBot(PoeBot):
             character_statement=character_statement,
             available_emojis=available_emojis,
         )
-        query.query = [{"role": "system", "content": EmojiClassifier_SYSTEM_PROMPT}] + [query.query[-1]]
+        query.query = [{"role": "system", "content": EmojiClassifier_SYSTEM_PROMPT}] + [
+            query.query[-1]
+        ]
 
         emoji_classification = ""
         async for msg in stream_request(query, "ChatGPT", query.api_key):

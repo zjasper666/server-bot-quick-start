@@ -3,3 +3,4 @@ max-line-length = 1000
 per-file-ignores =
   main.py: F401
   test_bots.py: SIM904
+  bot_GPT-4-128k-mirror.py: E203
