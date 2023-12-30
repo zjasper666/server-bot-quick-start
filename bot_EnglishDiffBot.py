@@ -14,7 +14,7 @@ from typing import AsyncIterable
 import fastapi_poe.client
 from fastapi_poe import PoeBot, make_app
 from fastapi_poe.client import MetaMessage, stream_request
-from fastapi_poe.types import QueryRequest, SettingsRequest, SettingsResponse
+from fastapi_poe.types import QueryRequest, SettingsRequest, SettingsResponse, ProtocolMessage
 from modal import Image, Stub, asgi_app
 from sse_starlette.sse import ServerSentEvent
 
@@ -35,6 +35,14 @@ The statement has ended.
 
 Only reply the fixed quoted text. Do not explain.
 Do not begin or end your reply with inverted commas.
+""".strip()
+
+EnglishDiffTool_SYSTEM_PROMPT = """
+You will follow the instructions from the user and fix the spelling, grammar and improve the style.
+
+Do not add or remove facts from the user's text.
+
+Only reply the user's text.
 """.strip()
 
 
@@ -60,10 +68,13 @@ class EchoBot(PoeBot):
 
         wrapped_message = LANGUAGE_PROMPT_TEMPLATE.format(user_statement=user_statement)
         query.query[-1].content = wrapped_message
-        query.query = [query.query[-1]]
+        query.query = [
+            ProtocolMessage(role="system", content=EnglishDiffTool_SYSTEM_PROMPT), 
+            query.query[-1]
+        ]
 
         character_reply = ""
-        async for msg in stream_request(query, "EnglishDiffTool", query.api_key):
+        async for msg in stream_request(query, "Claude-instant", query.api_key):
             # Note: See https://poe.com/EnglishDiffTool for the system prompt
             if isinstance(msg, MetaMessage):
                 continue
@@ -80,7 +91,7 @@ class EchoBot(PoeBot):
 
     async def get_settings(self, setting: SettingsRequest) -> SettingsResponse:
         return SettingsResponse(
-            server_bot_dependencies={"EnglishDiffTool": 1},
+            server_bot_dependencies={"Claude-instant": 1},
             allow_attachments=False,
             introduction_message="This bot will reply you the statement you made, with the language corrected.",
         )
