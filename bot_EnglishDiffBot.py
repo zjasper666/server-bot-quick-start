@@ -14,7 +14,12 @@ from typing import AsyncIterable
 import fastapi_poe.client
 from fastapi_poe import PoeBot, make_app
 from fastapi_poe.client import MetaMessage, stream_request
-from fastapi_poe.types import QueryRequest, SettingsRequest, SettingsResponse, ProtocolMessage
+from fastapi_poe.types import (
+    ProtocolMessage,
+    QueryRequest,
+    SettingsRequest,
+    SettingsResponse,
+)
 from modal import Image, Stub, asgi_app
 from sse_starlette.sse import ServerSentEvent
 
@@ -69,8 +74,8 @@ class EchoBot(PoeBot):
         wrapped_message = LANGUAGE_PROMPT_TEMPLATE.format(user_statement=user_statement)
         query.query[-1].content = wrapped_message
         query.query = [
-            ProtocolMessage(role="system", content=EnglishDiffTool_SYSTEM_PROMPT), 
-            query.query[-1]
+            ProtocolMessage(role="system", content=EnglishDiffTool_SYSTEM_PROMPT),
+            query.query[-1],
         ]
 
         character_reply = ""

@@ -110,9 +110,9 @@ class TrinoAgentBot(PoeBot):
             "45771": 10,  # WITH
             "3330": -10,  # ' column'
             "2007": -10,  # ' table'
-            "366": -10, # ' <'
-            "1198": -10, # ' --'
-            "48014": -10, # ' ...)'
+            "366": -10,  # ' <'
+            "1198": -10,  # ' --'
+            "48014": -10,  # ' ...)'
         }
         user_statement = request.query[-1].content
         print("user_statement")
