@@ -21,7 +21,8 @@ from bot_PythonAgent import PythonAgentBot
 modal.app._is_container_app = False
 
 bot_PythonAgent.PYTHON_AGENT_SYSTEM_PROMPT = """
-You write the Python code for me.
+You have access to the H-1B dataset in df.csv.
+You write the Python code to answer the queries from me, whenever possible.
 
 When you return Python code
 - Encapsulate all Python code within triple backticks (i.e ```python) with newlines.
@@ -259,6 +260,7 @@ bot.logit_bias = {
     "40": -10,  # I('m sorry)
     "663": -2,  # ']
     "7352": 2,  # '].
+    "1473": 3, # ':\n\n'
 }
 bot.allow_attachments = False
 
