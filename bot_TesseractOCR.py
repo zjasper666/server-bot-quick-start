@@ -18,7 +18,7 @@ import pytesseract
 import requests
 from docx import Document
 from fastapi_poe import PoeBot, make_app
-from fastapi_poe.types import QueryRequest, SettingsResponse
+from fastapi_poe.types import QueryRequest, SettingsResponse, SettingsRequest
 from modal import Image, Stub, asgi_app
 from PIL import Image as PILImage
 from sse_starlette.sse import ServerSentEvent
@@ -255,22 +255,6 @@ class EchoBot(PoeBot):
 
         yield self.replace_response_event(resume_string)
         return
-
-        url_cache[query.conversation_id] = content_url
-        user_statement = RESUME_STARTING_PROMPT.format(resume_string)
-
-        conversation_cache[query.conversation_id].append(
-            {"role": "user", "content": user_statement}
-        )
-
-        message_history = conversation_cache[query.conversation_id]
-        bot_statement = process_message_with_gpt(message_history)
-        bot_statement = bot_statement.replace("---", "\n---\n")
-        yield self.text_event(bot_statement)
-
-        conversation_cache[query.conversation_id].append(
-            {"role": "assistant", "content": bot_statement}
-        )
 
     async def get_settings(self, setting: SettingsRequest) -> SettingsResponse:
         return SettingsResponse(

@@ -155,6 +155,10 @@ def wrap_session(code, conversation_id):
 class PythonAgentBot(PoeBot):
     prompt_bot = "ChatGPT"
     code_iteration_limit = 7
+    logit_bias = {
+        "21362": -10,  # "!["
+    }
+    allow_attachments = True
 
     async def get_response(
         self, request: QueryRequest
@@ -168,7 +172,7 @@ class PythonAgentBot(PoeBot):
         )
 
         request.query = [PYTHON_AGENT_SYSTEM_MESSAGE] + request.query
-        request.logit_bias = {"21362": -10}  # censor "![", but does this work?
+        request.logit_bias = self.logit_bias
         request.temperature = 0.1  # does this work?
 
         # procedure to create volume if it does not exist
@@ -317,11 +321,12 @@ class PythonAgentBot(PoeBot):
 
             message = ProtocolMessage(role="user", content=current_user_simulated_reply)
             request.query.append(message)
+            print(request.query)
 
     async def get_settings(self, setting: SettingsRequest) -> SettingsResponse:
         return SettingsResponse(
             server_bot_dependencies={self.prompt_bot: 10},
-            allow_attachments=True,
+            allow_attachments=self.allow_attachments,
             introduction_message="",
         )
 

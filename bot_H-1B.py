@@ -1,76 +1,226 @@
 """
 
-BOT_NAME="PythonAgent"; modal deploy --name $BOT_NAME bot_${BOT_NAME}.py; curl -X POST https://api.poe.com/bot/fetch_settings/$BOT_NAME/$POE_ACCESS_KEY
+BOT_NAME="H-1B"; modal deploy --name $BOT_NAME bot_${BOT_NAME}.py; curl -X POST https://api.poe.com/bot/fetch_settings/$BOT_NAME/$POE_ACCESS_KEY
 
 Test message:
-download and save wine dataset
-list directory
+How many h1b1 were issued?
 
 """
 
-from __future__ import annotations
-
 import os
-import re
-import textwrap
-from typing import AsyncIterable
 
 import modal
-import requests
-from fastapi_poe import PoeBot, make_app
-from fastapi_poe.client import MetaMessage, stream_request
-from fastapi_poe.types import (
-    PartialResponse,
-    ProtocolMessage,
-    QueryRequest,
-    SettingsRequest,
-    SettingsResponse,
-)
-from modal import Image, Stub, asgi_app
 
+from fastapi_poe import make_app
+from modal import Stub, asgi_app
 
-def extract_code(reply):
-    pattern = r"```python([\s\S]*?)```"
-    matches = re.findall(pattern, reply)
-    return "\n\n".join(matches)
+import bot_PythonAgent
+from bot_PythonAgent import PythonAgentBot
 
+# https://modalbetatesters.slack.com/archives/C031Z7H15DG/p1675177408741889?thread_ts=1675174647.477169&cid=C031Z7H15DG
+modal.app._is_container_app = False
 
-PYTHON_AGENT_SYSTEM_PROMPT = """
-You write the Python code for me
+bot_PythonAgent.PYTHON_AGENT_SYSTEM_PROMPT = """
+You write the Python code for me.
 
 When you return Python code
 - Encapsulate all Python code within triple backticks (i.e ```python) with newlines.
 - The Python code should either print something or plot something
-- The Python code should not use input()
+- When filtering rows by <class 'str'> columns, always use .str.contains() instead of ==
+- The Python code should start with `df = pd.read_csv('/df.csv')` (NOTE: this is in the root directory /)
 
-I have already installed these Python packages
+df.csv contains information about Labor application information from H-1B, H-1B1, and E-3 Programs.
 
-numpy
-scipy
-matplotlib
-basemap (in mpl_toolkits.basemap)
-scikit-learn
-pandas
-ortools
-torch
-torchvision
-tensorflow
-transformers
-opencv-python-headless
-nltk
-openai
-requests
-beautifulsoup4
-newspaper3k
-feedparser
-sympy
-yfinance
+df.csv contains the following columns
+- 'CASE_NUMBER'
+- 'CASE_STATUS',
+- 'RECEIVED_DATE'
+- 'DECISION_DATE'
+- 'ORIGINAL_CERT_DATE'
+- 'VISA_CLASS'
+- 'JOB_TITLE'
+- 'SOC_TITLE'
+- 'FULL_TIME_POSITION'
+- 'BEGIN_DATE'
+- 'END_DATE'
+- 'EMPLOYER_NAME'
+- 'AGENT_REPRESENTING_EMPLOYER'
+- 'LAWFIRM_NAME_BUSINESS_NAME'
+- 'SECONDARY_ENTITY'
+- 'SECONDARY_ENTITY_BUSINESS_NAME'
+- 'WORKSITE_STATE'
+- 'WAGE_RATE_OF_PAY_FROM'
+- 'WAGE_RATE_OF_PAY_TO'
+- 'WAGE_UNIT_OF_PAY'
+- 'YEAR'
+- 'QUARTER'
+
+
+The five most common values for each column is as listed.
+
+I-200-20281-869622    5
+I-200-20329-926703    5
+I-200-20281-866764    5
+I-200-20283-875087    5
+I-200-20281-868228    5
+Name: CASE_NUMBER, type: <class 'str'>
+
+Certified                2366621
+Certified - Withdrawn     118268
+Withdrawn                  47581
+Denied                     13921
+Name: CASE_STATUS, type: <class 'str'>
+
+2020-10-07 00:00:00    30757
+2020-12-09 00:00:00    14006
+2020-12-10 00:00:00     9146
+2020-12-14 00:00:00     6610
+2020-12-11 00:00:00     6436
+Name: RECEIVED_DATE, type: <class 'str'>
+
+2020-10-15 00:00:00    29251
+2020-12-16 00:00:00    13401
+2020-12-17 00:00:00     9003
+2020-11-25 00:00:00     8926
+2021-02-22 00:00:00     6950
+Name: DECISION_DATE, type: <class 'str'>
+
+2020-10-15 00:00:00    1257
+2020-12-16 00:00:00     548
+2021-06-25 00:00:00     534
+2020-05-13 00:00:00     406
+2021-04-22 00:00:00     381
+Name: ORIGINAL_CERT_DATE, type: <class 'float'>
+
+H-1B               2481378
+E-3 Australian       51029
+H-1B1 Chile           7802
+H-1B1 Singapore       6182
+Name: VISA_CLASS, type: <class 'str'>
+
+SOFTWARE ENGINEER              137371
+SOFTWARE DEVELOPER             101873
+SENIOR SOFTWARE ENGINEER        37190
+MANAGER JC50                    25504
+SENIOR SYSTEMS ANALYST JC60     22488
+Name: JOB_TITLE, type: <class 'str'>
+
+Software Developers, Applications        624758
+Software Developers                      209165
+Computer Systems Analysts                160672
+Software Developers, Systems Software    116219
+Computer Systems Engineers/Architects     86964
+Name: SOC_TITLE, type: <class 'str'>
+
+Y    2506698
+N      39693
+Name: FULL_TIME_POSITION, type: <class 'str'>
+
+2022-10-01 00:00:00    102403
+2020-10-01 00:00:00     89445
+2021-10-01 00:00:00     85991
+2023-10-01 00:00:00     71318
+2021-01-01 00:00:00     14035
+Name: BEGIN_DATE, type: <class 'str'>
+
+2025-09-30 00:00:00    100715
+2024-09-30 00:00:00     87862
+2023-09-30 00:00:00     86452
+2026-09-30 00:00:00     69101
+2024-06-30 00:00:00     13131
+Name: END_DATE, type: <class 'str'>
+
+COGNIZANT TECHNOLOGY SOLUTIONS US CORP    74619
+AMAZON.COM SERVICES LLC                   54156
+GOOGLE LLC                                48220
+TATA CONSULTANCY SERVICES LIMITED         44031
+ERNST & YOUNG U.S. LLP                    40673
+Name: EMPLOYER_NAME, type: <class 'str'>
+
+Yes    1438149
+No      530908
+Y       405668
+N       171666
+Name: AGENT_REPRESENTING_EMPLOYER, type: <class 'str'>
+
+FRAGOMEN, DEL REY, BERNSEN & LOEWY, LLP           261280
+BERRY APPLEMAN & LEIDEN LLP                       141684
+FRAGOMEN, DEL REY, BERNSEN & LOEWY LLP             50628
+OGLETREE, DEAKINS, NASH, SMOAK & STEWART, P.C.     45981
+SEYFARTH SHAW LLP                                  38399
+Name: LAWFIRM_NAME_BUSINESS_NAME, type: <class 'str'>
+
+No     1515532
+Yes     453525
+N       376986
+Y       198387
+Name: SECONDARY_ENTITY, type: <class 'str'>
+
+WELLS FARGO             6375
+FORD MOTOR COMPANY      5562
+VERIZON                 4821
+CAPITAL ONE             4608
+FIDELITY INVESTMENTS    4528
+Name: SECONDARY_ENTITY_BUSINESS_NAME, type: <class 'float'>
+
+CA    517753
+TX    306873
+NY    202901
+WA    145738
+NJ    134790
+Name: WORKSITE_STATE, type: <class 'str'>
+
+120000.0    36230
+100000.0    32325
+110000.0    30649
+130000.0    28461
+90000.0     28287
+Name: WAGE_RATE_OF_PAY_FROM, type: <class 'numpy.float64'>
+
+120000.0    15849
+130000.0    13469
+100000.0    13398
+150000.0    13069
+140000.0    12260
+Name: WAGE_RATE_OF_PAY_TO, type: <class 'numpy.float64'>
+
+Year         2394108
+Hour          148881
+Month           2299
+Bi-Weekly        553
+Week             548
+Name: WAGE_UNIT_OF_PAY, type: <class 'str'>
+
+2021    826305
+2022    626084
+2020    577334
+2023    516668
+Name: YEAR, type: <class 'numpy.int64'>
+
+3    1018294
+2     753801
+1     411680
+4     362616
+Name: QUARTER, type: <class 'numpy.int64'>
 """
 
-CODE_WITH_WRAPPERS = """\
+# To print the statistics
+# for column in df.columns:
+#     print(str(df[column].value_counts().head(5)).replace(
+#         "dtype: int64", 
+#         "type: " + str(type(df[column][0]))
+#     ))
+#     print()
+
+
+bot_PythonAgent.CODE_WITH_WRAPPERS = CODE_WITH_WRAPPERS = """\
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.pyplot import savefig
+import warnings
+import pandas as pd
+
+warnings.simplefilter(action='ignore', category=pd.errors.DtypeWarning)
 
 def save_image(filename):
     def decorator(func):
@@ -83,305 +233,46 @@ def save_image(filename):
 plt.show = save_image('image.png')(plt.show)
 plt.savefig = save_image('image.png')(plt.savefig)
 
-import dill, os, pickle
-if os.path.exists("{conversation_id}.dill"):
-    try:
-        with open("{conversation_id}.dill", 'rb') as f:
-            dill.load_session(f)
-    except:
-        pass
-
 {code}
-
-with open('{conversation_id}.dill', 'wb') as f:
-    dill.dump_session(f)
 """
 
-SIMULATED_USER_REPLY_OUTPUT_ONLY = """\
-Your code was executed and this is the output.
-```output
-{output}
-```
-"""
-
-SIMULATED_USER_REPLY_ERROR_ONLY = """\
-Your code was executed and this is the error.
-```error
-{error}
-```
-"""
-
-SIMULATED_USER_REPLY_OUTPUT_AND_ERROR = """\
-Your code was executed and this is the output and error.
-```output
-{output}
-```
-
-```error
-{error}
-```
-"""
-
-SIMULATED_USER_REPLY_NO_OUTPUT_OR_ERROR = """\
-Your code was executed without issues, without any standard output.
-"""
-
-SIMULATED_USER_SUFFIX_IMAGE_FOUND = """
-
-Your code was executed and it displayed a plot.
-"""
-
-SIMULATED_USER_SUFFIX_IMAGE_NOT_FOUND = """
-
-Your code was executed but it did not display a plot.
-"""
-
-SIMULATED_USER_SUFFIX_PROMPT = """
+bot_PythonAgent.SIMULATED_USER_SUFFIX_PROMPT = """
 If there is an issue, you will fix the Python code.
 Otherwise, provide a brief and concise comment.
-"""
+""".strip()
 
 
-def wrap_session(code, conversation_id):
-    # the wrapper code
-    # - load session with dill (for the same conversation)
-    # - execute the code
-    # - save to image.png on plt.plot() and plt.show()
-    # - save session with dill (if execution is successful)
+bot = PythonAgentBot()
+bot.prompt_bot = "ChatGPT"
+bot.code_iteration_limit = 10
+bot.logit_bias = {
+    "21362": -10,  # "!["
+    "4380": 2,  # ("/
+    "3478": 2,  # ('/
+    "446": -2,  # ("
+    "493": -2,  # ('
+    "19701": -15,  # Sorry
+    "10835": -5, # Ap(ologies)
+    "5159": -2,  # My (apologies, but I'm)
+    "2170": -5,  # As (an AI language model)
+    "31140": -10,  # Unfortunately
+    "40": -10,  # I('m sorry)
+    "663": -2,  # ']
+    "7352": 2,  # '].
+}
+bot.allow_attachments = False
 
-    return CODE_WITH_WRAPPERS.format(code=code, conversation_id=conversation_id)
-
-
-class PythonAgentBot(PoeBot):
-    prompt_bot = "ChatGPT"
-    code_iteration_limit = 7
-
-    async def get_response(
-        self, request: QueryRequest
-    ) -> AsyncIterable[PartialResponse]:
-        last_message = request.query[-1].content
-        print("user_message")
-        print(last_message)
-
-        PYTHON_AGENT_SYSTEM_MESSAGE = ProtocolMessage(
-            role="system", content=PYTHON_AGENT_SYSTEM_PROMPT
-        )
-
-        request.query = [PYTHON_AGENT_SYSTEM_MESSAGE] + request.query
-        request.logit_bias = {"21362": -10}  # censor "![", but does this work?
-        request.temperature = 0.1  # does this work?
-
-        # procedure to create volume if it does not exist
-        # tried other ways to write a code but has hydration issues
-        try:
-            vol = modal.NetworkFileSystem.lookup(f"vol-{request.user_id}")
-        except Exception:
-            stub.nfs = modal.NetworkFileSystem.persisted(f"vol-{request.user_id}")
-            sb = stub.spawn_sandbox(
-                "bash", "-c", "cd /cache", network_file_systems={"/cache": stub.nfs}
-            )
-            sb.wait()
-            vol = modal.NetworkFileSystem.lookup(f"vol-{request.user_id}")
-
-        for query in request.query:
-            for attachment in query.attachments:
-                query.content += f"\n\nThe user has provided {attachment.name} in the current directory."
-            query.attachments = []
-
-        # upload files in latest user message
-        for attachment in request.query[-1].attachments:
-            r = requests.get(attachment.url)
-            with open(attachment.name, "wb") as f:
-                f.write(r.content)
-            vol.add_local_file(attachment.name)
-
-        for code_iteration_count in range(self.code_iteration_limit):
-            print("code_iteration_count", code_iteration_count)
-
-            current_bot_reply = ""
-            async for msg in stream_request(request, self.prompt_bot, request.api_key):
-                if isinstance(msg, MetaMessage):
-                    continue
-                elif msg.is_suggested_reply:
-                    yield self.suggested_reply_event(msg.text)
-                elif msg.is_replace_response:
-                    yield self.replace_response_event(msg.text)
-                else:
-                    current_bot_reply += msg.text
-                    yield self.text_event(msg.text)
-                    if extract_code(current_bot_reply):
-                        # break when a Python code block is detected
-                        break
-
-            message = ProtocolMessage(role="bot", content=current_bot_reply)
-            request.query.append(message)
-
-            # if the bot output does not have code, terminate
-            code = extract_code(current_bot_reply)
-            if not code:
-                return
-
-            # prepare code for execution
-            print("code")
-            print(code)
-            wrapped_code = wrap_session(code, conversation_id=request.conversation_id)
-
-            # upload python script
-            with open(f"{request.user_id}.py", "w") as f:
-                f.write(wrapped_code)
-            vol.add_local_file(f"{request.user_id}.py", f"{request.user_id}.py")
-
-            # execute code
-            stub.nfs = modal.NetworkFileSystem.persisted(f"vol-{request.user_id}")
-            sb = stub.spawn_sandbox(
-                "bash",
-                "-c",
-                f"cd /cache && python {request.user_id}.py",
-                image=image_exec,
-                network_file_systems={"/cache": stub.nfs},
-            )
-            sb.wait()
-
-            output = sb.stdout.read()
-            error = sb.stderr.read()
-
-            print("len(output)", len(output))
-            print("len(error)", len(error))
-            if error:  # for monitoring
-                print("error")
-                print(error)
-
-            current_user_simulated_reply = ""
-            if output and error:
-                yield PartialResponse(
-                    text=textwrap.dedent(f"\n\n```output\n{output}```\n\n")
-                )
-                yield PartialResponse(
-                    text=textwrap.dedent(f"\n\n```error\n{error}```\n\n")
-                )
-                current_user_simulated_reply = (
-                    SIMULATED_USER_REPLY_OUTPUT_AND_ERROR.format(
-                        output=output, error=error
-                    )
-                )
-            elif output:
-                yield PartialResponse(
-                    text=textwrap.dedent(f"\n\n```output\n{output}```\n\n")
-                )
-                current_user_simulated_reply = SIMULATED_USER_REPLY_OUTPUT_ONLY.format(
-                    output=output
-                )
-            elif error:
-                yield PartialResponse(
-                    text=textwrap.dedent(f"\n\n```error\n{error}```\n\n")
-                )
-                current_user_simulated_reply = SIMULATED_USER_REPLY_ERROR_ONLY.format(
-                    error=error
-                )
-            else:
-                current_user_simulated_reply = SIMULATED_USER_REPLY_NO_OUTPUT_OR_ERROR
-
-            # upload image and get image url
-            image_url = None
-            if any("image.png" in str(entry) for entry in vol.listdir("*")):
-                # some roundabout way to check if image file is in directory
-                with open("image.png", "wb") as f:
-                    for chunk in vol.read_file("image.png"):
-                        f.write(chunk)
-
-                image_data = None
-                with open("image.png", "rb") as f:
-                    image_data = f.read()
-
-                print("len(image_data)", len(image_data))
-                if image_data:
-                    f = modal.Function.lookup("image-upload-shared", "upload_file")
-                    image_url = f.remote(image_data, "image.png")
-                    yield PartialResponse(
-                        text=textwrap.dedent(f"\n\n![plot]({image_url})")
-                    )
-                    vol.remove_file("image.png")
-
-            if image_url:
-                # wishlist - call an API that describes what is going on in the image
-                current_user_simulated_reply += SIMULATED_USER_SUFFIX_IMAGE_FOUND
-                if not output and not error:
-                    current_user_simulated_reply = SIMULATED_USER_SUFFIX_IMAGE_FOUND
-            else:
-                if "matplotlib" in code:
-                    current_user_simulated_reply += (
-                        SIMULATED_USER_SUFFIX_IMAGE_NOT_FOUND
-                    )
-
-            current_user_simulated_reply += SIMULATED_USER_SUFFIX_PROMPT
-
-            message = ProtocolMessage(role="user", content=current_user_simulated_reply)
-            request.query.append(message)
-
-    async def get_settings(self, setting: SettingsRequest) -> SettingsResponse:
-        return SettingsResponse(
-            server_bot_dependencies={self.prompt_bot: 10},
-            allow_attachments=True,
-            introduction_message="",
-        )
-
-
-image_bot = (
-    Image.debian_slim()
-    .pip_install("fastapi-poe==0.0.23", "requests==2.28.2")
-    .env({"POE_ACCESS_KEY": os.environ["POE_ACCESS_KEY"]})
-)
-
-image_exec = Image.debian_slim().pip_install(
-    "fastapi-poe==0.0.23",
-    "huggingface-hub==0.16.4",
-    "ipython",
-    "scipy",
-    "matplotlib",
-    "scikit-learn",
-    "pandas==1.3.2",
-    "ortools",
-    "torch",
-    "torchvision",
-    "tensorflow",
-    "spacy",
-    "transformers",
-    "opencv-python-headless",
-    "nltk",
-    "openai",
-    "requests",
-    "beautifulsoup4",
-    "newspaper3k",
-    "feedparser",
-    "sympy",
-    "tensorflow",
-    "cartopy",
-    "wordcloud",
-    "gensim",
-    "keras",
-    "librosa",
-    "XlsxWriter",
-    "docx2txt",
-    "markdownify",
-    "pdfminer.six",
-    "Pillow",
-    "opencv-python",
-    "sortedcontainers",
-    "intervaltree",
-    "geopandas",
-    "basemap",
-    "tiktoken",
-    "basemap-data-hires",
-    "yfinance",
-    "dill",
-    "seaborn",
-    "openpyxl",
-)
 
 stub = Stub("poe-bot-quickstart")
 
-bot = PythonAgentBot()
+image_bot = (
+    bot_PythonAgent.image_bot.copy_local_file("df.csv", "/root/df.csv")
+)
 
+bot_PythonAgent.image_exec = (
+    bot_PythonAgent.image_exec
+    .copy_local_file("df.csv", "df.csv")
+)
 
 @stub.function(image=image_bot)
 @asgi_app()
