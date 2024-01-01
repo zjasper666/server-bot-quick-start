@@ -231,20 +231,22 @@ class PythonAgentBot(PoeBot):
             wrapped_code = wrap_session(code, conversation_id=request.conversation_id)
 
             # upload python script
-            with open(f"{request.user_id}.py", "w") as f:
+            with open(f"{request.conversation_id}.py", "w") as f:
                 f.write(wrapped_code)
-            vol.add_local_file(f"{request.user_id}.py", f"{request.user_id}.py")
+            vol.add_local_file(f"{request.conversation_id}.py", f"{request.conversation_id}.py")
 
             # execute code
             stub.nfs = modal.NetworkFileSystem.persisted(f"vol-{request.user_id}")
             sb = stub.spawn_sandbox(
                 "bash",
                 "-c",
-                f"cd /cache && python {request.user_id}.py",
+                f"cd /cache && python {request.conversation_id}.py",
                 image=image_exec,
                 network_file_systems={"/cache": stub.nfs},
             )
             sb.wait()
+
+            print("sb.returncode", sb.returncode)
 
             output = sb.stdout.read()
             error = sb.stderr.read()
@@ -321,7 +323,6 @@ class PythonAgentBot(PoeBot):
 
             message = ProtocolMessage(role="user", content=current_user_simulated_reply)
             request.query.append(message)
-            print(request.query)
 
     async def get_settings(self, setting: SettingsRequest) -> SettingsResponse:
         return SettingsResponse(

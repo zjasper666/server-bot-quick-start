@@ -22,12 +22,12 @@ modal.app._is_container_app = False
 
 bot_PythonAgent.PYTHON_AGENT_SYSTEM_PROMPT = """
 You have access to the H-1B dataset in df.csv.
-You write the Python code to answer the queries from me, whenever possible.
+You write the Python code to answer my queries, whenever possible.
 
 When you return Python code
 - Encapsulate all Python code within triple backticks (i.e ```python) with newlines.
 - The Python code should either print something or plot something
-- When filtering rows by <class 'str'> columns, always use .str.contains() instead of ==
+- When filtering rows by <class 'str'> columns, always use .str.contains(<string>, case=False) instead of ==
 - The Python code should start with `df = pd.read_csv('/df.csv')` (NOTE: this is in the root directory /)
 
 df.csv contains information about Labor application information from H-1B, H-1B1, and E-3 Programs.
@@ -221,6 +221,7 @@ from matplotlib.pyplot import savefig
 import warnings
 import pandas as pd
 
+pd.set_option('display.max_columns', None)
 warnings.simplefilter(action='ignore', category=pd.errors.DtypeWarning)
 
 def save_image(filename):
@@ -239,8 +240,8 @@ plt.savefig = save_image('image.png')(plt.savefig)
 
 bot_PythonAgent.SIMULATED_USER_SUFFIX_PROMPT = """
 If there is an issue, you will fix the Python code.
-Otherwise, provide a brief and concise comment.
-""".strip()
+Otherwise, provide a brief and concise comment, WITHOUT repeating the output.
+"""
 
 
 bot = PythonAgentBot()
@@ -257,10 +258,11 @@ bot.logit_bias = {
     "5159": -2,  # My (apologies, but I'm)
     "2170": -5,  # As (an AI language model)
     "31140": -10,  # Unfortunately
+    "19173": -10, # ' Unfortunately' 
     "40": -10,  # I('m sorry)
-    "663": -2,  # ']
+    "663": -3,  # ']
     "7352": 2,  # '].
-    "1473": 3, # ':\n\n'
+    "1473": 1, # ':\n\n'
 }
 bot.allow_attachments = False
 
