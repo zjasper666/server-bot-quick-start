@@ -199,7 +199,7 @@ class PythonAgentBot(PoeBot):
                 f.write(r.content)
             vol.add_local_file(attachment.name)
 
-        for code_iteration_count in range(self.code_iteration_limit):
+        for code_iteration_count in range(self.code_iteration_limit - 1):
             print("code_iteration_count", code_iteration_count)
 
             current_bot_reply = ""
@@ -326,7 +326,7 @@ class PythonAgentBot(PoeBot):
 
     async def get_settings(self, setting: SettingsRequest) -> SettingsResponse:
         return SettingsResponse(
-            server_bot_dependencies={self.prompt_bot: 10},
+            server_bot_dependencies={self.prompt_bot: self.code_iteration_limit},
             allow_attachments=self.allow_attachments,
             introduction_message="",
         )

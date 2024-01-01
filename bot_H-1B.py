@@ -246,7 +246,7 @@ Otherwise, provide a brief and concise comment, WITHOUT repeating the output.
 
 bot = PythonAgentBot()
 bot.prompt_bot = "ChatGPT"
-bot.code_iteration_limit = 10
+bot.code_iteration_limit = 3
 bot.logit_bias = {
     "21362": -10,  # "!["
     "4380": 2,  # ("/
