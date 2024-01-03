@@ -50,7 +50,7 @@ scipy
 matplotlib
 basemap (in mpl_toolkits.basemap)
 scikit-learn
-pandas
+pandas (prefer pandas over csv)
 ortools
 torch
 torchvision
@@ -67,6 +67,7 @@ sympy
 yfinance
 """
 
+# probably there is a better method to retain memory than to pickle
 CODE_WITH_WRAPPERS = """\
 import numpy as np
 import matplotlib.pyplot as plt
@@ -93,8 +94,11 @@ if os.path.exists("{conversation_id}.dill"):
 
 {code}
 
-with open('{conversation_id}.dill', 'wb') as f:
-    dill.dump_session(f)
+try:
+    with open('{conversation_id}.dill', 'wb') as f:
+        dill.dump_session(f)
+except:
+    pass
 """
 
 SIMULATED_USER_REPLY_OUTPUT_ONLY = """\
@@ -154,7 +158,7 @@ def wrap_session(code, conversation_id):
 
 class PythonAgentBot(PoeBot):
     prompt_bot = "ChatGPT"
-    code_iteration_limit = 7
+    code_iteration_limit = 3
     logit_bias = {
         "21362": -10,  # "!["
     }
@@ -190,14 +194,17 @@ class PythonAgentBot(PoeBot):
         for query in request.query:
             for attachment in query.attachments:
                 query.content += f"\n\nThe user has provided {attachment.name} in the current directory."
-            query.attachments = []
 
         # upload files in latest user message
         for attachment in request.query[-1].attachments:
             r = requests.get(attachment.url)
             with open(attachment.name, "wb") as f:
                 f.write(r.content)
-            vol.add_local_file(attachment.name)
+            vol.add_local_file(attachment.name, attachment.name)
+
+        for query in request.query:
+            # bot calling doesn't allow attachments
+            query.attachments = []
 
         for code_iteration_count in range(self.code_iteration_limit - 1):
             print("code_iteration_count", code_iteration_count)
