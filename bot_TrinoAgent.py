@@ -118,7 +118,7 @@ class TrinoAgentBot(PoeBot):
         print("user_statement")
         print(user_statement)
 
-        for _ in range(10):
+        for _ in range(10):   # intentionally error if exceed limits
             current_bot_reply = ""
             async for msg in stream_request(request, self.prompt_bot, request.api_key):
                 if isinstance(msg, MetaMessage):
@@ -160,7 +160,7 @@ class TrinoAgentBot(PoeBot):
 
     async def get_settings(self, setting: SettingsRequest) -> SettingsResponse:
         return SettingsResponse(
-            server_bot_dependencies={self.prompt_bot: 10},
+            server_bot_dependencies={self.prompt_bot: 3},
             allow_attachments=False,
             introduction_message=textwrap.dedent(
                 """Which Trino keyword do you want to learn about?"""
