@@ -1,9 +1,19 @@
-from datetime import datetime
-import requests
+"""
+
+modal deploy --name statuspage statuspage.py
+
+"""
+
 import os
+import requests
+import asyncio
+from datetime import datetime
+
 import fastapi_poe.client as fp_client
 import fastapi_poe.types as fp_types
-import asyncio
+
+import modal
+from modal import Stub, Image
 
 
 async def get_bot_response(bot_name, messages):
@@ -61,8 +71,8 @@ def update_component(component_id, description, status):
 
 
 
-def test_bot(bot_name, user_message, expected_reply_substring):
-    component_id = BOT_NAME_TO_COMPONENT_ID[bot_name]
+def test_bot(bot_name, user_message, expected_reply_substring, bot_name_to_compoenent_id):
+    component_id = bot_name_to_compoenent_id[bot_name]
 
     print(f"Testing {bot_name}")
 
@@ -96,36 +106,57 @@ def test_bot(bot_name, user_message, expected_reply_substring):
     update_component(component_id, description, status)        
 
 
-BOT_NAME_TO_COMPONENT_ID = {}
-for component in get_components().json():
-    BOT_NAME_TO_COMPONENT_ID[component["name"]] = component["id"]
-
-test_bot(
-    bot_name = "EchoBotDemonstration",
-    user_message = "hello there",
-    expected_reply_substring = "hello there",
+image = (
+    Image.debian_slim()
+    .pip_install("requests", "fastapi-poe")
+    .env(
+        {
+            "STATUSPAGE_PAGE_ID": os.environ["STATUSPAGE_PAGE_ID"],
+            "STATUSPAGE_API_KEY": os.environ["STATUSPAGE_API_KEY"],
+            "POE_API_KEY": os.environ["POE_API_KEY"],
+        }
+    )
 )
 
-test_bot(
-    bot_name = "ChatGPT",
-    user_message = "What is 1+2?",
-    expected_reply_substring = "3",
-)
+stub = Stub()
 
-test_bot(
-    bot_name = "AllCapsBotDemo",
-    user_message = "Who is the 1st US President?",
-    expected_reply_substring = "WASHINGTON",
-)
+@stub.function(image=image, schedule=modal.Period(hours=1))
+def update_statuspage():
+    BOT_NAME_TO_COMPONENT_ID = {}
+    for component in get_components().json():
+        BOT_NAME_TO_COMPONENT_ID[component["name"]] = component["id"]
 
-test_bot(
-    bot_name = "PythonAgent",
-    user_message = "make scatter plot",
-    expected_reply_substring = "![",
-)
+    test_bot(
+        bot_name = "EchoBotDemonstration",
+        user_message = "hello there",
+        expected_reply_substring = "hello there",
+        bot_name_to_compoenent_id = BOT_NAME_TO_COMPONENT_ID,
+    )
 
-test_bot(
-    bot_name = "GPT-4-128k-mirror",
-    user_message = "What is 1+2",
-    expected_reply_substring = "3",
-)
+    test_bot(
+        bot_name = "ChatGPT",
+        user_message = "What is 1+2?",
+        expected_reply_substring = "3",
+        bot_name_to_compoenent_id = BOT_NAME_TO_COMPONENT_ID,
+    )
+
+    test_bot(
+        bot_name = "AllCapsBotDemo",
+        user_message = "Who is the 1st US President?",
+        expected_reply_substring = "WASHINGTON",
+        bot_name_to_compoenent_id = BOT_NAME_TO_COMPONENT_ID,
+    )
+
+    test_bot(
+        bot_name = "PythonAgent",
+        user_message = "make scatter plot",
+        expected_reply_substring = "![plot](https://res.cloudinary.com",
+        bot_name_to_compoenent_id = BOT_NAME_TO_COMPONENT_ID,
+    )
+
+    test_bot(
+        bot_name = "GPT-4-128k-mirror",
+        user_message = "What is 1+2",
+        expected_reply_substring = "3",
+        bot_name_to_compoenent_id = BOT_NAME_TO_COMPONENT_ID,
+    )
