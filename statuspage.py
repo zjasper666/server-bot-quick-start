@@ -7,6 +7,7 @@ modal deploy --name statuspage statuspage.py
 import os
 import requests
 import asyncio
+import time
 from datetime import datetime
 
 import fastapi_poe.client as fp_client
@@ -14,6 +15,9 @@ import fastapi_poe.types as fp_types
 
 import modal
 from modal import Stub, Image
+
+RETRY_COUNT = 2
+DELAY_SECONDS = 10
 
 
 async def get_bot_response(bot_name, messages):
@@ -79,31 +83,38 @@ def test_bot(bot_name, user_message, expected_reply_substring, bot_name_to_compo
     messages = [fp_types.ProtocolMessage(role="user", content=user_message)]
     response = None
 
-    try:
-        response = asyncio.run(get_bot_response(bot_name, messages))
-        print(f"Response:\n{response}")
-    except Exception as e:
-        print(str(e))
+    for _ in range(RETRY_COUNT):
+
+        try:
+            response = asyncio.run(get_bot_response(bot_name, messages))
+            print(f"Response:\n{response}")
+        except Exception as e:
+            print(str(e))
 
 
-    if response is None:
-        description = f"Did not receive response at {get_utc_timestring()} UTC"
-        status = "major_outage"
+        if response is None:
+            description = f"Did not receive response at {get_utc_timestring()} UTC"
+            status = "major_outage"
 
-    elif expected_reply_substring in response:
-        description = f"Expected response received at {get_utc_timestring()} UTC"
-        status = "operational"
+        elif expected_reply_substring in response:
+            description = f"Expected response received at {get_utc_timestring()} UTC"
+            status = "operational"
 
-    else:
-        description = f"Response did not contain expected substring at {get_utc_timestring()} UTC"
-        status = "degraded_performance"
+        else:
+            description = f"Response did not contain expected substring at {get_utc_timestring()} UTC"
+            status = "degraded_performance"
 
 
-    print(f"Description: {description}")
-    print(f"Status: {status}")
-    print()
+        print(f"Description: {description}")
+        print(f"Status: {status}")
+        print()
 
-    update_component(component_id, description, status)        
+        update_component(component_id, description, status)
+
+        if status == "operational":
+            break
+
+        time.sleep(DELAY_SECONDS)
 
 
 image = (
@@ -120,8 +131,8 @@ image = (
 
 stub = Stub()
 
-@stub.function(image=image, schedule=modal.Period(hours=1))
-def update_statuspage():
+@stub.function(image=image, schedule=modal.Period(minutes=1))
+def update_statuspage_minutely():
     BOT_NAME_TO_COMPONENT_ID = {}
     for component in get_components().json():
         BOT_NAME_TO_COMPONENT_ID[component["name"]] = component["id"]
@@ -132,6 +143,12 @@ def update_statuspage():
         expected_reply_substring = "hello there",
         bot_name_to_compoenent_id = BOT_NAME_TO_COMPONENT_ID,
     )
+
+@stub.function(image=image, schedule=modal.Period(minutes=10))
+def update_statuspage_ten_minutely():
+    BOT_NAME_TO_COMPONENT_ID = {}
+    for component in get_components().json():
+        BOT_NAME_TO_COMPONENT_ID[component["name"]] = component["id"]
 
     test_bot(
         bot_name = "ChatGPT",
@@ -154,6 +171,11 @@ def update_statuspage():
         bot_name_to_compoenent_id = BOT_NAME_TO_COMPONENT_ID,
     )
 
+@stub.function(image=image, schedule=modal.Period(hours=1))
+def update_statuspage_hourly():
+    BOT_NAME_TO_COMPONENT_ID = {}
+    for component in get_components().json():
+        BOT_NAME_TO_COMPONENT_ID[component["name"]] = component["id"]
     test_bot(
         bot_name = "GPT-4-128k-mirror",
         user_message = "What is 1+2",
