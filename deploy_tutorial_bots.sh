@@ -16,5 +16,8 @@ BOT_NAME="ImageResponseBotDemo"; modal deploy --name $BOT_NAME image_response_bo
 # poe.com/PDFCounterBotDemo
 BOT_NAME="PDFCounterBotDemo"; modal deploy --name $BOT_NAME pdf_counter_bot.py; curl -X POST https://api.poe.com/bot/fetch_settings/$BOT_NAME/$POE_ACCESS_KEY
 
+# poe.com/FunctionCallingDemo
+BOT_NAME="FunctionCallingDemo"; modal deploy --name $BOT_NAME function_calling_bot.py; curl -X POST https://api.poe.com/bot/fetch_settings/$BOT_NAME/$POE_ACCESS_KEY
+
 # poe.com/TurboVsClaudeBotDemo
 BOT_NAME="TurboVsClaudeBotDemo"; modal deploy --name $BOT_NAME turbo_vs_claude.py; curl -X POST https://api.poe.com/bot/fetch_settings/$BOT_NAME/$POE_ACCESS_KEY
