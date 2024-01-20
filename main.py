@@ -14,7 +14,7 @@ from turbo_allcapsbot import GPT35TurboAllCapsBot
 from turbo_vs_claude import GPT35TurbovsClaudeBot
 
 # Echo bot is a very simple bot that just echoes back the user's last message.
-# bot = EchoBot()
+bot = EchoBot()
 
 # A sample bot that showcases the capabilities the protocol provides. Please see the
 # following link for the full set of available message commands:
@@ -32,7 +32,7 @@ from turbo_vs_claude import GPT35TurbovsClaudeBot
 # Please note that since this bot uses another Poe bot, you need to update this bot's settings on
 # Poe by following the instructions at: https://developer.poe.com/server-bots/updating-bot-settings
 # For more details, see: https://developer.poe.com/server-bots/accessing-other-bots-on-poe
-bot = GPT35TurbovsClaudeBot()
+# bot = GPT35TurbovsClaudeBot()
 
 # A chatbot based on a model hosted on HuggingFace.
 # bot = HuggingFaceBot("microsoft/DialoGPT-medium")
