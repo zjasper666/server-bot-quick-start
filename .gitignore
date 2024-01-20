@@ -1,6 +1,6 @@
 files_HelpDeskDemo/
 .DS_Store
-__pycache__/
 node_modules/
+__pycache__/
 *.pkl
 *.csv
