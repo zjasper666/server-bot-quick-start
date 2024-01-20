@@ -158,9 +158,30 @@ def update_statuspage_ten_minutely():
     )
 
     test_bot(
+        bot_name = "Claude-instant",
+        user_message = "What is 1+2?",
+        expected_reply_substring = "3",
+        bot_name_to_compoenent_id = BOT_NAME_TO_COMPONENT_ID,
+    )
+
+    test_bot(
+        bot_name = "Llama-2-70b",
+        user_message = "What is 1+2?",
+        expected_reply_substring = "3",
+        bot_name_to_compoenent_id = BOT_NAME_TO_COMPONENT_ID,
+    )
+
+    test_bot(
         bot_name = "AllCapsBotDemo",
         user_message = "Who is the 1st US President?",
         expected_reply_substring = "WASHINGTON",
+        bot_name_to_compoenent_id = BOT_NAME_TO_COMPONENT_ID,
+    )
+
+    test_bot(
+        bot_name = "FunctionCallingDemo",
+        user_message = "What is the temperate in Tokyo?",
+        expected_reply_substring = "11",
         bot_name_to_compoenent_id = BOT_NAME_TO_COMPONENT_ID,
     )
 
@@ -176,6 +197,7 @@ def update_statuspage_hourly():
     BOT_NAME_TO_COMPONENT_ID = {}
     for component in get_components().json():
         BOT_NAME_TO_COMPONENT_ID[component["name"]] = component["id"]
+
     test_bot(
         bot_name = "GPT-4-128k-mirror",
         user_message = "What is 1+2",
