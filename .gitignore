@@ -1,6 +1,3 @@
-files_HelpDeskDemo/
 .DS_Store
-node_modules/
 __pycache__/
-*.pkl
-*.csv
+node_modules
