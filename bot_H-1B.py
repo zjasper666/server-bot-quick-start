@@ -10,7 +10,6 @@ How many h1b1 were issued?
 import os
 
 import modal
-
 from fastapi_poe import make_app
 from modal import Stub, asgi_app
 
@@ -208,13 +207,13 @@ Name: QUARTER, type: <class 'numpy.int64'>
 # To print the statistics
 # for column in df.columns:
 #     print(str(df[column].value_counts().head(5)).replace(
-#         "dtype: int64", 
+#         "dtype: int64",
 #         "type: " + str(type(df[column][0]))
 #     ))
 #     print()
 
 
-bot_PythonAgent.CODE_WITH_WRAPPERS = CODE_WITH_WRAPPERS = """\
+bot_PythonAgent.CODE_WITH_WRAPPERS = """\
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.pyplot import savefig
@@ -254,29 +253,27 @@ bot.logit_bias = {
     "446": -2,  # ("
     "493": -2,  # ('
     "19701": -15,  # Sorry
-    "10835": -5, # Ap(ologies)
+    "10835": -5,  # Ap(ologies)
     "5159": -2,  # My (apologies, but I'm)
     "2170": -5,  # As (an AI language model)
     "31140": -10,  # Unfortunately
-    "19173": -10, # ' Unfortunately' 
+    "19173": -10,  # ' Unfortunately'
     "40": -10,  # I('m sorry)
     "663": -3,  # ']
     "7352": 2,  # '].
-    "1473": 1, # ':\n\n'
+    "1473": 1,  # ':\n\n'
 }
 bot.allow_attachments = False
 
 
 stub = Stub("poe-bot-quickstart")
 
-image_bot = (
-    bot_PythonAgent.image_bot.copy_local_file("df.csv", "/root/df.csv")
+image_bot = bot_PythonAgent.image_bot.copy_local_file("df.csv", "/root/df.csv")
+
+bot_PythonAgent.image_exec = bot_PythonAgent.image_exec.copy_local_file(
+    "df.csv", "df.csv"
 )
 
-bot_PythonAgent.image_exec = (
-    bot_PythonAgent.image_exec
-    .copy_local_file("df.csv", "df.csv")
-)
 
 @stub.function(image=image_bot)
 @asgi_app()

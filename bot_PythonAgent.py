@@ -159,9 +159,7 @@ def wrap_session(code, conversation_id):
 class PythonAgentBot(PoeBot):
     prompt_bot = "ChatGPT"
     code_iteration_limit = 3
-    logit_bias = {
-        "21362": -10,  # "!["
-    }
+    logit_bias = {"21362": -10}  # "!["
     allow_attachments = True
 
     async def get_response(
@@ -240,7 +238,9 @@ class PythonAgentBot(PoeBot):
             # upload python script
             with open(f"{request.conversation_id}.py", "w") as f:
                 f.write(wrapped_code)
-            vol.add_local_file(f"{request.conversation_id}.py", f"{request.conversation_id}.py")
+            vol.add_local_file(
+                f"{request.conversation_id}.py", f"{request.conversation_id}.py"
+            )
 
             # execute code
             stub.nfs = modal.NetworkFileSystem.persisted(f"vol-{request.user_id}")

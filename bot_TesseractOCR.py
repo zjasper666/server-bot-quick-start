@@ -18,7 +18,7 @@ import pytesseract
 import requests
 from docx import Document
 from fastapi_poe import PoeBot, make_app
-from fastapi_poe.types import QueryRequest, SettingsResponse, SettingsRequest
+from fastapi_poe.types import QueryRequest, SettingsRequest, SettingsResponse
 from modal import Image, Stub, asgi_app
 from PIL import Image as PILImage
 from sse_starlette.sse import ServerSentEvent

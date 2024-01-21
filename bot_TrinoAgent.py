@@ -118,7 +118,7 @@ class TrinoAgentBot(PoeBot):
         print("user_statement")
         print(user_statement)
 
-        for _ in range(10):   # intentionally error if exceed limits
+        for _ in range(10):  # intentionally error if exceed limits
             current_bot_reply = ""
             async for msg in stream_request(request, self.prompt_bot, request.api_key):
                 if isinstance(msg, MetaMessage):
