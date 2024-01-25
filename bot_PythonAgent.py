@@ -311,10 +311,12 @@ class PythonAgentBot(PoeBot):
                     f = modal.Function.lookup("image-upload-shared", "upload_file")
                     image_url = f.remote(image_data, "image.png")
                     yield PartialResponse(
-                        text=textwrap.dedent(f"\n\n![plot]({image_url})")
+                        text=f"\n\n![plot]({image_url})\n\n"
                     )
                     vol.remove_file("image.png")
 
+            yield self.text_event("\n")
+            
             if image_url:
                 # wishlist - call an API that describes what is going on in the image
                 current_user_simulated_reply += SIMULATED_USER_SUFFIX_IMAGE_FOUND
