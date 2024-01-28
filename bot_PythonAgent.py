@@ -322,7 +322,7 @@ class PythonAgentBot(PoeBot):
                     vol.remove_file("image.png")
 
             yield self.text_event("\n")
-            
+
             if image_data is not None:
                 # wishlist - call an API that describes what is going on in the image
                 current_user_simulated_reply += SIMULATED_USER_SUFFIX_IMAGE_FOUND

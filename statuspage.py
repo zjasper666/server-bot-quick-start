@@ -200,6 +200,13 @@ def update_statuspage_hourly():
         bot_name_to_compoenent_id=BOT_NAME_TO_COMPONENT_ID,
     )
 
+
+@stub.function(image=image, schedule=modal.Period(days=1))
+def update_statuspage_daily():
+    BOT_NAME_TO_COMPONENT_ID = {}
+    for component in get_components().json():
+        BOT_NAME_TO_COMPONENT_ID[component["name"]] = component["id"]
+
     test_bot(
         bot_name="CafeMaid",
         user_message="I want coffee",
