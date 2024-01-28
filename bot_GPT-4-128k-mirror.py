@@ -203,7 +203,7 @@ class EchoBot(PoeBot):
             )
         else:
             stream = client.chat.completions.create(
-                model="gpt-4-1106-preview",
+                model="gpt-4-turbo-preview",
                 messages=openai_messages_no_image,
                 stream=True,
                 max_tokens=4096,

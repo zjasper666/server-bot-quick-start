@@ -166,6 +166,7 @@ class PythonAgentBot(PoeBot):
         self, request: QueryRequest
     ) -> AsyncIterable[PartialResponse]:
         last_message = request.query[-1].content
+        original_message_id = request.message_id
         print("user_message")
         print(last_message)
 
@@ -295,7 +296,7 @@ class PythonAgentBot(PoeBot):
                 current_user_simulated_reply = SIMULATED_USER_REPLY_NO_OUTPUT_OR_ERROR
 
             # upload image and get image url
-            image_url = None
+            image_data = None
             if any("image.png" in str(entry) for entry in vol.listdir("*")):
                 # some roundabout way to check if image file is in directory
                 with open("image.png", "wb") as f:
@@ -306,18 +307,23 @@ class PythonAgentBot(PoeBot):
                 with open("image.png", "rb") as f:
                     image_data = f.read()
 
-                print("len(image_data)", len(image_data))
                 if image_data:
-                    f = modal.Function.lookup("image-upload-shared", "upload_file")
-                    image_url = f.remote(image_data, "image.png")
+                    attachment_upload_response = await self.post_message_attachment(
+                        os.environ["POE_ACCESS_KEY"],
+                        original_message_id,
+                        file_data=image_data,
+                        filename="image.png",
+                        is_inline=True,
+                    )
+                    print("inline_ref", attachment_upload_response.inline_ref)
                     yield PartialResponse(
-                        text=f"\n\n![plot]({image_url})\n\n"
+                        text=f"\n\n![plot][{attachment_upload_response.inline_ref}]\n\n"
                     )
                     vol.remove_file("image.png")
 
             yield self.text_event("\n")
             
-            if image_url:
+            if image_data is not None:
                 # wishlist - call an API that describes what is going on in the image
                 current_user_simulated_reply += SIMULATED_USER_SUFFIX_IMAGE_FOUND
                 if not output and not error:
@@ -343,7 +349,7 @@ class PythonAgentBot(PoeBot):
 
 image_bot = (
     Image.debian_slim()
-    .pip_install("fastapi-poe==0.0.23", "requests==2.28.2")
+    .pip_install("fastapi-poe==0.0.32", "requests==2.28.2")
     .env({"POE_ACCESS_KEY": os.environ["POE_ACCESS_KEY"]})
 )
 
