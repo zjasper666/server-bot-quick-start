@@ -1,9 +1,9 @@
 """
 
-BOT_NAME="GPT-4-128k-mirror"; modal deploy --name $BOT_NAME bot_${BOT_NAME}.py; curl -X POST https://api.poe.com/bot/fetch_settings/$BOT_NAME/$POE_ACCESS_KEY
+BOT_NAME="DollarDivider"; modal deploy --name $BOT_NAME bot_${BOT_NAME}.py; curl -X POST https://api.poe.com/bot/fetch_settings/$BOT_NAME/$POE_ACCESS_KEY
 
 Test message:
-ChatGPT
+Upload a receipt
 
 """
 from __future__ import annotations
@@ -96,6 +96,52 @@ def split_markdown_text_images(
     return interleaved
 
 
+SYSTEM_PROMPT = """
+You will split the bill given the receipt.
+
+Follow these assumptions, unless specified in the conversation otherwise
+- The taxes and tips are split proportionally with the menu price.
+- Each menu item is ordered by one person.
+
+Reply in the following format
+
+Attribute the items to the people. If the names are not specified, use Person 1, Person 2, etc.
+Present the table in the following format.
+
+| Menu Item | Menu Price | Person |
+| --------- | ---------- | ------ |
+| MENU_ITEM | MENU_PRICE | PERSON |
+| MENU_ITEM | MENU_PRICE | PERSON, PERSON |
+
+Do math to check that the sum of menu prices adds up to the menu subtotal.
+
+Calulate the percentage of additional charges by dividing the total price (after tax, tips, etc) with the menu subtotal.
+
+Enumerate for each person to calculate the amount payable.
+
+Do math to check that the sum of amount payable adds up to the total price (which includes tax, tips, etc)
+
+Present the table in the following format.
+
+| Person | Total Menu Price | Amount Payable | Payment |
+| ------ | ---------------- | -------------- | ------- |
+| PERSON | TOTAL_MENU_PRICE | AMOUNT_PAYABLE | [Venmo](https://venmo.com/?txn=charge&amount=AMOUNT_PAYABLE&note=NOTE) |
+| PERSON | TOTAL_MENU_PRICE | AMOUNT_PAYABLE | [Venmo](https://venmo.com/?txn=charge&amount=AMOUNT_PAYABLE&note=NOTE) |
+
+Replace NOTE with the following format (STORE_NAME | MENU_ITEM MENU_PRICE_SHARE | via DollarDivider on Poe).
+- Escape all non-alphanumeric characters with URL encoding
+- Escape whitespace with %E2%80%84 (NEVER use %20)
+- Example: Masa%E2%80%84Sushi%E2%80%84%7C%E2%80%84California%E2%80%84Roll%E2%80%84$12.34%E2%80%84%7C%E2%80%84via%E2%80%84DollarDivider%E2%80%84on%E2%80%84Poe
+
+REPEAT: NEVER USE %20 for URL encoding. NEVER EVER USE %20.
+""".strip()
+
+
+SYSTEM_MESSAGE = {
+    "role": "system", "content": SYSTEM_PROMPT
+}
+
+
 class EchoBot(PoeBot):
     async def get_response(
         self, request: QueryRequest
@@ -149,8 +195,8 @@ class EchoBot(PoeBot):
 
         client = OpenAI()
 
-        openai_messages = []
-        openai_messages_no_image = []
+        openai_messages = [SYSTEM_MESSAGE]
+        openai_messages_no_image = [SYSTEM_MESSAGE]
         conversation_has_image = False
         for query in request.query:
             if query.role == "bot":
@@ -200,6 +246,7 @@ class EchoBot(PoeBot):
                 messages=openai_messages,
                 stream=True,
                 max_tokens=4096,
+                # logit bias is not working
             )
         else:
             stream = client.chat.completions.create(
@@ -217,7 +264,7 @@ class EchoBot(PoeBot):
         return SettingsResponse(
             server_bot_dependencies={"GPT-4": 1},
             allow_attachments=True,
-            introduction_message="",
+            introduction_message="Please upload your receipt.",
         )
 
 
@@ -225,7 +272,7 @@ bot = EchoBot()
 
 image = (
     Image.debian_slim()
-    .pip_install("fastapi-poe==0.0.23", "openai==1.1.0", "tiktoken")
+    .pip_install("fastapi-poe==0.0.32", "openai==1.1.0", "tiktoken")
     .env(
         {
             "OPENAI_API_KEY": os.environ["OPENAI_API_KEY"],
