@@ -220,6 +220,7 @@ class EchoBot(PoeBot):
                     }
                 )
                 for attachment in query.attachments:
+                    print(attachment.content_type)
                     if attachment.content_type.startswith("image/"):
                         openai_messages[-1]["content"].append(
                             {"type": "image_url", "image_url": {"url": attachment.url}}
@@ -229,6 +230,9 @@ class EchoBot(PoeBot):
                         calls = stub.my_dict[dict_key]
                         calls.append((current_time, 1000))
                         stub.my_dict[dict_key] = calls
+                    else:
+                        yield PartialResponse(text=f"Attaching {attachment.name} is not supported.\n\n")
+
             if query.role == "system":
                 openai_messages_no_image.append(
                     {"role": query.role, "content": query.content}
@@ -255,6 +259,8 @@ class EchoBot(PoeBot):
                 stream=True,
                 max_tokens=4096,
             )
+
+        yield PartialResponse(text="", is_replace_response=True)
 
         for chunk in stream:
             if chunk.choices[0].delta.content is not None:
