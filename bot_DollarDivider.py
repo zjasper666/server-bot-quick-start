@@ -101,7 +101,7 @@ You will split the bill given the receipt.
 
 Follow these assumptions, unless specified in the conversation otherwise
 - The taxes and tips are split proportionally with the menu price.
-- Each menu item is ordered by one person.
+- Each person only orders one item (even if we see multiple of the same item being ordered).
 
 Reply in the following format
 
@@ -113,15 +113,15 @@ Present the table in the following format.
 | MENU_ITEM | MENU_PRICE | PERSON |
 | MENU_ITEM | MENU_PRICE | PERSON, PERSON |
 
-Do math to check that the sum of menu prices adds up to the menu subtotal.
+Do math to check that the sum of menu prices adds up to the menu subtotal. Restart from scratch if it does not add up.
 
 Calulate the percentage of additional charges by dividing the total price (after tax, tips, etc) with the menu subtotal.
 
-Enumerate for each person to calculate the amount payable.
+Enumerate for each person to calculate the amount payable. Restart from scratch if it does not add up.
 
-Do math to check that the sum of amount payable adds up to the total price (which includes tax, tips, etc)
+Do math to check that the sum of amount payable adds up to the total price (which includes tax, tips, etc).
 
-Present the table in the following format.
+Present the table in the following format. Do not do math in the table, do it before presenting the table.
 
 | Person | Total Menu Price | Amount Payable | Payment |
 | ------ | ---------------- | -------------- | ------- |
