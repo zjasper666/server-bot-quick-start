@@ -95,7 +95,10 @@ class GPT35TurboAllCapsBot(fp.PoeBot):
             yield msg.model_copy()
 
     async def get_settings(self, setting: fp.SettingsRequest) -> fp.SettingsResponse:
-        return fp.SettingsResponse(server_bot_dependencies={"GPT-3.5-Turbo": 1})
+        return fp.SettingsResponse(
+            server_bot_dependencies={"GPT-3.5-Turbo": 1},
+            introduction_message="Say 'start' to get the Chinese word.",
+        )
 
 
 REQUIREMENTS = ["fastapi-poe==0.0.24", "pandas"]
