@@ -159,6 +159,13 @@ def update_statuspage_ten_minutely():
     )
 
     test_bot(
+        bot_name="Mixtral-8x7B-Chat",
+        user_message="What is 1+2?",
+        expected_reply_substring="3",
+        bot_name_to_compoenent_id=BOT_NAME_TO_COMPONENT_ID,
+    )
+
+    test_bot(
         bot_name="AllCapsBotDemo",
         user_message="Who is the 1st US President?",
         expected_reply_substring="WASHINGTON",
@@ -174,10 +181,18 @@ def update_statuspage_ten_minutely():
 
     test_bot(
         bot_name="PythonAgent",
-        user_message="make scatter plot",
-        expected_reply_substring="![plot](https://res.cloudinary.com",
+        user_message="Calculate 3 to the power of 1009 modulo 65537",
+        expected_reply_substring="32057",
         bot_name_to_compoenent_id=BOT_NAME_TO_COMPONENT_ID,
     )
+
+    # currently there is issues with testing attachment responses
+    # test_bot(
+    #     bot_name="PythonAgent",
+    #     user_message="make scatter plot",
+    #     expected_reply_substring="![plot]",
+    #     bot_name_to_compoenent_id=BOT_NAME_TO_COMPONENT_ID,
+    # )
 
 
 @stub.function(image=image, schedule=modal.Period(hours=1))
