@@ -185,7 +185,9 @@ class EchoBot(PoeBot):
                         calls.append((current_time, 1000))
                         stub.my_dict[dict_key] = calls
                     else:
-                        yield PartialResponse(text=f"Attaching {attachment.name} is not supported.\n\n")
+                        yield PartialResponse(
+                            text=f"Attaching {attachment.name} is not supported.\n\n"
+                        )
 
             if query.role == "system":
                 openai_messages_no_image.append(
