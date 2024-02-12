@@ -51,15 +51,26 @@ Only reply the user's text.
 """.strip()
 
 
-def markdown_diff(str1, str2):
-    diff = difflib.ndiff(str1.split(), str2.split())
+def markdown_diff(str1, str2, is_incomplete=False):
+    diff = list(difflib.ndiff(str1.split(), str2.split()))
     result = []
+
+    idx = len(diff) - 1
+    while is_incomplete and idx >= 0:
+        if diff[idx][0] == "-":
+            diff[idx] = "  " + diff[idx][2:]
+            idx -= 1
+        else:
+            break
+
+    if not is_incomplete:
+        print(diff)
 
     for token in diff:
         if token[0] == "-":
-            result.append(f"~~{token[2:]}~~")  # strikethrough
+            result.append(f"""\[ \\textcolor{{red}}{{\\texttt{{{token[2:]}}}}} \]""")
         elif token[0] == "+":
-            result.append(f"**{token[2:]}**")  # bold
+            result.append(f"""\[ \\textcolor{{green}}{{\\texttt{{{token[2:]}}}}} \]""")
         elif token[0] == " ":
             result.append(token[2:])
 
@@ -89,9 +100,11 @@ class EchoBot(PoeBot):
                 yield self.replace_response_event(msg.text)
             else:
                 character_reply += msg.text
-                rendered_text = markdown_diff(user_statement, character_reply)
+                rendered_text = markdown_diff(user_statement, character_reply, is_incomplete=True)
                 yield self.replace_response_event(rendered_text)
 
+        rendered_text = markdown_diff(user_statement, character_reply, is_incomplete=False)
+        yield self.replace_response_event(rendered_text)
         print("character_reply", character_reply)
 
     async def get_settings(self, setting: SettingsRequest) -> SettingsResponse:
