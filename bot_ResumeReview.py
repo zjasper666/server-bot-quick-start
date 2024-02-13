@@ -7,6 +7,7 @@ Test message:
 https://pjreddie.com/static/Redmon%20Resume.pdf
 
 """
+
 from __future__ import annotations
 
 import os

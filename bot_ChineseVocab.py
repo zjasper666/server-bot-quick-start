@@ -3,6 +3,7 @@
 BOT_NAME="ChineseVocab"; modal deploy --name $BOT_NAME bot_${BOT_NAME}.py; curl -X POST https://api.poe.com/bot/fetch_settings/$BOT_NAME/$POE_ACCESS_KEY
 
 """
+
 from __future__ import annotations
 
 from typing import AsyncIterable
@@ -14,16 +15,18 @@ from modal import Dict, Image, Stub, asgi_app
 stub = Stub("poe-bot-ChineseVocab")
 stub.my_dict = Dict.new()
 
-df = pd.read_csv("chinese_words.csv")  # downloaded from wikipedia
+df = pd.read_csv("chinese_words.csv")
+# using https://github.com/krmanik/HSK-3.0-words-list/tree/main/HSK%20List
 # see also https://www.mdbg.net/chinese/dictionary?page=cedict
 
 df = df[df["simplified"].str.len() > 1]
 
 TEMPLATE_STARTING_REPLY = """
-Your word is {word}
+Your word is
 
-Please provide the pinyin pronounication and meaning of the word.
-Format your pinyin in this way: ni2 hao3
+# {word}
+
+Please provide the **pinyin** and a **meaning** of the word.
 """.strip()
 
 SYSTEM_PROMPT = """
@@ -40,7 +43,7 @@ The meaning is {meaning}
 Rules
 - If the pronounciation is not provided, ask for the pronounciation from the user.
 - If the the user provides the pinyin without the tune (e.g. ni hao), ask the user for the tones. DO NOT PROVIDE THE TONES.
-    - An example follow-up would be "Please provide the tones for <user input>. "
+    - An example follow-up would be "Please provide the tones for <user input>. Format your pinyin in this way: ni2 hao3"
 - If the meaning is not provided, ask for the meaning from the user. DO NOT PROVIDE THE MEANING.
 - If the meaning is wrong or ambiguous, ask the user to try again. DO NOT PROVIDE THE MEANING.
 - ONLY after both the correct pinyin with tones and meaning is provided, reveal the correct pinyin and pronounciation.
@@ -59,7 +62,7 @@ class GPT35TurboAllCapsBot(fp.PoeBot):
     async def get_response(
         self, request: fp.QueryRequest
     ) -> AsyncIterable[fp.PartialResponse]:
-        response_content_type = "text/plain"
+        response_content_type = "text/markdown"
         yield fp.MetaResponse(
             text="",
             content_type=response_content_type,
@@ -88,7 +91,7 @@ class GPT35TurboAllCapsBot(fp.PoeBot):
                 ),
             }
         ] + request.query
-        request.logit_bias = {"13080": 10, "308": 5, "2483": 5}  # " ni"  # " n"  # "i2"
+        request.logit_bias = {"13080": 2, "308": 1, "2483": 1}  # " ni"  # " n"  # "i2"
         async for msg in fp.stream_request(
             request, "GPT-3.5-Turbo", request.access_key
         ):

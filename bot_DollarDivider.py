@@ -6,6 +6,7 @@ Test message:
 Upload a receipt
 
 """
+
 from __future__ import annotations
 
 import os

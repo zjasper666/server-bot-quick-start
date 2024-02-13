@@ -6,6 +6,7 @@ Test message:
 Please corect this massage.
 
 """
+
 from __future__ import annotations
 
 import difflib
@@ -68,9 +69,11 @@ def markdown_diff(str1, str2, is_incomplete=False):
 
     for token in diff:
         if token[0] == "-":
-            result.append(f"""\[ \\textcolor{{red}}{{\\texttt{{{token[2:]}}}}} \]""")
+            result.append(f"""\\[ \\textcolor{{red}}{{\\texttt{{{token[2:]}}}}} \\]""")
         elif token[0] == "+":
-            result.append(f"""\[ \\textcolor{{green}}{{\\texttt{{{token[2:]}}}}} \]""")
+            result.append(
+                f"""\\[ \\textcolor{{green}}{{\\texttt{{{token[2:]}}}}} \\]"""
+            )
         elif token[0] == " ":
             result.append(token[2:])
 
@@ -100,10 +103,14 @@ class EchoBot(PoeBot):
                 yield self.replace_response_event(msg.text)
             else:
                 character_reply += msg.text
-                rendered_text = markdown_diff(user_statement, character_reply, is_incomplete=True)
+                rendered_text = markdown_diff(
+                    user_statement, character_reply, is_incomplete=True
+                )
                 yield self.replace_response_event(rendered_text)
 
-        rendered_text = markdown_diff(user_statement, character_reply, is_incomplete=False)
+        rendered_text = markdown_diff(
+            user_statement, character_reply, is_incomplete=False
+        )
         yield self.replace_response_event(rendered_text)
         print("character_reply", character_reply)
 

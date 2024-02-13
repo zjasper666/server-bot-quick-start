@@ -6,6 +6,7 @@ Test message:
 Start
 
 """
+
 from __future__ import annotations
 
 from typing import AsyncIterable
