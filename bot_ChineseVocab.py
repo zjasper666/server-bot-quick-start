@@ -6,6 +6,7 @@ BOT_NAME="ChineseVocab"; modal deploy --name $BOT_NAME bot_${BOT_NAME}.py; curl 
 
 from __future__ import annotations
 
+import unicodedata
 from typing import AsyncIterable
 
 import fastapi_poe as fp
@@ -29,148 +30,88 @@ The word sampled from HSK level {level} is
 Please provide the **pinyin** and a **meaning** of the word.
 """.strip()
 
-SYSTEM_PROMPT = """
+SYSTEM_TABULATION_PROMPT = """
 You will test the user on the definition of a Chinese word.
 
 The user will need to provide the pinyin pronounication and meaning of the word.
 The pinyin provided needs to have the tones annotated.
 
 The word is {word}
-The correct pronounication is {pinyin}
+The reference pinyin is {pinyin}
 The reference meaning is {meaning}
-(The reference meaning is not exhaustive. Accept the user answer if it is correct, even it is not in the reference meaning.)
 
-After providing the word, your FIRST task is to obtain the pinyin and meaning from the user.
-You will keep asking for the pinyin or the meaning until the user has provided each of them somewhere in the conversation.
-- If the the user provides the pinyin without the tune (e.g. ni hao), ask the user for the tones.
-    - You ACCEPT numerical tones like ni2 hao3
-    - An example follow-up would be "Please provide the tones for ni hao".
-    - DO NOT ASK FOR THE TONES IF THE USER HAS PROVIDED THE TONES (e.g. ni2 hao3)
-    - DO NOT PROVIDE THE ANSWER. USE "ni2 hao3" AS THE EXAMPLE.
+The user is expected to reply the pinyin and meaning.
 
+When you receive the pinyin and meaning, reply with the following table. DO NOT ADD ANYTHING ELSE.
 
-THESE ARE SOME EXAMPLES OF CONVERSATION FLOW THAT YOU SHOULD FOLLOW
+For example, if the user replies "mei2 shou1 confiscate", your reply will be
 
-<conversation>
-
-System:
-The word is 没收
-The correct pronounication is mòshōu
-The meaning is to confiscate, to seize
-
-Bot:
-The word sampled from HSK level 6 is
-
-# 没收
-
-Please provide the pinyin and a meaning of the word.
-
-User:
-mei shou confiscate
-
-Bot:
-Please provide the tones for "mei shou"
-
-User:
-mei2 shou1
-
-Bot: (ONLY AFTER THE USER HAS PROVIDED BOTH THE PINYIN AND THE MEANING)
 |             | Pinyin      | Meaning                 |
 | ----------- | ----------- | ----------------------- |
 | Your answer | mei2 shou1  | confiscate              |
-| Reference   | mòshōu      | to confiscate, to seize |
-
-The pinyin you provided is incorrect, but the meaning is correct.
-
-</conversation>
-
-NOTE: ONLY ASK FOR THE TONES IF THE USER DID NOT PROVIDE THE TONE. YOU ACCEPT NUMERICAL TONES LIKE mei2 shou1
-
-<conversation>
-
-System:
-The word is 没收
-The correct pronounication is mòshōu
-The meaning is to confiscate, to seize
-
-Bot:
-The word sampled from HSK level 6 is
-
-# 没收
-
-Please provide the pinyin and a meaning of the word.
-
-User:
-confiscate mo4 shou1
-
-Bot: (ONLY AFTER THE USER HAS PROVIDED BOTH THE PINYIN AND THE MEANING)
-|             | Pinyin    | Meaning                 |
-| ----------- | --------- | ----------------------- |
-| Your answer | mo4 shou1 | confiscate              |
-| Reference   | mòshōu    | to confiscate, to seize |
-
-You have provided the correct pinyin and meaning.
-
-</conversation>
-
-NOTE: ACCEPT NUMERICAL PINYIN. IF THE REFERENCE PINYIN IS mòshōu, mo4 shou1 IS CORRECT.
-NOTE: IF THE USER HAS PROVIDED THE TONES, DO NOT ASK FOR THE TONES.
-
-<conversation>
-
-Please provide the pinyin and a meaning of the word.
-
-User:
-mei2 shou1 did not keep
-
-Bot: (ONLY AFTER THE USER HAS PROVIDED BOTH THE PINYIN AND THE MEANING)
-|             | Pinyin      | Meaning                 |
-| ----------- | ----------- | ----------------------- |
-| Your answer | mei2 shou1  | did not keep            |
-| Reference   | mòshōu      | to confiscate, to seize |
-
-The pinyin and meaning you provided are incorrect.
-
-</conversation>
-
-NOTE: IF THE USER HAS PROVIDED THE TONES, DO NOT ASK FOR THE TONES.
+| Reference   | mo4 shou1   | to confiscate, to seize |
 
 REMINDER
-- DO NOT GIVE THE ANSWER UNLESS EXPLICTLY ASKED BY THE USER.
-- IF THE USER HAS PROVIDED THE TONES, DO NOT ASK FOR THE TONES.
-- The reference meaning is not exhaustive. Accept the user answer if it is correct, even it is not in the reference meaning.
-- ACCEPT NUMERICAL PINYIN. IF THE REFERENCE PINYIN IS mòshōu, mo4 shou1 IS CORRECT.
+- ALWAYS REPLY WITH THE TABLE.
+- DO NOT ADD ANYTHING ELSE AFTER THE TABLE.
 """
 
 JUDGE_SYSTEM_PROMPT = """
-Read the following reply.
+You will judge the whether the user (in the row "your answer") has provided the correct pinyin, tone and meaning.
 
 {reply}
 
-Reply with exactly one of the following
-- The pinyin is correct. The meaning is correct.
-- The pinyin is incorrect. The meaning is correct.
-- The meaning is correct. The pinyin is incorrect. 
-- The meaning is incorrect. The pinyin is incorrect. 
+You will start your reply with exactly one of, only based on the alphabets provided, ignoring the numerical tones
+
+- The pinyin is correct.
+- The pinyin is incorrect.
+- The pinyin is missing.
+
+You will exactly reply with one of, based on the numerical tone provided
+
+- The numerical tone is correct.
+- The numerical tone is incorrect
+- The numerical tone is missing.
+
+You will exactly reply with one of, based on the meaning provided
+
+- The meaning is correct.
+- The meaning is missing.
+- The meaning is incorrect.
+
+REMINDER
+- Follow the reply template.
+- Do not add anything else in your reply.
+- The reference meaning is not exhaustive. Accept the user's answer if it is correct, even it is not in the reference meaning.
 """
 
 
 def get_user_level_key(user_id):
     return f"ChineseVocab-level-{user_id}"
 
+
 def get_conversation_word_key(conversation_id):
     return f"ChineseVocab-word-{conversation_id}"
 
+
 def get_conversation_submitted_key(conversation_id):
     return f"ChineseVocab-submitted-{conversation_id}"
+
+
+def to_tone_number(s):
+    table = {0x304: ord("1"), 0x301: ord("2"), 0x30C: ord("3"), 0x300: ord("4")}
+    return unicodedata.normalize("NFD", s).translate(table)
+
 
 class GPT35TurboAllCapsBot(fp.PoeBot):
     async def get_response(
         self, request: fp.QueryRequest
     ) -> AsyncIterable[fp.PartialResponse]:
-        user_level_key = get_user_level_key(request.conversation_id)
+        user_level_key = get_user_level_key(request.user_id)
         conversation_word_key = get_conversation_word_key(request.conversation_id)
-        conversation_submitted_key = get_conversation_submitted_key(request.conversation_id)
+        conversation_submitted_key = get_conversation_submitted_key(
+            request.conversation_id
+        )
 
         if conversation_submitted_key not in stub.my_dict:
             yield fp.MetaResponse(
@@ -183,6 +124,8 @@ class GPT35TurboAllCapsBot(fp.PoeBot):
 
         if user_level_key in stub.my_dict:
             level = stub.my_dict[user_level_key]
+            level = max(1, level)
+            level = min(7, level)
         else:
             level = 3
             stub.my_dict[user_level_key] = level
@@ -190,54 +133,56 @@ class GPT35TurboAllCapsBot(fp.PoeBot):
         if conversation_word_key in stub.my_dict:
             word_info = stub.my_dict[conversation_word_key]
         else:
-            word_info = df[df["level"] == level].sample(n=1).to_dict(orient="records")[0]
+            word_info = (
+                df[(df["level"] == level) & (df["exclude"] == False)]
+                .sample(n=1)
+                .to_dict(orient="records")[0]
+            )
             stub.my_dict[conversation_word_key] = word_info
             yield self.text_event(
-                TEMPLATE_STARTING_REPLY.format(word=word_info["simplified"], level=word_info["level"])
+                TEMPLATE_STARTING_REPLY.format(
+                    word=word_info["simplified"], level=word_info["level"]
+                )
             )
             return
 
         request.query = [
             {
                 "role": "system",
-                "content": SYSTEM_PROMPT.format(
+                "content": SYSTEM_TABULATION_PROMPT.format(
                     word=word_info["simplified"],
-                    pinyin=word_info["pinyin"],
+                    pinyin=word_info["numerical_pinyin"],
                     meaning=word_info["translation"],
                 ),
             }
         ] + request.query
-        request.logit_bias = {"13080": 2, "308": 1, "2483": 1}  # " ni"  # " n"  # "i2"
+        request.logit_bias = {"2746": -5, "36821": -10}  # "If"  # " |\n\n"
 
         bot_reply = ""
-        async for msg in fp.stream_request(
-            request, "ChatGPT", request.access_key
-        ):
+        async for msg in fp.stream_request(request, "ChatGPT", request.access_key):
             bot_reply += msg.text
             yield msg.model_copy()
+
+        yield self.text_event("\n\n")
 
         if "-----" in bot_reply:
             stub.my_dict[conversation_submitted_key] = True
             request.query = [
-                {
-                    "role": "user",
-                    "content": JUDGE_SYSTEM_PROMPT.format(
-                        reply=bot_reply
-                    ),
-                }
+                {"role": "user", "content": JUDGE_SYSTEM_PROMPT.format(reply=bot_reply)}
             ]
             judge_reply = ""
-            async for msg in fp.stream_request(
-                request, "ChatGPT", request.access_key
-            ):
+            async for msg in fp.stream_request(request, "ChatGPT", request.access_key):
                 judge_reply += msg.text
-            if "The pinyin is correct. The meaning is correct." in judge_reply:
-                stub.my_dict[user_level_key] += 1
-            elif "The pinyin is incorrect. The meaning is incorrect." in judge_reply:
-                stub.my_dict[user_level_key] -= 1
-            else:
-                pass        
+                yield self.text_event(msg.text)
 
+            if (
+                "pinyin is correct" in judge_reply
+                and "tone is correct" in judge_reply
+                and "meaning is correct" in judge_reply
+            ):
+                stub.my_dict[user_level_key] = stub.my_dict[user_level_key] + 1
+            elif judge_reply.count("missing") >= 3:
+                stub.my_dict[user_level_key] = stub.my_dict[user_level_key] - 1
 
     async def get_settings(self, setting: fp.SettingsRequest) -> fp.SettingsResponse:
         return fp.SettingsResponse(
