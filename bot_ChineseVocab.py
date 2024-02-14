@@ -11,6 +11,7 @@ from typing import AsyncIterable
 
 import fastapi_poe as fp
 import pandas as pd
+from fastapi_poe.types import PartialResponse
 from modal import Dict, Image, Stub, asgi_app
 
 stub = Stub("poe-bot-ChineseVocab")
@@ -73,7 +74,7 @@ You will exactly reply with one of, based on the numerical tone provided
 - The numerical tone is incorrect
 - The numerical tone is missing.
 
-You will exactly reply with one of, based on the meaning provided
+You will exactly reply with one of
 
 - The meaning is correct.
 - The meaning is missing.
@@ -82,7 +83,8 @@ You will exactly reply with one of, based on the meaning provided
 REMINDER
 - Follow the reply template.
 - Do not add anything else in your reply.
-- The reference meaning is not exhaustive. Accept the user's answer if it is correct, even it is not in the reference meaning.
+- We consider the meaning correct if it matches any of the reference meaning
+- The reference meaning is not exhaustive. Accept the user's answer if it is correct, even it is not in the reference meaning
 """
 
 
@@ -112,6 +114,7 @@ class GPT35TurboAllCapsBot(fp.PoeBot):
         conversation_submitted_key = get_conversation_submitted_key(
             request.conversation_id
         )
+        print(request.query[-1].content)
 
         if conversation_submitted_key not in stub.my_dict:
             yield fp.MetaResponse(
@@ -156,6 +159,7 @@ class GPT35TurboAllCapsBot(fp.PoeBot):
                 ),
             }
         ] + request.query
+        request.temperature = 0
         request.logit_bias = {"2746": -5, "36821": -10}  # "If"  # " |\n\n"
 
         bot_reply = ""
@@ -183,6 +187,15 @@ class GPT35TurboAllCapsBot(fp.PoeBot):
                 stub.my_dict[user_level_key] = stub.my_dict[user_level_key] + 1
             elif judge_reply.count("missing") >= 3:
                 stub.my_dict[user_level_key] = stub.my_dict[user_level_key] - 1
+
+            word = word_info["simplified"]
+            yield PartialResponse(
+                text=f"What are some ways to use {word} in a sentence?",
+                is_suggested_reply=True,
+            )
+            yield PartialResponse(
+                text=f"What are some words related to {word}?", is_suggested_reply=True
+            )
 
     async def get_settings(self, setting: fp.SettingsRequest) -> fp.SettingsResponse:
         return fp.SettingsResponse(

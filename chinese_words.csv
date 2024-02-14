@@ -270,15 +270,15 @@ traditional,simplified,pinyin,translation,level,numerical_pinyin,pinyin_check,ex
 你們,你们,nǐmen,"you, you (plural), you-all",1,ni3 men,nǐmen,False
 您,您,nín,you,1,nin2,nín,False
 牛奶,牛奶,niúnǎi,cow's milk,1,niu2 nai3,niúnǎi,False
-女,女,nǚ,"girl, female, woman, neodymium, hen, daughter, beaver, creature",1,nu:3,nǚ,False
+女,女,nǚ,"girl, female, woman, neodymium, hen, daughter, beaver, creature",1,nv3,nǚ,False
 年,年,nián,year,1,nian2,nián,False
-女孩兒,女孩儿,nǚháir,"girl, erhua variant of 女孩[nu:3 hai2]",1,nu:3 hai2 r,nǚháir,False
-女兒,女儿,nǚér,"daughter, girl",1,nu:3 er2,nǚér,False
-女生,女生,nǚshēng,"schoolgirl, girl student, female student, female, girl, woman student, co-ed",1,nu:3 sheng1,nǚshēng,False
-女朋友,女朋友,nǚpéngyou,"jane, girl, girl friend, lady friend, girlfriend, amie",1,nu:3 peng2 you,nǚpéngyou,False
+女孩兒,女孩儿,nǚháir,"girl, erhua variant of 女孩[nu:3 hai2]",1,nv3 hai2 r,nǚháir,False
+女兒,女儿,nǚér,"daughter, girl",1,nv3 er2,nǚér,False
+女生,女生,nǚshēng,"schoolgirl, girl student, female student, female, girl, woman student, co-ed",1,nv3 sheng1,nǚshēng,False
+女朋友,女朋友,nǚpéngyou,"jane, girl, girl friend, lady friend, girlfriend, amie",1,nv3 peng2 you,nǚpéngyou,False
 旁邊,旁边,pángbiān,"by the side of, side, adjacency, near by",1,pang2 bian1,pángbiān,False
 跑,跑,pǎo,"travel, race, be away, escape, course, run errands, skirr, double, walk, be away/off, run away, be off, run about doing sth., run, drive, paw the earth, run about doing ..., ride, leg",1,pao3,pǎo,False
-女人,女人,nǚren,"jade, crumpet, female, female person, Gill, bitch, chick, fair, squaw, womenfolk, adult female, doll, momma, wench, skirt, womankind, girl, jill, wife, broad, petticoat, sister, woman, bimbo, bird, jane, she, hen, hairpin, dame, women",1,nu:3 ren2,nǚrén,True
+女人,女人,nǚren,"jade, crumpet, female, female person, Gill, bitch, chick, fair, squaw, womenfolk, adult female, doll, momma, wench, skirt, womankind, girl, jill, wife, broad, petticoat, sister, woman, bimbo, bird, jane, she, hen, hairpin, dame, women",1,nv3 ren2,nǚrén,True
 朋友,朋友,péngyou,"amigo, connections, kith, friend, boy, crony, ami, boy/girl friend, companion, mate, boy friend or girl friend, compadre, boy friend, Mac, paisano, matey, old_boy, sport, folks, pard, hearty, Kamerad, cocker, cobber, girl friend, pardner, company",1,peng2 you,péngyou,False
 票,票,piào,"ticket, ballot, note",1,piao4,piào,False
 七,七,qī,det.: seven,1,qi1,qī,False
@@ -857,13 +857,13 @@ traditional,simplified,pinyin,translation,level,numerical_pinyin,pinyin_check,ex
 流利,流利,liúlì,fluent,2,liu2 li4,liúlì,False
 流,流,liú,"spread, circulate",2,liu2,liú,False
 流行,流行,liúxíng,"prevalent, popular, fashionable, in vogue, spread, rage (of contagious disease)",2,liu2 xing2,liúxíng,False
-旅客,旅客,lǚkè,"journeyer, guest, hotel guest, traveler, traffic, wayfarer, viator, rider, traveller, passer, passenger",2,lu:3 ke4,lǚkè,False
-旅行,旅行,lǚxíng,"travel, journey, tour",2,lu:3 xing2,lǚxíng,False
-綠,绿,lǜ,green,2,lu:4,lǜ,False
-綠色,绿色,lǜsè,"verdure, green, greenness, green color, verdancy, bice, virescence, vert, pistachio, viridity",2,lu:4 se4,lǜsè,False
+旅客,旅客,lǚkè,"journeyer, guest, hotel guest, traveler, traffic, wayfarer, viator, rider, traveller, passer, passenger",2,lv3 ke4,lǚkè,False
+旅行,旅行,lǚxíng,"travel, journey, tour",2,lv3 xing2,lǚxíng,False
+綠,绿,lǜ,green,2,lv4,lǜ,False
+綠色,绿色,lǜsè,"verdure, green, greenness, green color, verdancy, bice, virescence, vert, pistachio, viridity",2,lv4 se4,lǜsè,False
 路邊,路边,lùbiān,"curb, roadside, wayside",2,lu4 bian1,lùbiān,False
 賣,卖,mài,"bring, parade, prostitute, make living at, go, sell out, show off, negotiate, exert to the utmost, tout, not spare, deal, betray, make living by, at, sell, make living by/at, betrayal, trade, fetch, market, bring in",2,mai4,mài,False
-旅遊,旅游,lǚyóu,"trip, journey, tourism, travel, tour, to travel",2,lu:3 you2,lǚyóu,False
+旅遊,旅游,lǚyóu,"trip, journey, tourism, travel, tour, to travel",2,lv3 you2,lǚyóu,False
 滿意,满意,mǎnyì,"satisfy, well-pleasing, pleased, satisfied",2,man3 yi4,mǎnyì,False
 貓,猫,māo,"pussycat, puss, malkin, cat, kitty, tabby, felid, feline, true cat, pussy",2,mao1,māo,False
 米,米,mǐ,"rice, shelled/husked seed",2,mi3,mǐ,False
@@ -1719,10 +1719,10 @@ traditional,simplified,pinyin,translation,level,numerical_pinyin,pinyin_check,ex
 另外,另外,lìngwài,"conj.: in addition, besides, moreover",3,ling4 wai4,lìngwài,False
 錄,录,lù,"surname Lu, diary, record, to hit, to copy",3,lu4,lù,False
 路線,路线,lùxiàn,"track, path, cart track, way of life, itinerary, route, cartroad, course, road, channel, line, way, routeway, pipeline, curriculum",3,lu4 xian4,lùxiàn,False
-旅館,旅馆,lǚguǎn,"gasthaus, caravanserai, nonresident, roadhouse, hotel, lodge, hostler, hostel, fonda, ordinary, inn, hostelry",3,lu:3 guan3,lǚguǎn,False
+旅館,旅馆,lǚguǎn,"gasthaus, caravanserai, nonresident, roadhouse, hotel, lodge, hostler, hostel, fonda, ordinary, inn, hostelry",3,lv3 guan3,lǚguǎn,False
 錄音,录音,lùyīn,record sound,3,lu4 yin1,lùyīn,False
-旅行社,旅行社,lǚxíngshè,"a tourist agency, travel_agency, a travel agency, travel service/agent, travel service, travel agent, travel agency",3,lu:3 xing2 she4,lǚxíngshè,False
-綠茶,绿茶,lǜchá,green tea,3,lu:4 cha2,lǜchá,False
+旅行社,旅行社,lǚxíngshè,"a tourist agency, travel_agency, a travel agency, travel service/agent, travel service, travel agent, travel agency",3,lv3 xing2 she4,lǚxíngshè,False
+綠茶,绿茶,lǜchá,green tea,3,lv4 cha2,lǜchá,False
 落後,落后,luò hòu,fall/lay behind,3,luo4 hou4,luòhòu,False
 麻煩,麻烦,máfan,"trouble sb., bother",3,ma2 fan,máfan,False
 滿足,满足,mǎnzú,"fulfill, fit, cope with, fill, be satisfied/contented, gloat, contented, arrive, be satisfied, satisfy, sate, gratify, serve, meet, appease, replete, supply, satisfied, fulfill, suffice, assuage, satiate, content, be contented, conform to, suit, match",3,man3 zu2,mǎnzú,False
@@ -1773,7 +1773,7 @@ traditional,simplified,pinyin,translation,level,numerical_pinyin,pinyin_check,ex
 牛,牛,niú,"ox, cattle, cow",3,niu2,niú,False
 農村,农村,nóngcūn,"country, village, countryside, rural area",3,nong2 cun1,nóngcūn,False
 農業,农业,nóngyè,"farm, farming, geoponics, husbandry, agricultural, plow, agriculture",3,nong2 ye4,nóngyè,False
-女子,女子,nǚzǐ,"lady, female, femme, young lady, adult female, missy, young woman, fem, moll, womankind, fille, damsel, girl, miss, woman, wren, blade",3,nu:3 zi3,nǚzǐ,False
+女子,女子,nǚzǐ,"lady, female, femme, young lady, adult female, missy, young woman, fem, moll, womankind, fille, damsel, girl, miss, woman, wren, blade",3,nv3 zi3,nǚzǐ,False
 暖和,暖和,nuǎnhuo,"warm, nice and warm",3,nuan3 huo,nuǎnhuo,False
 怕,怕,pà,"I'm afraid, dread, funk, I suppose, be afraid of, fear",3,pa4,pà,False
 拍,拍,pāi,"clap, pat, lick sb.'s boots",3,pai1,pāi,False
@@ -2209,7 +2209,7 @@ traditional,simplified,pinyin,translation,level,numerical_pinyin,pinyin_check,ex
 追,追,zhuī,"reminiscence, to pursue, course, reminisce, trace, chase after, recall, follow, chase, pursue, go after, to chase after, look into, pursuit, heel, chevy, find out, get to the bottom of, seek, run after",3,zhui1,zhuī,False
 資金,资金,zījīn,"principal_sum, fund, bankroll, finance, coffer, ante, grubstake, munition, wherewithal, capital, working capital",3,zi1 jin1,zījīn,False
 自從,自从,zìcóng,since,3,zi4 cong2,zìcóng,False
-子女,子女,zǐnǚ,"sons and daughters, children",3,zi3 nu:3,zǐnǚ,False
+子女,子女,zǐnǚ,"sons and daughters, children",3,zi3 nv3,zǐnǚ,False
 自動,自动,zìdòng,automatic,3,zi4 dong4,zìdòng,False
 自然,自然,zìran,natural world,3,zi4 ran2,zìrán,True
 自覺,自觉,zìjué,be conscious/aware,3,zi4 jue2,zìjué,False
@@ -2447,7 +2447,7 @@ traditional,simplified,pinyin,translation,level,numerical_pinyin,pinyin_check,ex
 發燒,发烧,fāshāo,"fever, kindle, feverish, temperature, run a temperature, run a fever, have a fever, have a temperature",4,fa1 shao1,fāshāo,False
 法,法,fǎ,"law, method, way, mode, standard, model, legalists, Legalist School, Buddhist doctrine, dharma, magic arts",4,fa3,fǎ,False
 法官,法官,fǎguān,"sentencer, Bench, judiciary, judgeship, bench, tippet, wig, justice, judicature, magistrate, court, judge, jurist, recorder, hakim, justicer, judgship",4,fa3 guan1,fǎguān,False
-法律,法律,fǎlǜ,"constitution, juridical, legal, jus, judiciary, statute law, law, codex, legislation, jurisprudence, lex, code, Themis, statute, judicial, practice of law, prescript, forensic, natural law",4,fa3 lu:4,fǎlǜ,False
+法律,法律,fǎlǜ,"constitution, juridical, legal, jus, judiciary, statute law, law, codex, legislation, jurisprudence, lex, code, Themis, statute, judicial, practice of law, prescript, forensic, natural law",4,fa3 lv4,fǎlǜ,False
 法院,法院,fǎyuàn,"judicature, (law) court, judicatory, bar, courthouse, law court, court, tribunal, judiciary, banc, court of justice, jug, banco, forensic",4,fa3 yuan4,fǎyuàn,False
 翻譯,翻译,fānyì,"translate, interpret",4,fan1 yi4,fānyì,False
 煩,烦,fán,"to feel vexed, to bother, to trouble, superfluous and confusing, edgy",4,fan2,fán,False
@@ -2520,7 +2520,7 @@ traditional,simplified,pinyin,translation,level,numerical_pinyin,pinyin_check,ex
 逛,逛,guàng,"to stroll, to visit",4,guang4,guàng,False
 光盤,光盘,guāngpán,"compact disc, CD or DVD, CD ROM, CL:片[pian4],張|张[zhang1]",4,guang1 pan2,guāngpán,False
 瓜,瓜,guā,"melon, gourd, squash",4,gua1,guā,False
-規律,规律,guīlǜ,"law, regular pattern",4,gui1 lu:4,guīlǜ,False
+規律,规律,guīlǜ,"law, regular pattern",4,gui1 lv4,guīlǜ,False
 規則,规则,guīzé,"rule, regulation",4,gui1 ze2,guīzé,False
 果實,果实,guǒshí,"fruitery, fruitage, gains, fruits, fruit, fructification",4,guo3 shi2,guǒshí,False
 海水,海水,hǎishuǐ,"waters, seawater, salt water, sea, the sea, brine",4,hai3 shui3,hǎishuǐ,False
@@ -2561,7 +2561,7 @@ traditional,simplified,pinyin,translation,level,numerical_pinyin,pinyin_check,ex
 匯,汇,huì,"to remit, to converge (of rivers), to exchange, variant of 匯|汇[hui4]",4,hui4,huì,False
 彙報,汇报,huìbào,"to report, to give an account of, report",4,hui4 bao4,huìbào,False
 婚禮,婚礼,hūnlǐ,"wedding ceremony, wedding, CL:場|场[chang3]",4,hun1 li3,hūnlǐ,False
-匯率,汇率,huìlǜ,"interchange, exchange rate, rate of exchange, exchange, exchange_rate",4,hui4 lu:4,huìlǜ,False
+匯率,汇率,huìlǜ,"interchange, exchange rate, rate of exchange, exchange, exchange_rate",4,hui4 lv4,huìlǜ,False
 伙,伙,huǒ,"companion, partner, group, classifier for groups of people, to combine, together",4,huo3,huǒ,False
 火,火,huǒ,"fire;internal heat, anger, temper;firearms, ammunition",4,huo3,huǒ,False
 或許,或许,huòxǔ,"possibly, in all probability, peradventure, conceivably, mayhap, likely, perhaps, perchance, probably, maybe, haply, in all likelihood, belike",4,huo4 xu3,huòxǔ,False
@@ -2585,7 +2585,7 @@ traditional,simplified,pinyin,translation,level,numerical_pinyin,pinyin_check,ex
 極其,极其,jíqí,"absolutely, extremely, very, parlous, heaps, utterly, entirely, miserably, goldarn, precious, exceedingly, passing, definitely, plaguily, passingly, totally, staving, goldurn, completely",4,ji2 qi2,jíqí,False
 技巧,技巧,jìqiǎo,"technics, artifice, superior skill, acquisition, acquirement, cunning, trick, dexterity, accomplishment, mechanism, craft, craftsmanship, technique, artistry, handiwork, mastery, handicraft, finesse, attainment, sleight, skill, implement, execution, prowess, ingenuity, art, method, dish, mechanics, knack, cup of tea, management, bag, proficiency, address, facility, virtuosity, workman",4,ji4 qiao3,jìqiǎo,False
 集合,集合,jíhé,"gather, assemble, muster",4,ji2 he2,jíhé,False
-紀律,纪律,jìlǜ,"disciplinary, discipline, ferule, morale, regime, laws and regulations",4,ji4 lu:4,jìlǜ,False
+紀律,纪律,jìlǜ,"disciplinary, discipline, ferule, morale, regime, laws and regulations",4,ji4 lv4,jìlǜ,False
 系,系,xì,be,4,xi4,xì,False
 季,季,jì,"surname Ji, season, the last month of a season, fourth or youngest amongst brothers, classifier for seasonal crop yields",4,ji4,jì,False
 季度,季度,jìdù,"quarter of a year, season (sports)",4,ji4 du4,jìdù,False
@@ -2658,7 +2658,7 @@ traditional,simplified,pinyin,translation,level,numerical_pinyin,pinyin_check,ex
 看不起,看不起,kànbuqǐ,"to look down upon, to despise",4,kan4 bu qi3,kànbuqǐ,False
 看望,看望,kànwang,"to visit, to pay a call to",4,kan4 wang4,kànwàng,True
 考察,考察,kǎochá,"inspect, make on-the-spot investigation, observe and study",4,kao3 cha2,kǎochá,False
-考慮,考虑,kǎolǜ,"think over, consider",4,kao3 lu:4,kǎolǜ,False
+考慮,考虑,kǎolǜ,"think over, consider",4,kao3 lv4,kǎolǜ,False
 可見,可见,kějiàn,therefore,4,ke3 jian4,kějiàn,False
 空間,空间,kōngjiān,"elbow room, allowance, margin, roomage, open air/sky/space, road, leeway, way, open air, sheets, room, tolerance, opening, clear, sky, spacial, interspace, vacuity, spatial, dimension, open sky/space, space, place, vacuum",4,kong1 jian1,kōngjiān,False
 空,空,kōng,"free, with spare time",4,kong1,kōng,False
@@ -2714,7 +2714,7 @@ traditional,simplified,pinyin,translation,level,numerical_pinyin,pinyin_check,ex
 樓梯,楼梯,lóutī,"stairs, staircase",4,lou2 ti1,lóutī,False
 陸續,陆续,lùxù,"continuously, one after another, in succession",4,lu4 xu4,lùxù,False
 陸地,陆地,lùdì,dry land (as opposed to the sea),4,lu4 di4,lùdì,False
-律師,律师,lǜshī,"scribe, counsellor, advocate, gown, avocat, solicitor, barrister, lawyer, counsel, jurist, counselor, counselor-at-law, attorney",4,lu:4 shi1,lǜshī,False
+律師,律师,lǜshī,"scribe, counsellor, advocate, gown, avocat, solicitor, barrister, lawyer, counsel, jurist, counselor, counselor-at-law, attorney",4,lv4 shi1,lǜshī,False
 錄取,录取,lùqǔ,"enroll, recruit, admit",4,lu4 qu3,lùqǔ,False
 輪,轮,lún,m.[event],4,lun2,lún,False
 輪椅,轮椅,lúnyǐ,wheelchair,4,lun2 yi3,lúnyǐ,False
@@ -2729,7 +2729,7 @@ traditional,simplified,pinyin,translation,level,numerical_pinyin,pinyin_check,ex
 沒錯,没错,méicuò,"that's right, sure!, rest assured!, that's good, can't go wrong",4,mei2 cuo4,méicuò,False
 沒想到,没想到,méixiǎngdào,unexpectedly,4,mei2 xiang3 dao4,méixiǎngdào,False
 美金,美金,měijīn,"buck, dollar, U.S. dollar",4,mei3 jin1,měijīn,False
-美女,美女,měinǚ,"looker, bombshell, siren, cookie, peach, dish, sweetheart, peri, lulu, beautiful woman, charmer, smasher, belle, knockout, mantrap, Venus, stunner, beauty, lovely",4,mei3 nu:3,měinǚ,False
+美女,美女,měinǚ,"looker, bombshell, siren, cookie, peach, dish, sweetheart, peri, lulu, beautiful woman, charmer, smasher, belle, knockout, mantrap, Venus, stunner, beauty, lovely",4,mei3 nv3,měinǚ,False
 夢見,梦见,mèngjiàn,"to dream about (sth or sb), to see in a dream",4,meng4 jian4,mèngjiàn,False
 夢想,梦想,mèngxiǎng,fond dream,4,meng4 xiang3,mèngxiǎng,False
 夢,梦,mèng,dream,4,meng4,mèng,False
@@ -2752,7 +2752,7 @@ traditional,simplified,pinyin,translation,level,numerical_pinyin,pinyin_check,ex
 末,末,mò,"tip, end",4,mo4,mò,False
 默默,默默,mòmò,"quietly, silently",4,mo4 mo4,mòmò,False
 哪,哪,nǎ,det.: which,4,na3,nǎ,False
-男女,男女,nánnǚ,men and women,4,nan2 nu:3,nánnǚ,False
+男女,男女,nánnǚ,men and women,4,nan2 nv3,nánnǚ,False
 男士,男士,nánshì,"gent, man, men, menfolk",4,nan2 shi4,nánshì,False
 難免,难免,nánmiǎn,hard to avoid,4,nan2 mian3,nánmiǎn,False
 哪怕,哪怕,nǎpà,"even, even if, even though, no matter how",4,na3 pa4,nǎpà,False
@@ -2764,7 +2764,7 @@ traditional,simplified,pinyin,translation,level,numerical_pinyin,pinyin_check,ex
 能幹,能干,nénggàn,"capable, competent",4,neng2 gan4,nénggàn,False
 寧靜,宁静,níngjìng,"peaceful, tranquil, quiet",4,ning2 jing4,níngjìng,False
 濃,浓,nóng,"thick, concentrated, stress, favor, dense",4,nong2,nóng,False
-女士,女士,nǚshì,"senorita, lady, Ms., mum, Senora, educated girl, educated woman, madonna, madam, Miss, woman, ma'am, Madame, madame, gentlewoman, senhorita, dame, mademoiselle",4,nu:3 shi4,nǚshì,False
+女士,女士,nǚshì,"senorita, lady, Ms., mum, Senora, educated girl, educated woman, madonna, madam, Miss, woman, ma'am, Madame, madame, gentlewoman, senhorita, dame, mademoiselle",4,nv3 shi4,nǚshì,False
 暖氣,暖气,nuǎnqì,"central heating, heater, warm air",4,nuan3 qi4,nuǎnqì,False
 拍照,拍照,pāi zhào,"take a picture, take (picture), shoot (film), snap, film, take a photograph, take, photograph, shoot",4,pai1 zhao4,pāizhào,False
 排列,排列,páiliè,"arrange, put in order",4,pai2 lie4,páiliè,False
@@ -2910,7 +2910,7 @@ traditional,simplified,pinyin,translation,level,numerical_pinyin,pinyin_check,ex
 酸奶,酸奶,suānnǎi,yogurt,4,suan1 nai3,suānnǎi,False
 隨手,随手,suíshǒu,"conveniently, without extra trouble, while doing it, in passing",4,sui2 shou3,suíshǒu,False
 孫子,孙子,sūnzi,"son's son, grandson",4,sun1 zi,sūnzi,False
-孫女,孙女,sūnnü,"son's daughter, granddaughter",4,sun1 nu:3,sūnnǚ,True
+孫女,孙女,sūnnü,"son's daughter, granddaughter",4,sun1 nv3,sūnnǚ,True
 縮短,缩短,suō duǎn,"shorten, curtail, cut down",4,suo1 duan3,suōduǎn,False
 臺階,台阶,táijiē,"steps, flight of steps, step (over obstacle), fig. way out of an embarrassing situation, bench (geology)",4,tai2 jie1,táijiē,False
 縮小,缩小,suō xiǎo,"recede, dwindle away, narrow, foreshorten, shrinkage, narrow down, abridge, minify, reduction, puncture, compress, specialize, scale down, dwindle, deflate, minish, take in, reduce, lessen, shorten, diminish, dwindle down, shrink, subside, deescalate, retract",4,suo1 xiao3,suōxiǎo,False
@@ -3029,7 +3029,7 @@ traditional,simplified,pinyin,translation,level,numerical_pinyin,pinyin_check,ex
 小吃,小吃,xiǎochī,"snack, refreshments, CL:家[jia1]",4,xiao3 chi1,xiǎochī,False
 小伙子,小伙子,xiǎohuǒzi,"young man, young guy, lad, youngster, CL:個|个[ge4]",4,xiao3 huo3 zi,xiǎohuǒzi,False
 小型,小型,xiǎoxíng,"spyglass, miniature, small-sized, bar, small-scale, pettiness",4,xiao3 xing2,xiǎoxíng,False
-效率,效率,xiàolǜ,"sufficiency, effectualness, effectuality, productiveness, usefulness, efficiency, effectivity, effectiveness",4,xiao4 lu:4,xiàolǜ,False
+效率,效率,xiàolǜ,"sufficiency, effectualness, effectuality, productiveness, usefulness, efficiency, effectivity, effectiveness",4,xiao4 lv4,xiàolǜ,False
 些,些,xiē,m.[proximation],4,xie1,xiē,False
 心理,心理,xīnlǐ,"mental_state, psychology, mentality",4,xin1 li3,xīnlǐ,False
 新郎,新郎,xīnláng,"groom, bridegroom",4,xin1 lang2,xīnláng,False
@@ -3083,7 +3083,7 @@ traditional,simplified,pinyin,translation,level,numerical_pinyin,pinyin_check,ex
 醫療,医疗,yīliáo,"treat, cure",4,yi1 liao2,yīliáo,False
 醫學,医学,yīxué,"medicine, practice of medicine, medical science, leechcraft, physic, iatrology, medical",4,yi1 xue2,yīxué,False
 依靠,依靠,yīkào,rely/depend on,4,yi1 kao4,yīkào,False
-一律,一律,yīlǜ,"equally, without exception",4,yi1 lu:4,yīlǜ,False
+一律,一律,yīlǜ,"equally, without exception",4,yi1 lv4,yīlǜ,False
 一致,一致,yīzhì,"symphonize, coheiress, identical, quadrate, accord, coincide, equate, homologize, answer, comport, concur, consist, unanimous, chime_in, agree, jibe, unite, square, correspond, consort",4,yi1 zhi4,yīzhì,False
 葉子,叶子,yèzi,"foliage, frond, leafage, leaf, leave",4,ye4 zi,yèzi,False
 依然,依然,yīrán,"notwithstanding, natheless, withal, even so, yet, nonetheless, nevertheless, all the same, however, still, as before",4,yi1 ran2,yīrán,False
@@ -3439,7 +3439,7 @@ traditional,simplified,pinyin,translation,level,numerical_pinyin,pinyin_check,ex
 噸,吨,dūn,"metric ton, acre, ton, m.[standard], ,A, MT, tonne, t",5,dun1,dūn,False
 躲,躲,duǒ,"avoid, hide, hide oneself, dodge, hide (oneself)",5,duo3,duǒ,False
 耳朵,耳朵,ěrduo,"auricle, lobe, lobule, ear, auditory, lap, lug, lappet",5,er3 duo,ěrduo,False
-兒女,儿女,érnǚ,"sons and daughters, young man and woman, children, young males and females, child",5,er2 nu:3,érnǚ,False
+兒女,儿女,érnǚ,"sons and daughters, young man and woman, children, young males and females, child",5,er2 nv3,érnǚ,False
 二維碼,二维码,èrwéimǎ,"two-dimensional barcode, QR code",5,er4 wei2 ma3,èrwéimǎ,False
 發覺,发觉,fājué,"light upon, discovery, find, see, espy, discover, perceive, strike, come upon, detection, come across, happen upon, detect, chance upon, chance on",5,fa1 jue2,fājué,False
 發射,发射,fāshè,"launch, project, discharge, shoot, transmit, emit",5,fa1 she4,fāshè,False
@@ -3751,7 +3751,7 @@ traditional,simplified,pinyin,translation,level,numerical_pinyin,pinyin_check,ex
 牛,牛,niú,"ox, cattle, cow",5,niu2,niú,False
 農產品,农产品,nóngchǎnpǐn,"agricultural products, farm produce",5,nong2 chan3 pin3,nóngchǎnpǐn,False
 暖,暖,nuǎn,"warm, to warm, variant of 暖[nuan3], warm",5,nuan3,nuǎn,False
-女性,女性,nǚxìng,"lady, female sex, womankind, feminie, female, sex, petticoat, femininity, female person, woman, she, patroness, womanhood, fair, feminine",5,nu:3 xing4,nǚxìng,False
+女性,女性,nǚxìng,"lady, female sex, womankind, feminie, female, sex, petticoat, femininity, female person, woman, she, patroness, womanhood, fair, feminine",5,nv3 xing4,nǚxìng,False
 偶然,偶然,ǒurán,"accidentally, occasionally",5,ou3 ran2,ǒurán,False
 偶像,偶像,ǒuxiàng,"mammet, god, Baal, hoodoo, icon, idol, image, effigy, fetich, fetish, model, graven image, matinee idol, swami, iconology, voodoo, joss, obeah, pagod, juju",5,ou3 xiang4,ǒuxiàng,False
 偶爾,偶尔,ǒuěr,"once in a blue moon, from time to time, hardly ever, every so often, now and again, seldom, infrequently, on occasion, rarely, betweenwhiles, scarcely, unusually, occasionally, sporadically, every now and then, at times, now and then, once in a while",5,ou3 er3,ǒuěr,False
@@ -4377,7 +4377,7 @@ traditional,simplified,pinyin,translation,level,numerical_pinyin,pinyin_check,ex
 廁所,厕所,cèsuǒ,"john, W.C., can, jakes, lavatory, lav, cloaca, crapper, privy, water closet, bathroom, bog, washroom, closet, convenience, stool, rear, latrine, loo, facility, toilet, John, cloakroom",6,ce4 suo3,cèsuǒ,False
 測定,测定,cèdìng,to survey and evaluate,6,ce4 ding4,cèdìng,False
 策劃,策划,cèhuà,"to plot, to scheme, to bring about, to engineer, planning, producer, planner",6,ce4 hua4,cèhuà,False
-策略,策略,cèlüè,"coup, resource, enginery, wile, stratagem, gambit, practice, plant, diplomacy, artifice, trap, twist, tactical manoeuver, policy, game, mechanism, game plan, ambush, chicanery, finesse, lying in wait, maneuvering, joker, tactics, gimmick, manoeuvering, plan, device, art, tactical maneuver, maneuver, measure, play, tactic, manoeuvre, mechanics, tack, ambuscade, trickery, strategy, setup, r",6,ce4 lu:e4,cèlüè,False
+策略,策略,cèlüè,"coup, resource, enginery, wile, stratagem, gambit, practice, plant, diplomacy, artifice, trap, twist, tactical manoeuver, policy, game, mechanism, game plan, ambush, chicanery, finesse, lying in wait, maneuvering, joker, tactics, gimmick, manoeuvering, plan, device, art, tactical maneuver, maneuver, measure, play, tactic, manoeuvre, mechanics, tack, ambuscade, trickery, strategy, setup, r",6,ce4 lve4,cèlüè,False
 層面,层面,céngmiàn,"storey, level, side, story, range, floor, coverage",6,ceng2 mian4,céngmiàn,False
 差異,差异,chāyì,"gap, departure, spread, variance, divergence, difference, diversity, discrepancy, imparity, disparity, contrast, interval, differentia, distinction",6,cha1 yi4,chāyì,False
 查出,查出,cháchū,"find, look_up, smell, investigate, find_out, find out, smoke_out, detect, track_down, smoke out, examine",6,cha2 chu1,cháchū,False
@@ -4569,11 +4569,11 @@ traditional,simplified,pinyin,translation,level,numerical_pinyin,pinyin_check,ex
 佛教,佛教,Fójiào,"Bodhisattva, Buddhist religion, Buddhism",6,fo2 jiao4,fójiào,False
 佛,佛,fú,"Buddha, Buddhism, image of Buddha",6,fo2,fó,True
 服,服,fú,"clothes, dress, garment, to serve (in the military, a prison sentence etc), to obey, to convince, to admire, to acclimatize, to take (medicine), mourning clothes, to wear mourning clothes, dose (measure word for medicine), Taiwan pr. [fu2]",6,fu2,fú,False
-父女,父女,fùnǚ,father and daughter,6,fu4 nu:3,fùnǚ,False
+父女,父女,fùnǚ,father and daughter,6,fu4 nv3,fùnǚ,False
 父子,父子,fùzǐ,father and son,6,fu4 zi3,fùzǐ,False
 負,负,fù,"betray, abandon, go against",6,fu4,fù,False
 浮,浮,fú,"to float, superficial, floating, unstable, movable, provisional, temporary, transient, impetuous, hollow, inflated, to exceed, superfluous, excessive, surplus",6,fu2,fú,False
-婦女,妇女,fùnǚ,"feme, womankind, female, femininity, cummer, woman, femme, quean, bevy, matron, toots, womanhood, feminine, womenfolk, women",6,fu4 nu:3,fùnǚ,False
+婦女,妇女,fùnǚ,"feme, womankind, female, femininity, cummer, woman, femme, quean, bevy, matron, toots, womanhood, feminine, womenfolk, women",6,fu4 nv3,fùnǚ,False
 副,副,fù,m.[general],6,fu4,fù,False
 復蘇,复苏,fùsū,"variant of 復甦|复苏[fu4 su1], to recover (health, economic), to resuscitate, anabiosis",6,fu4 su1,fùsū,False
 富人,富人,fùrén,rich man,6,fu4 ren2,fùrén,False
@@ -4667,7 +4667,7 @@ traditional,simplified,pinyin,translation,level,numerical_pinyin,pinyin_check,ex
 宏大,宏大,hóngdà,"great, grand",6,hong2 da4,hóngdà,False
 洪水,洪水,hóngshuǐ,"deluge, flood",6,hong2 shui3,hóngshuǐ,False
 互動,互动,hùdòng,relate,6,hu4 dong4,hùdòng,False
-忽略,忽略,hūlüè,"overpass, fail, pretermit, outlook, pass, overlook, neglectful, snub, cut, neglect, marginalize, miss, lose sight of, disregard, slur, ignore, forget",6,hu1 lu:e4,hūlüè,False
+忽略,忽略,hūlüè,"overpass, fail, pretermit, outlook, pass, overlook, neglectful, snub, cut, neglect, marginalize, miss, lose sight of, disregard, slur, ignore, forget",6,hu1 lve4,hūlüè,False
 戶外,户外,hùwài,"air, outdoor, open_air, out-of-doors, open, outdoors, open air, open-air",6,hu4 wai4,hùwài,False
 護,护,hù,to protect,6,hu4,hù,False
 花瓶,花瓶,huāpíng,"flower vase, fig. just a pretty face, CL:對|对[dui4]",6,hua1 ping2,huāpíng,False
@@ -4843,11 +4843,11 @@ traditional,simplified,pinyin,translation,level,numerical_pinyin,pinyin_check,ex
 錄像,录像,lùxiàng,"to videotape, to videorecord, video recording, CL:盤|盘[pan2]",6,lu4 xiang4,lùxiàng,False
 露,露,lù,"betray, betrayal, appear, reveal, show",6,lu4,lù,False
 錄音機,录音机,lùyīnjī,"(tape) recording machine, tape recorder, CL:臺|台[tai2]",6,lu4 yin1 ji1,lùyīnjī,False
-旅店,旅店,lǚdiàn,"inn, small hotel",6,lu:3 dian4,lǚdiàn,False
+旅店,旅店,lǚdiàn,"inn, small hotel",6,lv3 dian4,lǚdiàn,False
 馬車,马车,mǎchē,"cart, chariot, carriage, buggy",6,ma3 che1,mǎchē,False
 路過,路过,lùguò,to pass by or through,6,lu4 guo4,lùguò,False
 埋,埋,mái,"hide away, burial, bury, inter",6,mai2,mái,False
-綠化,绿化,lǜhuà,"make (a place) green, afforest",6,lu:4 hua4,lǜhuà,False
+綠化,绿化,lǜhuà,"make (a place) green, afforest",6,lv4 hua4,lǜhuà,False
 慢車,慢车,mànchē,"local bus or train, slow train with many stops",6,man4 che1,mànchē,False
 饅頭,馒头,mántou,"steamed roll, steamed bun, steamed bread, CL:個|个[ge4]",6,man2 tou,mántou,False
 盲人,盲人,mángrén,blind person,6,mang2 ren2,mángrén,False
@@ -4879,7 +4879,7 @@ traditional,simplified,pinyin,translation,level,numerical_pinyin,pinyin_check,ex
 墨水,墨水,mòshuǐ,"ink, CL:瓶[ping2]",6,mo4 shui3,mòshuǐ,False
 母,母,mǔ,"mother, elderly female relative, origin, source, (of animals) female",6,mu3,mǔ,False
 母雞,母鸡,mǔjī,hen,6,mu3 ji1,mǔjī,False
-母女,母女,mǔ-nǚ,mother-daughter,6,mu3 nu:3,mǔnǚ,False
+母女,母女,mǔ-nǚ,mother-daughter,6,mu3 nv3,mǔnǚ,False
 墓,墓,mù,"grave, tomb, mausoleum",6,mu4,mù,False
 拿走,拿走,názǒu,to take away,6,na2 zou3,názǒu,False
 母子,母子,mǔzǐ,"mother and child, parent and subsidiary (companies), principal and interest",6,mu3 zi3,mǔzǐ,False
@@ -5319,7 +5319,7 @@ traditional,simplified,pinyin,translation,level,numerical_pinyin,pinyin_check,ex
 占據,占据,zhànjù,"inhabit, occupy, stand, assume, prevail, hold, invade, occupation, take, take up",6,zhan4 ju4,zhànjù,False
 戰場,战场,zhànchǎng,"field of battle, plain, theatre, camp, cockpit, battlefield, theater, battleground, field, battlefront",6,zhan4 chang3,zhànchǎng,False
 戰術,战术,zhànshù,"tactical, war, tactics, military tactics, tactic, swordcraft",6,zhan4 shu4,zhànshù,False
-戰略,战略,zhànlüè,"stratagem, tactical, strategics, tactics, strategy",6,zhan4 lu:e4,zhànlüè,False
+戰略,战略,zhànlüè,"stratagem, tactical, strategics, tactics, strategy",6,zhan4 lve4,zhànlüè,False
 戰友,战友,zhànyǒu,"comrade-in-arms, battle companion",6,zhan4 you3,zhànyǒu,False
 章,章,zhāng,m.[general],6,zhang1,zhāng,False
 站臺,站台,zhàntái,platform (at a railway station),6,zhan4 tai2,zhàntái,False
@@ -5499,7 +5499,7 @@ traditional,simplified,pinyin,translation,level,numerical_pinyin,pinyin_check,ex
 半真半假,半真半假,bànzhēn-bànjiǎ,(idiom) half true and half false,7,ban4 zhen1 ban4 jia3,bànzhēnbànjiǎ,False
 伴,伴,bàn,accompany,7,ban4,bàn,False
 扮,扮,bàn,"to disguise oneself as, to dress up, to play (a role), to put on (an expression)",7,ban4,bàn,False
-伴侶,伴侣,bànlǚ,"companion, mate, helpmate, coachfellow, familiar, partner, fere, company",7,ban4 lu:3,bànlǚ,False
+伴侶,伴侣,bànlǚ,"companion, mate, helpmate, coachfellow, familiar, partner, fere, company",7,ban4 lv3,bànlǚ,False
 伴隨,伴随,bànsuí,"accompany, follow",7,ban4 sui2,bànsuí,False
 伴奏,伴奏,bànzòu,accompany (with musical instruments),7,ban4 zou4,bànzòu,False
 幫手,帮手,bāngshou,"helper, assistant",7,bang1 shou3,bāngshǒu,True
@@ -5587,7 +5587,7 @@ traditional,simplified,pinyin,translation,level,numerical_pinyin,pinyin_check,ex
 鄙視,鄙视,bǐshì,"to despise, to disdain, to look down upon",7,bi3 shi4,bǐshì,False
 必不可少,必不可少,bìbùkěshǎo,"absolutely necessary, indispensable, essential",7,bi4 bu4 ke3 shao3,bìbùkěshǎo,False
 必定,必定,bìdìng,"inevitably, sure, for sure, by all means, needs, necessarily, sure enough, sure as shooting, be sure to, surely, certainly, of necessity, for certain",7,bi4 ding4,bìdìng,False
-碧綠,碧绿,bìlǜ,dark green,7,bi4 lu:4,bìlǜ,False
+碧綠,碧绿,bìlǜ,dark green,7,bi4 lv4,bìlǜ,False
 弊病,弊病,bìbìng,"malady, evil, malpractice, drawback, disadvantage",7,bi4 bing4,bìbìng,False
 弊端,弊端,bìduān,"malpractice, abuse, corrupt practice",7,bi4 duan1,bìduān,False
 避難,避难,bì nàn,"refuge, to take refuge, to seek asylum (political etc)",7,bi4 nan4,bìnàn,False
@@ -6070,7 +6070,7 @@ traditional,simplified,pinyin,translation,level,numerical_pinyin,pinyin_check,ex
 粗暴,粗暴,cūbào,"rough, cruel",7,cu1 bao4,cūbào,False
 粗糙,粗糙,cūcāo,"crude, gruff, rough, coarse",7,cu1 cao1,cūcāo,False
 粗魯,粗鲁,cūlu,"coarse, crude (in one's manner), boorish",7,cu1 lu3,cūlǔ,True
-粗略,粗略,cūlüè,"rough (not precise or accurate), cursory",7,cu1 lu:e4,cūlüè,False
+粗略,粗略,cūlüè,"rough (not precise or accurate), cursory",7,cu1 lve4,cūlüè,False
 粗心大意,粗心大意,cūxīn-dàyì,"negligent, careless, inadvertent",7,cu1 xin1 da4 yi4,cūxīndàyì,False
 促成,促成,cùchéng,"facilitate, effect",7,cu4 cheng2,cùchéng,False
 簇擁,簇拥,cùyōng,"to crowd around, to escort",7,cu4 yong1,cùyōng,False
@@ -6080,7 +6080,7 @@ traditional,simplified,pinyin,translation,level,numerical_pinyin,pinyin_check,ex
 催眠,催眠,cuīmián,"lull, hypnotize, mesmerize, hypnotic, lull (to sleep)",7,cui1 mian2,cuīmián,False
 摧毀,摧毁,cuīhuǐ,"take_out, blot_out, bang up, blast, devastate, mow_down, zap, tobreak, wreck, smash up, bust up, smite, destroy, bust, demolish, knock_down, destruction, ravage, unbuild, liquidate, smash, deflower, knock_off, break, wrack",7,cui1 hui3,cuīhuǐ,False
 脆弱,脆弱,cuìruò,"fragile, frail, weak",7,cui4 ruo4,cuìruò,False
-翠綠,翠绿,cuìlǜ,"greenish-blue, emerald green",7,cui4 lu:4,cuìlǜ,False
+翠綠,翠绿,cuìlǜ,"greenish-blue, emerald green",7,cui4 lv4,cuìlǜ,False
 存放,存放,cúnfàng,"leave with, leave in sb.'s care, deposit (money)",7,cun2 fang4,cúnfàng,False
 存心,存心,cúnxīn,deliberately,7,cun2 xin1,cúnxīn,False
 存折,存折,cúnzhé,"passbook, bankbook",7,cun2 zhe2,cúnzhé,False
@@ -6264,7 +6264,7 @@ traditional,simplified,pinyin,translation,level,numerical_pinyin,pinyin_check,ex
 顛覆,颠覆,diānfù,"overturn, subvert",7,dian1 fu4,diānfù,False
 巔峰,巅峰,diānfēng,"summit, apex, pinnacle (of one's career etc), peak (of a civilization etc)",7,dian1 feng1,diānfēng,False
 點火,点火,diǎn huǒ,"to ignite, to light a fire, to agitate, to start an engine, ignition, fig. to stir up trouble",7,dian3 huo3,diǎnhuǒ,False
-點擊率,点击率,diǎnjīlǜ,click-through rate (CTR) (Internet),7,dian3 ji1 lu:4,diǎnjīlǜ,False
+點擊率,点击率,diǎnjīlǜ,click-through rate (CTR) (Internet),7,dian3 ji1 lv4,diǎnjīlǜ,False
 典範,典范,diǎnfàn,"quintessence, nonpareil, example, specimen, nonsuch, apotheosis, ideal, nonesuch, prototype, monument, paragon, role model, soul, saint, model",7,dian3 fan4,diǎnfàn,False
 點評,点评,diǎnpíng,"to comment, a point by point commentary",7,dian3 ping2,diǎnpíng,False
 點心,点心,diǎnxin,"light refreshments, pastry, dimsum (in Cantonese cooking), dessert",7,dian3 xin,diǎnxin,False
@@ -6660,7 +6660,7 @@ traditional,simplified,pinyin,translation,level,numerical_pinyin,pinyin_check,ex
 鈣,钙,gài,"atomic number 20, calcium, Ca, calcic",7,gai4,gài,False
 蓋子,盖子,gàizi,"cover, lid, shell",7,gai4 zi,gàizi,False
 概況,概况,gàikuàng,"general situation, summary",7,gai4 kuang4,gàikuàng,False
-概率,概率,gàilǜ,probability (math.),7,gai4 lu:4,gàilǜ,False
+概率,概率,gàilǜ,probability (math.),7,gai4 lv4,gàilǜ,False
 概論,概论,gàilùn,"outline, introduction, survey, general discussion",7,gai4 lun4,gàilùn,False
 干戈,干戈,gāngē,"weapons of war, arms",7,gan1 ge1,gāngē,False
 乾旱,干旱,gānhàn,"drought, arid, dry",7,gan1 han4,gānhàn,False
@@ -6791,7 +6791,7 @@ traditional,simplified,pinyin,translation,level,numerical_pinyin,pinyin_check,ex
 攻讀,攻读,gōngdú,"to major (in a field), to study a specialty to obtain a higher degree",7,gong1 du2,gōngdú,False
 攻,攻,gōng,"assault, attack, censure, accuse",7,gong1,gōng,False
 攻關,攻关,gōng guān,"to storm a strategic pass, fig. to tackle a key problem",7,gong1 guan1,gōngguān,False
-功率,功率,gōnglǜ,"rate of work, power (output)",7,gong1 lu:4,gōnglǜ,False
+功率,功率,gōnglǜ,"rate of work, power (output)",7,gong1 lv4,gōnglǜ,False
 供不應求,供不应求,gōngbùyìngqiú,supply does not meet demand,7,gong1 bu4 ying4 qiu2,gōngbùyìngqiú,False
 供,供,gōng,"supply, feed, be for (the use/convenience of)",7,gong1,gōng,False
 供暖,供暖,gōngnuǎn,Heating,7,gong1 nuan3,gōngnuǎn,False
@@ -6842,7 +6842,7 @@ traditional,simplified,pinyin,translation,level,numerical_pinyin,pinyin_check,ex
 顧不得,顾不得,gùbude,"unable to change sth, unable to deal with",7,gu4 bu de,gùbude,False
 顧不上,顾不上,gùbushàng,cannot attend to or manage,7,gu4 bu shang4,gùbushàng,False
 顧及,顾及,gù jí,"study, give consideration to, consider, take into account, consult, attend to, allow_for",7,gu4 ji2,gùjí,False
-顧慮,顾虑,gùlǜ,"misgivings, apprehensions",7,gu4 lu:4,gùlǜ,False
+顧慮,顾虑,gùlǜ,"misgivings, apprehensions",7,gu4 lv4,gùlǜ,False
 雇,雇,gù,"to employ, to hire, to rent",7,gu4,gù,False
 顧全大局,顾全大局,gùquándàjú,"to take the big picture into consideration (idiom), to work for the benefits of all",7,gu4 quan2 da4 ju2,gùquándàjú,False
 雇傭,雇佣,gùyōng,"to employ, to hire",7,gu4 yong1,gùyōng,False
@@ -6916,7 +6916,7 @@ traditional,simplified,pinyin,translation,level,numerical_pinyin,pinyin_check,ex
 龜,龟,guī,"tortoise, turtle",7,gui1,guī,False
 規格,规格,guīgé,"quality requirements, requirement, specification, standard, spec, criterion, measure, touchstone, specifications",7,gui1 ge2,guīgé,False
 規矩,规矩,guīju,"rule, custom",7,gui1 ju,guīju,False
-閨女,闺女,guīnü,"maiden, unmarried woman, daughter",7,gui1 nu:3,guīnǚ,True
+閨女,闺女,guīnü,"maiden, unmarried woman, daughter",7,gui1 nv3,guīnǚ,True
 瑰寶,瑰宝,guībǎo,"gem, (fig.) rare and valuable item, gem, treasure",7,gui1 bao3,guībǎo,False
 軌跡,轨迹,guǐjì,"track, orbit, trail, locus",7,gui3 ji4,guǐjì,False
 櫃檯,柜台,guìtái,"sales counter, front desk, bar, (of markets, medicines etc) OTC (over-the-counter), variant of 櫃檯|柜台[gui4 tai2]",7,gui4 tai2,guìtái,False
@@ -6947,7 +6947,7 @@ traditional,simplified,pinyin,translation,level,numerical_pinyin,pinyin_check,ex
 過獎,过奖,guòjiǎng,"to overpraise, to flatter",7,guo4 jiang3,guòjiǎng,False
 過節,过节,guò jié,"to celebrate a festival, after the celebrations (i.e. once the festival is over)",7,guo4 jie2,guòjié,False
 過境,过境,guò jìng,"to pass through a country's territory, transit",7,guo4 jing4,guòjìng,False
-過濾,过滤,guòlǜ,"to filter, filter",7,guo4 lu:4,guòlǜ,False
+過濾,过滤,guòlǜ,"to filter, filter",7,guo4 lv4,guòlǜ,False
 過期,过期,guò qī,"to be overdue, to exceed the time limit, to expire (as in expiration date)",7,guo4 qi1,guòqī,False
 過剩,过剩,guòshèng,"surplus, excess",7,guo4 sheng4,guòshèng,False
 過失,过失,guòshī,"error, fault, (law) negligence, delinquency",7,guo4 shi1,guòshī,False
@@ -7261,7 +7261,7 @@ traditional,simplified,pinyin,translation,level,numerical_pinyin,pinyin_check,ex
 豁達,豁达,huòdá,"optimistic, sanguine, generous, magnanimous, open-minded",7,huo4 da2,huòdá,False
 譏笑,讥笑,jīxiào,to sneer,7,ji1 xiao4,jīxiào,False
 飢餓,饥饿,jīè,"hunger, starvation, famine",7,ji1 e4,jīè,False
-幾率,几率,jīlǜ,"probability, odds",7,ji1 lu:4,jīlǜ,False
+幾率,几率,jīlǜ,"probability, odds",7,ji1 lv4,jīlǜ,False
 機艙,机舱,jīcāng,cabin of a plane,7,ji1 cang1,jīcāng,False
 機動,机动,jīdòng,"locomotive, motorized, power-driven, adaptable, flexible (use, treatment, timing etc)",7,ji1 dong4,jīdòng,False
 機密,机密,jīmì,"secret, classified (information)",7,ji1 mi4,jīmì,False
@@ -7472,7 +7472,7 @@ traditional,simplified,pinyin,translation,level,numerical_pinyin,pinyin_check,ex
 焦,焦,jiāo,"surname Jiao, burnt, scorched, charred, worried, anxious, coke",7,jiao1,jiāo,False
 焦距,焦距,jiāojù,"focal length, focal distance",7,jiao1 ju4,jiāojù,False
 焦急,焦急,jiāojí,"anxiety, anxious",7,jiao1 ji2,jiāojí,False
-焦慮,焦虑,jiāolǜ,"anxious, apprehensive",7,jiao1 lu:4,jiāolǜ,False
+焦慮,焦虑,jiāolǜ,"anxious, apprehensive",7,jiao1 lv4,jiāolǜ,False
 焦躁,焦躁,jiāozào,"fretful, impatient",7,jiao1 zao4,jiāozào,False
 嚼,嚼,jué,"to chew, also pr. [jue2]",7,jiao2,jiáo,True
 礁石,礁石,jiāoshí,reef,7,jiao1 shi2,jiāoshí,False
@@ -8004,7 +8004,7 @@ traditional,simplified,pinyin,translation,level,numerical_pinyin,pinyin_check,ex
 立交橋,立交桥,lìjiāoqiáo,"overpass, flyover",7,li4 jiao1 qiao2,lìjiāoqiáo,False
 立足,立足,lì zú,"to stand, to have a footing, to be established, to base oneself on",7,li4 zu2,lìzú,False
 立體,立体,lìtǐ,"three-dimensional, stereoscopic",7,li4 ti3,lìtǐ,False
-利率,利率,lìlǜ,"profit, interest rate, rate_of_interest, rate of interest",7,li4 lu:4,lìlǜ,False
+利率,利率,lìlǜ,"profit, interest rate, rate_of_interest, rate of interest",7,li4 lv4,lìlǜ,False
 勵志,励志,lìzhì,"to encourage, encouragement",7,li4 zhi4,lìzhì,False
 粒,粒,lì,"granule, grain, kernel, pellet, m.[general],",7,li4,lì,False
 利害,利害,lìhai,"pros and cons, advantages and disadvantages, gains and losses, terrible, formidable, serious, devastating, tough, capable, sharp, severe, fierce",7,li4 hai4,lìhài,True
@@ -8077,7 +8077,7 @@ traditional,simplified,pinyin,translation,level,numerical_pinyin,pinyin_check,ex
 靈通,灵通,língtōng,"fast and abundant (news), clever, effective",7,ling2 tong1,língtōng,False
 領會,领会,lǐnghuì,"to understand, to comprehend, to grasp",7,ling3 hui4,lǐnghuì,False
 領軍,领军,lǐng jūn,"to lead troups, (fig.) to lead, leading",7,ling3 jun1,lǐngjūn,False
-領略,领略,lǐnglüè,"to have a taste of, to realize, to appreciate",7,ling3 lu:e4,lǐnglüè,False
+領略,领略,lǐnglüè,"to have a taste of, to realize, to appreciate",7,ling3 lve4,lǐnglüè,False
 領事,领事,lǐngshì,consul,7,ling3 shi4,lǐngshì,False
 領事館,领事馆,lǐngshìguǎn,consulate,7,ling3 shi4 guan3,lǐngshìguǎn,False
 領隊,领队,lǐngduì,leader of a group/team/etc.,7,ling3 dui4,lǐngduì,False
@@ -8136,24 +8136,24 @@ traditional,simplified,pinyin,translation,level,numerical_pinyin,pinyin_check,ex
 路燈,路灯,lùdēng,"street lamp, street light",7,lu4 deng1,lùdēng,False
 路途,路途,lùtú,Route,7,lu4 tu2,lùtú,False
 露天,露天,lùtiān,"in the open air, outdoors",7,lu4 tian1,lùtiān,False
-旅程,旅程,lǚchéng,"travel plan, journeying, itinerary, route, stage, peregrination, journey",7,lu:3 cheng2,lǚchéng,False
-旅途,旅途,lǚtú,"way, travel, route, traveling, travelling, trip, journey",7,lu:3 tu2,lǚtú,False
+旅程,旅程,lǚchéng,"travel plan, journeying, itinerary, route, stage, peregrination, journey",7,lv3 cheng2,lǚchéng,False
+旅途,旅途,lǚtú,"way, travel, route, traveling, travelling, trip, journey",7,lv3 tu2,lǚtú,False
 路子,路子,lùzi,"method, way, approach",7,lu4 zi,lùzi,False
 鋁,铝,lǚ,aluminum (chemistry),7,lv3,lǚ,False
-屢次,屡次,lǚcì,"repeatedly, time and again",7,lu:3 ci4,lǚcì,False
-縷,缕,lǚ,"strand, thread, detailed, in detail, classifier for wisps (of smoke, mist or vapor), strands, locks (of hair)",7,lu:3,lǚ,False
-屢,屡,lǚ,"time and again, repeatedly, frequently",7,lu:3,lǚ,False
-履行,履行,lǚxíng,"to fulfill (one's obligations), to carry out (a task), to implement (an agreement), to perform",7,lu:3 xing2,lǚxíng,False
-率,率,lǜ,"lead, command",7,lu:4,lǜ,False
-綠燈,绿灯,lǜdēng,green light,7,lu:4 deng1,lǜdēng,False
+屢次,屡次,lǚcì,"repeatedly, time and again",7,lv3 ci4,lǚcì,False
+縷,缕,lǚ,"strand, thread, detailed, in detail, classifier for wisps (of smoke, mist or vapor), strands, locks (of hair)",7,lv3,lǚ,False
+屢,屡,lǚ,"time and again, repeatedly, frequently",7,lv3,lǚ,False
+履行,履行,lǚxíng,"to fulfill (one's obligations), to carry out (a task), to implement (an agreement), to perform",7,lv3 xing2,lǚxíng,False
+率,率,lǜ,"lead, command",7,lv4,lǜ,False
+綠燈,绿灯,lǜdēng,green light,7,lv4 deng1,lǜdēng,False
 孿生,孪生,luánshēng,twin,7,luan2 sheng1,luánshēng,False
-綠地,绿地,lǜdì,"greenness, greenery patches, meadow, grassland",7,lu:4 di4,lǜdì,False
+綠地,绿地,lǜdì,"greenness, greenery patches, meadow, grassland",7,lv4 di4,lǜdì,False
 卵,卵,luǎn,"egg, ovum, spawn",7,luan3,luǎn,False
-掠奪,掠夺,lüèduó,"to plunder, to rob",7,lu:e4 duo2,lüèduó,False
+掠奪,掠夺,lüèduó,"to plunder, to rob",7,lve4 duo2,lüèduó,False
 亂七八糟,乱七八糟,luànqībāzāo,"everything in disorder (idiom), in a hideous mess, at sixes and sevens",7,luan4 qi1 ba1 zao1,luànqībāzāo,False
-略微,略微,lüèwēi,"a little bit, slightly",7,lu:e4 wei1,lüèwēi,False
+略微,略微,lüèwēi,"a little bit, slightly",7,lve4 wei1,lüèwēi,False
 掄,抡,lūn,"to swing (one's arms, a heavy object), to wave (a sword, one's fists), to fling (money), to select",7,lun1,lūn,False
-略,略,lüè,"a little bit, cursorily, any, something, slightly, somewhat, a little, poco, a bit",7,lu:e4,lüè,False
+略,略,lüè,"a little bit, cursorily, any, something, slightly, somewhat, a little, poco, a bit",7,lve4,lüè,False
 倫理,伦理,lúnlǐ,"value orientation, value-system, moral, moral principle, morals, ethical, ethical motive, ethic, moral principles, morality, ethics",7,lun2 li3,lúnlǐ,False
 輪換,轮换,lúnhuàn,duty roster,7,lun2 huan4,lúnhuàn,False
 輪流,轮流,lúnliú,"by turns, in turn",7,lun2 liu2,lúnliú,False
@@ -8443,8 +8443,8 @@ traditional,simplified,pinyin,translation,level,numerical_pinyin,pinyin_check,ex
 弄虛作假,弄虚作假,nòngxū-zuòjiǎ,"to practice fraud (idiom), by trickery",7,nong4 xu1 zuo4 jia3,nòngxūzuòjiǎ,False
 奴隸,奴隶,núlì,slave,7,nu2 li4,núlì,False
 暖烘烘,暖烘烘,nuǎnhōnghōng,"nice and warm, cosy, heartwarming",7,nuan3 hong1 hong1,nuǎnhōnghōng,False
-虐待,虐待,nüèdài,"to mistreat, to maltreat, to abuse, mistreatment, maltreatment",7,nu:e4 dai4,nüèdài,False
-女婿,女婿,nǚxu,"daughter's husband, son-in-law",7,nu:3 xu,nǚxu,False
+虐待,虐待,nüèdài,"to mistreat, to maltreat, to abuse, mistreatment, maltreatment",7,nve4 dai4,nüèdài,False
+女婿,女婿,nǚxu,"daughter's husband, son-in-law",7,nv3 xu,nǚxu,False
 諾言,诺言,nuòyán,promise,7,nuo4 yan2,nuòyán,False
 哦,哦,ó,particle: used when informing sb. of st. (to draw people's attention); indicating mild imperative/suggestion/exclamation/guess/etc.,7,o2,ó,False
 挪,挪,nuó,"to shift, to move",7,nuo2,nuó,False
@@ -8536,7 +8536,7 @@ traditional,simplified,pinyin,translation,level,numerical_pinyin,pinyin_check,ex
 貧窮,贫穷,pínqióng,"poor, needy",7,pin2 qiong2,pínqióng,False
 頻頻,频频,pínpín,"again and again, repeatedly",7,pin2 pin2,pínpín,False
 品嘗,品尝,pǐncháng,"to taste a small amount, to sample",7,pin3 chang2,pǐncháng,False
-頻率,频率,pínlǜ,"relative frequency, frequency, periodicity",7,pin2 lu:4,pínlǜ,False
+頻率,频率,pínlǜ,"relative frequency, frequency, periodicity",7,pin2 lv4,pínlǜ,False
 品德,品德,pǐndé,moral character,7,pin3 de2,pǐndé,False
 品行,品行,pǐnxíng,"behavior, moral conduct",7,pin3 xing2,pǐnxíng,False
 品位,品位,pǐnwèi,"rank, grade, quality, (aesthetic) taste",7,pin3 wei4,pǐnwèi,False
@@ -8713,7 +8713,7 @@ traditional,simplified,pinyin,translation,level,numerical_pinyin,pinyin_check,ex
 竊取,窃取,qièqǔ,"to steal, to seize",7,qie4 qu3,qièqǔ,False
 欽佩,钦佩,qīnpèi,"to admire, to look up to, to respect sb greatly",7,qin1 pei4,qīnpèi,False
 侵害,侵害,qīnhài,"encroach on (other's rights), violate",7,qin1 hai4,qīnhài,False
-侵略,侵略,qīnlüè,invade,7,qin1 lu:e4,qīnlüè,False
+侵略,侵略,qīnlüè,invade,7,qin1 lve4,qīnlüè,False
 侵占,侵占,qīnzhàn,to invade and occupy (territory),7,qin1 zhan4,qīnzhàn,False
 親和力,亲和力,qīnhélì,"(personal) warmth, approachability, accessibility, (in a product) user friendliness, (chemistry) affinity",7,qin1 he2 li4,qīnhélì,False
 侵權,侵权,qīnquán,"to infringe the rights of, to violate, infringement",7,qin1 quan2,qīnquán,False
@@ -8757,7 +8757,7 @@ traditional,simplified,pinyin,translation,level,numerical_pinyin,pinyin_check,ex
 情懷,情怀,qínghuái,"feelings, mood",7,qing2 huai2,qínghuái,False
 情調,情调,qíngdiào,"sentiment, tone and mood, taste",7,qing2 diao4,qíngdiào,False
 情結,情结,qíngjié,complex,7,qing2 jie2,qíngjié,False
-情侶,情侣,qínglǚ,"sweethearts, lovers",7,qing2 lu:3,qínglǚ,False
+情侶,情侣,qínglǚ,"sweethearts, lovers",7,qing2 lv3,qínglǚ,False
 情人,情人,qíngrén,"inamorato, steady, sweetie, Gill, jo, girlfriend, swain, valentine, paramour, turtledove, jill, girl, sweetling, mouse, heart-throb, lassie, truelove, soul mate, flame, ladybird, ladylove, lover, sweetheart, mistress, admirer, hon, lovey, inamorata, honeybunch, turtle, sweeting, bedmate",7,qing2 ren2,qíngrén,False
 情誼,情谊,qíngyì,"friendship, camaraderie",7,qing2 yi4,qíngyì,False
 情願,情愿,qíngyuàn,"willingness, would rather (agree to X than Y)",7,qing2 yuan4,qíngyuàn,False
@@ -9000,7 +9000,7 @@ traditional,simplified,pinyin,translation,level,numerical_pinyin,pinyin_check,ex
 少林寺,少林寺,Shàolínsì,"Shaolin Temple, Buddhist monastery famous for its kung fu monks",7,shao4 lin2 si4,shàolínsì,False
 少有,少有,shǎoyǒu,"rare, infrequent",7,shao3 you3,shǎoyǒu,False
 奢侈,奢侈,shēchǐ,"luxurious, extravagant",7,she1 chi3,shēchǐ,False
-少女,少女,shàonǚ,"signorina, tomato, puss, teens, Gill, bobbysocker, gill, trick, nymph, chick, pussy, missy, maiden, wench, bobbysoxer, demoiselle, girlish, damsel, girl, sheila, miss, jeune fille, squab, wren, pigeon, colleen, maid, burd, bud, lassie, virgin, girlishness, number, gal, skirt, fille, teenager, quean, lass, quail, shrimp, young girl, maidish",7,shao4 nu:3,shàonǚ,False
+少女,少女,shàonǚ,"signorina, tomato, puss, teens, Gill, bobbysocker, gill, trick, nymph, chick, pussy, missy, maiden, wench, bobbysoxer, demoiselle, girlish, damsel, girl, sheila, miss, jeune fille, squab, wren, pigeon, colleen, maid, burd, bud, lassie, virgin, girlishness, number, gal, skirt, fille, teenager, quean, lass, quail, shrimp, young girl, maidish",7,shao4 nv3,shàonǚ,False
 奢望,奢望,shēwàng,"an extravagant hope, to have excessive expectations",7,she1 wang4,shēwàng,False
 設,设,shè,"set up, found",7,she4,shè,False
 設定,设定,shèdìng,"frame, time",7,she4 ding4,shèdìng,False
@@ -9068,7 +9068,7 @@ traditional,simplified,pinyin,translation,level,numerical_pinyin,pinyin_check,ex
 聲望,声望,shēngwàng,"mana, celebrity, character, prestige, odour, repute, fame, name, prestigiousness, caste, renown, reputation, popularity",7,sheng1 wang4,shēngwàng,False
 繩子,绳子,shéngzi,"cord, string, rope, CL:條|条[tiao2]",7,sheng2 zi,shéngzi,False
 牲畜,牲畜,shēngchù,"domesticated animals, livestock",7,sheng1 chu4,shēngchù,False
-省略,省略,shěnglüè,"to leave out, an omission",7,sheng3 lu:e4,shěnglüè,False
+省略,省略,shěnglüè,"to leave out, an omission",7,sheng3 lve4,shěnglüè,False
 省事,省事,shěngshì,"to simplify matters, to save trouble, to handle administrative work",7,xing3 shi4,xǐngshì,True
 勝出,胜出,shèngchū,Win,7,sheng4 chu1,shèngchū,False
 聖賢,圣贤,shèngxián,"a sage, wise and holy man, virtuous ruler, Buddhist lama, wine",7,sheng4 xian2,shèngxián,False
@@ -9089,7 +9089,7 @@ traditional,simplified,pinyin,translation,level,numerical_pinyin,pinyin_check,ex
 失落,失落,shīluò,lose,7,shi1 luo4,shīluò,False
 失效,失效,shī xiào,"to fail, to lose effectiveness",7,shi1 xiao4,shīxiào,False
 失蹤,失踪,shī zōng,be missing,7,shi1 zong1,shīzōng,False
-失業率,失业率,shīyèlǜ,unemployment rate,7,shi1 ye4 lu:4,shīyèlǜ,False
+失業率,失业率,shīyèlǜ,unemployment rate,7,shi1 ye4 lv4,shīyèlǜ,False
 師範,师范,shīfàn,"teacher-training, pedagogical",7,shi1 fan4,shīfàn,False
 師長,师长,shīzhǎng,teacher,7,shi1 zhang3,shīzhǎng,False
 獅子,狮子,shīzi,"leonine, Panthera leo, king of beasts, lion",7,shi1 zi,shīzi,False
@@ -9168,7 +9168,7 @@ traditional,simplified,pinyin,translation,level,numerical_pinyin,pinyin_check,ex
 逝世,逝世,shìshì,"to pass away, to die",7,shi4 shi4,shìshì,False
 收留,收留,shōuliú,"to offer shelter, to have sb in one's care",7,shou1 liu2,shōuliú,False
 收縮,收缩,shōusuō,"to pull back, to shrink, to contract, (physiology) systole",7,shou1 suo1,shōusuō,False
-收視率,收视率,shōushìlǜ,ratings,7,shou1 shi4 lu:4,shōushìlǜ,False
+收視率,收视率,shōushìlǜ,ratings,7,shou1 shi4 lv4,shōushìlǜ,False
 收支,收支,shōuzhī,"cash flow, financial balance, income and expenditure",7,shou1 zhi1,shōuzhī,False
 手臂,手臂,shǒubì,arm,7,shou3 bi4,shǒubì,False
 手冊,手册,shǒucè,"companion, enchiridion, pamphlet, guidebook, notebook, vade_mecum, leaflet, handbook, booklet, brochure, folder, manual, vade mecum, workbook, guide",7,shou3 ce4,shǒucè,False
@@ -9792,7 +9792,7 @@ traditional,simplified,pinyin,translation,level,numerical_pinyin,pinyin_check,ex
 無形中,无形中,wúxíngzhōng,"imperceptibly, virtually",7,wu2 xing2 zhong1,wúxíngzhōng,False
 無須,无须,wúxū,"need not, not obliged to, not necessarily",7,wu2 xu1,wúxū,False
 無意,无意,wúyì,"have no intention, not be inclined to, have no intention to",7,wu2 yi4,wúyì,False
-無憂無慮,无忧无虑,wúyōu-wúlǜ,carefree and without worries (idiom),7,wu2 you1 wu2 lu:4,wúyōuwúlǜ,False
+無憂無慮,无忧无虑,wúyōu-wúlǜ,carefree and without worries (idiom),7,wu2 you1 wu2 lv4,wúyōuwúlǜ,False
 無緣,无缘,wúyuán,"to have no opportunity, no way (of doing sth), no chance, no connection, not placed (in a competition), (in pop lyrics) no chance of love, no place to be together etc",7,wu2 yuan2,wúyuán,False
 無足輕重,无足轻重,wúzúqīngzhòng,insignificant,7,wu2 zu2 qing1 zhong4,wúzúqīngzhòng,False
 五花八門,五花八门,wǔhuā-bāmén,"myriad, all kinds of, all sorts of",7,wu3 hua1 ba1 men2,wǔhuābāmén,False
@@ -9879,7 +9879,7 @@ traditional,simplified,pinyin,translation,level,numerical_pinyin,pinyin_check,ex
 嚇人,吓人,xià rén,Scary,7,xia4 ren2,xiàrén,False
 夏令營,夏令营,xiàlìngyíng,summer camp,7,xia4 ling4 ying2,xiàlìngyíng,False
 仙鶴,仙鹤,xiānhè,red-crowned crane (Grus japonensis),7,xian1 he4,xiānhè,False
-仙女,仙女,xiānnǚ,fairy,7,xian1 nu:3,xiānnǚ,False
+仙女,仙女,xiānnǚ,fairy,7,xian1 nv3,xiānnǚ,False
 先天,先天,xiāntiān,"a priori, congenital, natural, innately, innate, inborn",7,xian1 tian1,xiāntiān,False
 先例,先例,xiānlì,"antecedent, precedent",7,xian1 li4,xiānlì,False
 纖維,纤维,xiānwéi,"fiber, staple",7,xian1 wei2,xiānwéi,False
@@ -10120,7 +10120,7 @@ traditional,simplified,pinyin,translation,level,numerical_pinyin,pinyin_check,ex
 懸念,悬念,xuánniàn,"suspense in a movie, play etc, concern for sb's welfare",7,xuan2 nian4,xuánniàn,False
 懸殊,悬殊,xuánshū,"widely different, large disparity",7,xuan2 shu1,xuánshū,False
 懸崖,悬崖,xuányá,"precipice, overhanging cliff",7,xuan2 ya2,xuányá,False
-旋律,旋律,xuánlǜ,"air, chant, canto, melodic line, rhythm, strain, melodic phrase, melodic, melody, line, aria, movement, cantus, tonal pattern, tune, descant, note",7,xuan2 lu:4,xuánlǜ,False
+旋律,旋律,xuánlǜ,"air, chant, canto, melodic line, rhythm, strain, melodic phrase, melodic, melody, line, aria, movement, cantus, tonal pattern, tune, descant, note",7,xuan2 lv4,xuánlǜ,False
 選民,选民,xuǎnmín,"elector, voter, constituent, constituency, vote, electorate",7,xuan3 min2,xuǎnmín,False
 選項,选项,xuǎnxiàng,"to make a choice (between several alternatives), a choice, an option, an alternative",7,xuan3 xiang4,xuǎnxiàng,False
 旋渦,旋涡,xuánwō,"spiral, whirlpool, eddy, vortex",7,xuan2 wo1,xuánwō,False
@@ -10310,7 +10310,7 @@ traditional,simplified,pinyin,translation,level,numerical_pinyin,pinyin_check,ex
 疑點,疑点,yídiǎn,a doubtful point,7,yi2 dian3,yídiǎn,False
 遺址,遗址,yízhǐ,"ruins, remains, monument, relics",7,yi2 zhi3,yízhǐ,False
 疑惑,疑惑,yíhuò,"be perplexed, be uncertain",7,yi2 huo4,yíhuò,False
-疑慮,疑虑,yílǜ,"misgivings, doubts",7,yi2 lu:4,yílǜ,False
+疑慮,疑虑,yílǜ,"misgivings, doubts",7,yi2 lv4,yílǜ,False
 以,以,yǐ,"using, taking, from a point on, because of",7,yi3,yǐ,False
 以身作則,以身作则,yǐshēn-zuòzé,"to set an example (idiom), to serve as a model",7,yi3 shen1 zuo4 ze2,yǐshēnzuòzé,False
 以免,以免,yǐmiǎn,"conj.: in order to avoid, so as not to",7,yi3 mian3,yǐmiǎn,False
@@ -10451,7 +10451,7 @@ traditional,simplified,pinyin,translation,level,numerical_pinyin,pinyin_check,ex
 優越,优越,yōuyuè,"excel, exceed, superior, outstanding, transcend",7,you1 yue4,yōuyuè,False
 優雅,优雅,yōuyǎ,"graceful, elegant, gracious",7,you1 ya3,yōuyǎ,False
 憂愁,忧愁,yōuchóu,to be worried,7,you1 chou2,yōuchóu,False
-憂慮,忧虑,yōulǜ,"to worry, anxiety (about)",7,you1 lu:4,yōulǜ,False
+憂慮,忧虑,yōulǜ,"to worry, anxiety (about)",7,you1 lv4,yōulǜ,False
 悠久,悠久,yōujiǔ,long in time,7,you1 jiu3,yōujiǔ,False
 憂鬱,忧郁,yōuyù,"sullen, depressed, melancholy, dejected",7,you1 yu4,yōuyù,False
 悠閒,悠闲,yōuxián,"leisurely, carefree, relaxed",7,you1 xian2,yōuxián,False
