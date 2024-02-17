@@ -55,10 +55,10 @@ For example, if the user replies "mei2 shou1 confiscate", your reply will be
 REMINDER
 - ALWAYS REPLY WITH THE TABLE.
 - DO NOT ADD ANYTHING ELSE AFTER THE TABLE.
-"""
+""".strip()
 
 JUDGE_SYSTEM_PROMPT = """
-You will judge the whether the user (in the row "your answer") has provided the correct pinyin, tone and meaning.
+You will judge the whether the user (in the row "your answer") has provided the correct pinyin, tone and meaning for the word {word}.
 
 {reply}
 
@@ -83,7 +83,7 @@ You will exactly reply with one of
 REMINDER
 - Follow the reply template.
 - Do not add anything else in your reply.
-- We consider the meaning correct if it matches any of the reference meaning
+- We consider the meaning correct if it matches any of the reference meanings.
 - The reference meaning is not exhaustive. Accept the user's answer if it is correct, even it is not in the reference meaning
 """
 
@@ -114,7 +114,8 @@ class GPT35TurboAllCapsBot(fp.PoeBot):
         conversation_submitted_key = get_conversation_submitted_key(
             request.conversation_id
         )
-        print(request.query[-1].content)
+        last_user_reply = request.query[-1].content
+        print(last_user_reply)
 
         if conversation_submitted_key not in stub.my_dict:
             yield fp.MetaResponse(
@@ -130,11 +131,12 @@ class GPT35TurboAllCapsBot(fp.PoeBot):
             level = max(1, level)
             level = min(7, level)
         else:
-            level = 3
+            level = 1
             stub.my_dict[user_level_key] = level
 
         if conversation_word_key in stub.my_dict:
             word_info = stub.my_dict[conversation_word_key]
+            word = word_info["simplified"]  # so that this can be used in f-string
         else:
             word_info = (
                 df[(df["level"] == level) & (df["exclude"] == False)]
@@ -172,23 +174,28 @@ class GPT35TurboAllCapsBot(fp.PoeBot):
         if "-----" in bot_reply:
             stub.my_dict[conversation_submitted_key] = True
             request.query = [
-                {"role": "user", "content": JUDGE_SYSTEM_PROMPT.format(reply=bot_reply)}
+                {"role": "user", "content": JUDGE_SYSTEM_PROMPT.format(reply=bot_reply, word=word)}
             ]
+            request.temperature = 0
             judge_reply = ""
-            async for msg in fp.stream_request(request, "ChatGPT", request.access_key):
+            async for msg in fp.stream_request(request, "GPT-3.5-Turbo", request.access_key):
                 judge_reply += msg.text
-                yield self.text_event(msg.text)
+                # yield self.text_event(msg.text)
 
+            yield self.text_event("\n\n")
+            yield self.text_event("You can reset the context (brush icon on bottom left) if you want a new word.\nYou can also follow up with asking more about the word.")
+
+            print(judge_reply, judge_reply.count(" correct"))
             if (
                 "pinyin is correct" in judge_reply
                 and "tone is correct" in judge_reply
                 and "meaning is correct" in judge_reply
+                and word_info["numerical_pinyin"] in last_user_reply
             ):
-                stub.my_dict[user_level_key] = stub.my_dict[user_level_key] + 1
-            elif judge_reply.count("missing") >= 3:
-                stub.my_dict[user_level_key] = stub.my_dict[user_level_key] - 1
+                stub.my_dict[user_level_key] = level + 1
+            elif judge_reply.count(" correct") == 0:  # NB: note the space otherwise it matches incorrect
+                stub.my_dict[user_level_key] = level - 1
 
-            word = word_info["simplified"]
             yield PartialResponse(
                 text=f"What are some ways to use {word} in a sentence?",
                 is_suggested_reply=True,
@@ -199,7 +206,7 @@ class GPT35TurboAllCapsBot(fp.PoeBot):
 
     async def get_settings(self, setting: fp.SettingsRequest) -> fp.SettingsResponse:
         return fp.SettingsResponse(
-            server_bot_dependencies={"ChatGPT": 2},
+            server_bot_dependencies={"ChatGPT": 1, "GPT-3.5-Turbo": 1},
             introduction_message="Say 'start' to get the Chinese word.",
         )
 
