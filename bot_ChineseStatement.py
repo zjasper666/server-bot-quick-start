@@ -1,99 +1,78 @@
 """
 
-BOT_NAME="ChineseVocab"; modal deploy --name $BOT_NAME bot_${BOT_NAME}.py; curl -X POST https://api.poe.com/bot/fetch_settings/$BOT_NAME/$POE_ACCESS_KEY
+BOT_NAME="ChineseStatement"; modal deploy --name $BOT_NAME bot_${BOT_NAME}.py; curl -X POST https://api.poe.com/bot/fetch_settings/$BOT_NAME/$POE_ACCESS_KEY
 
 """
 
 from __future__ import annotations
 
+import random
+import re
 import unicodedata
 from typing import AsyncIterable
 
 import fastapi_poe as fp
-import pandas as pd
 from fastapi_poe.types import PartialResponse
 from modal import Dict, Image, Stub, asgi_app
 
-stub = Stub("poe-bot-ChineseVocab")
+stub = Stub("poe-bot-ChineseStatement")
 stub.my_dict = Dict.new()
 
-df = pd.read_csv("chinese_words.csv")
-# using https://github.com/krmanik/HSK-3.0-words-list/tree/main/HSK%20List
-# see also https://www.mdbg.net/chinese/dictionary?page=cedict
+with open("chinese_sentences.txt") as f:
+    srr = f.readlines()
 
-df = df[df["simplified"].str.len() > 1]
+pattern = r"A\.\d\s"  # e.g. "A.1 "
+
+level_to_statements = []
+
+for line in srr:
+    if re.match(pattern, line):
+        level_to_statements.append([])
+    if "/" in line:
+        continue
+    if line == "\n":
+        continue
+    if "【" in line:
+        continue
+    if "（" in line:
+        continue
+    if "A." in line:
+        continue
+    if "。" not in line and "？" not in line:
+        continue
+    if "甲" in line or "乙" in line:
+        continue
+    if len(line) > 50:
+        continue
+    level_to_statements[-1].append(line.strip())
+
 
 TEMPLATE_STARTING_REPLY = """
-The word sampled from HSK level {level} is
+The statement sampled from HSK level {level} is
 
-# {word}
+# {statement}
 
-Please provide the **pinyin** and a **meaning** of the word.
+Please translate the sentence.
 """.strip()
 
 SYSTEM_TABULATION_PROMPT = """
-You will test the user on the definition of a Chinese word.
+You will test the user on the translation of a Chinese sentence.
 
-The user will need to provide the pinyin pronounication and meaning of the word.
-The pinyin provided needs to have the tones annotated.
+The statement is {statement}
 
-The word is {word}
-The reference pinyin is {pinyin}
-The reference meaning is {meaning}
+You will whether the user's translation captures the full meaning of the sentence.
 
-The user is expected to reply the pinyin and meaning.
-
-When you receive the pinyin and meaning, reply with the following table. DO NOT ADD ANYTHING ELSE.
-
-For example, if the user replies "mei2 shou1 confiscate", your reply will be
-
-|             | Pinyin      | Meaning                 |
-| ----------- | ----------- | ----------------------- |
-| Your answer | mei2 shou1  | confiscate              |
-| Reference   | mo4 shou1   | to confiscate, to seize |
-
-REMINDER
-- ALWAYS REPLY WITH THE TABLE.
-- DO NOT ADD ANYTHING ELSE AFTER THE TABLE.
+If the user has  user's translation captures the full meaning of the sentence, end you reply with
+- Your translation has captured the full meaning of the sentence.
 """.strip()
-
-JUDGE_SYSTEM_PROMPT = """
-You will judge the whether the user (in the row "your answer") has provided the correct pinyin, tone and meaning for the word {word}.
-
-{reply}
-
-You will start your reply with exactly one of, only based on the alphabets provided, ignoring the numerical tones
-
-- The pinyin is correct.
-- The pinyin is incorrect.
-- The pinyin is missing.
-
-You will exactly reply with one of, based on the numerical tone provided
-
-- The numerical tone is correct.
-- The numerical tone is incorrect
-- The numerical tone is missing.
-
-You will exactly reply with one of
-
-- The meaning is correct.
-- The meaning is missing.
-- The meaning is incorrect.
-
-REMINDER
-- Follow the reply template.
-- Do not add anything else in your reply.
-- We consider the meaning correct if it matches any of the reference meanings.
-- The reference meaning is not exhaustive. Accept the user's answer if it is correct, even it is not in the reference meaning
-"""
 
 
 def get_user_level_key(user_id):
     return f"ChineseVocab-level-{user_id}"
 
 
-def get_conversation_word_key(conversation_id):
-    return f"ChineseVocab-word-{conversation_id}"
+def get_conversation_statement_key(conversation_id):
+    return f"ChineseVocab-statement-{conversation_id}"
 
 
 def get_conversation_submitted_key(conversation_id):
@@ -110,7 +89,9 @@ class GPT35TurboAllCapsBot(fp.PoeBot):
         self, request: fp.QueryRequest
     ) -> AsyncIterable[fp.PartialResponse]:
         user_level_key = get_user_level_key(request.user_id)
-        conversation_word_key = get_conversation_word_key(request.conversation_id)
+        conversation_statement_key = get_conversation_statement_key(
+            request.conversation_id
+        )
         conversation_submitted_key = get_conversation_submitted_key(
             request.conversation_id
         )
@@ -134,19 +115,19 @@ class GPT35TurboAllCapsBot(fp.PoeBot):
             level = 1
             stub.my_dict[user_level_key] = level
 
-        if conversation_word_key in stub.my_dict:
-            word_info = stub.my_dict[conversation_word_key]
-            word = word_info["simplified"]  # so that this can be used in f-string
+        if conversation_statement_key in stub.my_dict:
+            statement_info = stub.my_dict[conversation_statement_key]
+            statement = statement_info[
+                "statement"
+            ]  # so that this can be used in f-string
         else:
-            word_info = (
-                df[(df["level"] == level) & (df["exclude"] == False)]
-                .sample(n=1)
-                .to_dict(orient="records")[0]
-            )
-            stub.my_dict[conversation_word_key] = word_info
+
+            statement = random.choice(level_to_statements[level])
+            statement_info = {"statement": statement}
+            stub.my_dict[conversation_statement_key] = statement_info
             yield self.text_event(
                 TEMPLATE_STARTING_REPLY.format(
-                    word=word_info["simplified"], level=word_info["level"]
+                    statement=statement_info["statement"], level=level
                 )
             )
             return
@@ -154,11 +135,7 @@ class GPT35TurboAllCapsBot(fp.PoeBot):
         request.query = [
             {
                 "role": "system",
-                "content": SYSTEM_TABULATION_PROMPT.format(
-                    word=word_info["simplified"],
-                    pinyin=word_info["numerical_pinyin"],
-                    meaning=word_info["translation"],
-                ),
+                "content": SYSTEM_TABULATION_PROMPT.format(statement=statement),
             }
         ] + request.query
         request.temperature = 0
@@ -169,45 +146,22 @@ class GPT35TurboAllCapsBot(fp.PoeBot):
             bot_reply += msg.text
             yield msg.model_copy()
 
-        yield self.text_event("\n\n")
-
-        if "-----" in bot_reply:
+        if conversation_submitted_key not in stub.my_dict:
             stub.my_dict[conversation_submitted_key] = True
-            request.query = [
-                {"role": "user", "content": JUDGE_SYSTEM_PROMPT.format(reply=bot_reply, word=word)}
-            ]
-            request.temperature = 0
-            judge_reply = ""
-            async for msg in fp.stream_request(request, "GPT-3.5-Turbo", request.access_key):
-                judge_reply += msg.text
-                # yield self.text_event(msg.text)
-
-            yield self.text_event("\n\n")
-            yield self.text_event("You can reset the context (brush icon on bottom left) if you want a new word.\nYou can also follow up with asking more about the word.")
-
-            print(judge_reply, judge_reply.count(" correct"))
-            if (
-                "pinyin is correct" in judge_reply
-                and "tone is correct" in judge_reply
-                and "meaning is correct" in judge_reply
-                and word_info["numerical_pinyin"] in last_user_reply
-            ):
+            if "has captured the full meaning" in bot_reply:
                 stub.my_dict[user_level_key] = level + 1
-            elif judge_reply.count(" correct") == 0:  # NB: note the space otherwise it matches incorrect
+            else:
                 stub.my_dict[user_level_key] = level - 1
 
             yield PartialResponse(
-                text=f"What are some ways to use {word} in a sentence?",
+                text=f"What are some other sentences of a similar structure?",
                 is_suggested_reply=True,
-            )
-            yield PartialResponse(
-                text=f"What are some words related to {word}?", is_suggested_reply=True
             )
 
     async def get_settings(self, setting: fp.SettingsRequest) -> fp.SettingsResponse:
         return fp.SettingsResponse(
             server_bot_dependencies={"ChatGPT": 1, "GPT-3.5-Turbo": 1},
-            introduction_message="Say 'start' to get the Chinese word.",
+            introduction_message="Say 'start' to get the sentence to translate.",
         )
 
 
@@ -215,7 +169,7 @@ REQUIREMENTS = ["fastapi-poe==0.0.24", "pandas"]
 image = (
     Image.debian_slim()
     .pip_install(*REQUIREMENTS)
-    .copy_local_file("chinese_words.csv", "/root/chinese_words.csv")
+    .copy_local_file("chinese_sentences.txt", "/root/chinese_sentences.txt")
 )
 
 

@@ -87,6 +87,12 @@ REMINDER
 - The reference meaning is not exhaustive. Accept the user's answer if it is correct, even it is not in the reference meaning
 """
 
+FREEFORM_SYSTEM_PROMPT = """
+You are a patient Chinese language teacher.
+
+You will guide the conversation in ways that maximizes the learning of the Chinese language.
+"""
+
 
 def get_user_level_key(user_id):
     return f"ChineseVocab-level-{user_id}"
@@ -117,14 +123,25 @@ class GPT35TurboAllCapsBot(fp.PoeBot):
         last_user_reply = request.query[-1].content
         print(last_user_reply)
 
-        if conversation_submitted_key not in stub.my_dict:
-            yield fp.MetaResponse(
-                text="",
-                content_type="text/markdown",
-                linkify=True,
-                refetch_settings=False,
-                suggested_replies=False,
-            )
+        if conversation_submitted_key in stub.my_dict:
+            request.query = [
+                {"role": "system", "content": FREEFORM_SYSTEM_PROMPT}
+            ] + request.query
+            bot_reply = ""
+            async for msg in fp.stream_request(request, "ChatGPT", request.access_key):
+                bot_reply += msg.text
+                yield msg.model_copy()
+            print(bot_reply)
+            return
+
+        # disable suggested replies
+        yield fp.MetaResponse(
+            text="",
+            content_type="text/markdown",
+            linkify=True,
+            refetch_settings=False,
+            suggested_replies=False,
+        )
 
         if user_level_key in stub.my_dict:
             level = stub.my_dict[user_level_key]
@@ -174,16 +191,23 @@ class GPT35TurboAllCapsBot(fp.PoeBot):
         if "-----" in bot_reply:
             stub.my_dict[conversation_submitted_key] = True
             request.query = [
-                {"role": "user", "content": JUDGE_SYSTEM_PROMPT.format(reply=bot_reply, word=word)}
+                {
+                    "role": "user",
+                    "content": JUDGE_SYSTEM_PROMPT.format(reply=bot_reply, word=word),
+                }
             ]
             request.temperature = 0
             judge_reply = ""
-            async for msg in fp.stream_request(request, "GPT-3.5-Turbo", request.access_key):
+            async for msg in fp.stream_request(
+                request, "GPT-3.5-Turbo", request.access_key
+            ):
                 judge_reply += msg.text
                 # yield self.text_event(msg.text)
 
             yield self.text_event("\n\n")
-            yield self.text_event("You can reset the context (brush icon on bottom left) if you want a new word.\nYou can also follow up with asking more about the word.")
+            yield self.text_event(
+                "You can reset the context (brush icon on bottom left) if you want a new word.\nYou can also follow up with asking more about the word."
+            )
 
             print(judge_reply, judge_reply.count(" correct"))
             if (
@@ -193,7 +217,9 @@ class GPT35TurboAllCapsBot(fp.PoeBot):
                 and word_info["numerical_pinyin"] in last_user_reply
             ):
                 stub.my_dict[user_level_key] = level + 1
-            elif judge_reply.count(" correct") == 0:  # NB: note the space otherwise it matches incorrect
+            elif (
+                judge_reply.count(" correct") == 0
+            ):  # NB: note the space otherwise it matches incorrect
                 stub.my_dict[user_level_key] = level - 1
 
             yield PartialResponse(
