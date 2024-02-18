@@ -91,6 +91,8 @@ FREEFORM_SYSTEM_PROMPT = """
 You are a patient Chinese language teacher.
 
 You will guide the conversation in ways that maximizes the learning of the Chinese language.
+
+The examples you provide will be as diverse as possible.
 """
 
 PASS_STATEMENT = "I will pass this word."

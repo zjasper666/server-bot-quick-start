@@ -66,6 +66,12 @@ If the user has  user's translation captures the full meaning of the sentence, e
 - Your translation has captured the full meaning of the sentence.
 """.strip()
 
+FREEFORM_SYSTEM_PROMPT = """
+You are a patient Chinese language teacher.
+
+You will guide the conversation in ways that maximizes the learning of the Chinese language.
+"""
+
 PASS_STATEMENT = "I will pass this sentence."
 
 
@@ -100,14 +106,25 @@ class GPT35TurboAllCapsBot(fp.PoeBot):
         last_user_reply = request.query[-1].content
         print(last_user_reply)
 
-        if conversation_submitted_key not in stub.my_dict:
-            yield fp.MetaResponse(
-                text="",
-                content_type="text/markdown",
-                linkify=True,
-                refetch_settings=False,
-                suggested_replies=False,
-            )
+        if conversation_submitted_key in stub.my_dict:
+            request.query = [
+                {"role": "system", "content": FREEFORM_SYSTEM_PROMPT}
+            ] + request.query
+            bot_reply = ""
+            async for msg in fp.stream_request(request, "ChatGPT", request.access_key):
+                bot_reply += msg.text
+                yield msg.model_copy()
+            print(bot_reply)
+            return
+
+        # disable suggested replies
+        yield fp.MetaResponse(
+            text="",
+            content_type="text/markdown",
+            linkify=True,
+            refetch_settings=False,
+            suggested_replies=False,
+        )
 
         if user_level_key in stub.my_dict:
             level = stub.my_dict[user_level_key]
@@ -159,7 +176,7 @@ class GPT35TurboAllCapsBot(fp.PoeBot):
                 stub.my_dict[user_level_key] = level - 1
 
             yield PartialResponse(
-                text=f"What are some other sentences of a similar structure?",
+                text=f"What are other sentences with a similar structure?",
                 is_suggested_reply=True,
             )
 
