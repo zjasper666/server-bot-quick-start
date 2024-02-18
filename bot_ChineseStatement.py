@@ -66,6 +66,8 @@ If the user has  user's translation captures the full meaning of the sentence, e
 - Your translation has captured the full meaning of the sentence.
 """.strip()
 
+PASS_STATEMENT = "I will pass this sentence."
+
 
 def get_user_level_key(user_id):
     return f"ChineseVocab-level-{user_id}"
@@ -115,13 +117,12 @@ class GPT35TurboAllCapsBot(fp.PoeBot):
             level = 1
             stub.my_dict[user_level_key] = level
 
-        if conversation_statement_key in stub.my_dict:
+        if conversation_statement_key in stub.my_dict and last_user_reply != PASS_STATEMENT:
             statement_info = stub.my_dict[conversation_statement_key]
             statement = statement_info[
                 "statement"
             ]  # so that this can be used in f-string
         else:
-
             statement = random.choice(level_to_statements[level])
             statement_info = {"statement": statement}
             stub.my_dict[conversation_statement_key] = statement_info
@@ -129,6 +130,10 @@ class GPT35TurboAllCapsBot(fp.PoeBot):
                 TEMPLATE_STARTING_REPLY.format(
                     statement=statement_info["statement"], level=level
                 )
+            )
+            yield PartialResponse(
+                text=PASS_STATEMENT,
+                is_suggested_reply=True,
             )
             return
 

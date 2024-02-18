@@ -93,6 +93,8 @@ You are a patient Chinese language teacher.
 You will guide the conversation in ways that maximizes the learning of the Chinese language.
 """
 
+PASS_STATEMENT = "I will pass this word."
+
 
 def get_user_level_key(user_id):
     return f"ChineseVocab-level-{user_id}"
@@ -151,7 +153,7 @@ class GPT35TurboAllCapsBot(fp.PoeBot):
             level = 1
             stub.my_dict[user_level_key] = level
 
-        if conversation_word_key in stub.my_dict:
+        if conversation_word_key in stub.my_dict and last_user_reply != PASS_STATEMENT:
             word_info = stub.my_dict[conversation_word_key]
             word = word_info["simplified"]  # so that this can be used in f-string
         else:
@@ -165,6 +167,10 @@ class GPT35TurboAllCapsBot(fp.PoeBot):
                 TEMPLATE_STARTING_REPLY.format(
                     word=word_info["simplified"], level=word_info["level"]
                 )
+            )
+            yield PartialResponse(
+                text=PASS_STATEMENT,
+                is_suggested_reply=True,
             )
             return
 
