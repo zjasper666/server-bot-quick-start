@@ -143,7 +143,9 @@ class GPT35TurboAllCapsBot(fp.PoeBot):
 
         # for new conversations, sample a problem
         if conversation_info_key not in stub.my_dict:
-            statement, context = random.choice(level_to_statements_and_context[level])
+            statement, context = random.choice(
+                level_to_statements_and_context[level - 1]  # leveling is one indexed
+            )
             statement_info = {"statement": statement, "context": context}
             stub.my_dict[conversation_info_key] = statement_info
             yield self.text_event(
