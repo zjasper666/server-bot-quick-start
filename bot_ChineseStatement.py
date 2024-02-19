@@ -2,13 +2,16 @@
 
 BOT_NAME="ChineseStatement"; modal deploy --name $BOT_NAME bot_${BOT_NAME}.py; curl -X POST https://api.poe.com/bot/fetch_settings/$BOT_NAME/$POE_ACCESS_KEY
 
+There are three states in the conversation
+- Before getting the problem
+- After getting the problem, before making a submission
+- After making a submission
 """
 
 from __future__ import annotations
 
 import random
 import re
-import unicodedata
 from typing import AsyncIterable
 
 import fastapi_poe as fp
@@ -89,11 +92,6 @@ def get_conversation_submitted_key(conversation_id):
     return f"ChineseVocab-submitted-{conversation_id}"
 
 
-def to_tone_number(s):
-    table = {0x304: ord("1"), 0x301: ord("2"), 0x30C: ord("3"), 0x300: ord("4")}
-    return unicodedata.normalize("NFD", s).translate(table)
-
-
 class GPT35TurboAllCapsBot(fp.PoeBot):
     async def get_response(
         self, request: fp.QueryRequest
@@ -108,10 +106,37 @@ class GPT35TurboAllCapsBot(fp.PoeBot):
         last_user_reply = request.query[-1].content
         print(last_user_reply)
 
-        if last_user_reply == NEXT_STATEMENT:
-            stub.my_dict.pop(conversation_statement_key)
-            stub.my_dict.pop(conversation_submitted_key)
+        # reset if the user passes or asks for the next statement
+        if last_user_reply in (NEXT_STATEMENT, PASS_STATEMENT):
+            if conversation_statement_key in stub.my_dict:
+                stub.my_dict.pop(conversation_statement_key)
+            if conversation_submitted_key in stub.my_dict:
+                stub.my_dict.pop(conversation_submitted_key)
 
+        # retrieve the level of the user
+        # TODO(when conversation starter is ready): jump to a specific level
+        if user_level_key in stub.my_dict:
+            level = stub.my_dict[user_level_key]
+            level = max(1, level)
+            level = min(7, level)
+        else:
+            level = 1
+            stub.my_dict[user_level_key] = level
+
+        # for new conversations, sample a problem
+        if conversation_statement_key not in stub.my_dict:
+            statement = random.choice(level_to_statements[level])
+            statement_info = {"statement": statement}
+            stub.my_dict[conversation_statement_key] = statement_info
+            yield self.text_event(
+                TEMPLATE_STARTING_REPLY.format(
+                    statement=statement_info["statement"], level=level
+                )
+            )
+            yield PartialResponse(text=PASS_STATEMENT, is_suggested_reply=True)
+            return
+
+        # if the submission is already made, continue as per normal
         if conversation_submitted_key in stub.my_dict:
             request.query = [
                 {"role": "system", "content": FREEFORM_SYSTEM_PROMPT}
@@ -123,7 +148,7 @@ class GPT35TurboAllCapsBot(fp.PoeBot):
             print(bot_reply)
             return
 
-        # disable suggested replies
+        # otherwise, disable suggested replies
         yield fp.MetaResponse(
             text="",
             content_type="text/markdown",
@@ -132,33 +157,9 @@ class GPT35TurboAllCapsBot(fp.PoeBot):
             suggested_replies=False,
         )
 
-        if user_level_key in stub.my_dict:
-            level = stub.my_dict[user_level_key]
-            level = max(1, level)
-            level = min(7, level)
-        else:
-            level = 1
-            stub.my_dict[user_level_key] = level
-
-        if (
-            conversation_statement_key in stub.my_dict
-            and last_user_reply != PASS_STATEMENT
-        ):
-            statement_info = stub.my_dict[conversation_statement_key]
-            statement = statement_info[
-                "statement"
-            ]  # so that this can be used in f-string
-        else:
-            statement = random.choice(level_to_statements[level])
-            statement_info = {"statement": statement}
-            stub.my_dict[conversation_statement_key] = statement_info
-            yield self.text_event(
-                TEMPLATE_STARTING_REPLY.format(
-                    statement=statement_info["statement"], level=level
-                )
-            )
-            yield PartialResponse(text=PASS_STATEMENT, is_suggested_reply=True)
-            return
+        # retrieve the previously cached word
+        statement_info = stub.my_dict[conversation_statement_key]
+        statement = statement_info["statement"]  # so that this can be used in f-string
 
         request.query = [
             {
@@ -174,18 +175,19 @@ class GPT35TurboAllCapsBot(fp.PoeBot):
             bot_reply += msg.text
             yield msg.model_copy()
 
-        if conversation_submitted_key not in stub.my_dict:
-            stub.my_dict[conversation_submitted_key] = True
-            if "has captured the full meaning" in bot_reply:
-                stub.my_dict[user_level_key] = level + 1
-            else:
-                stub.my_dict[user_level_key] = level - 1
+        # make a judgement on correctness
+        stub.my_dict[conversation_submitted_key] = True
+        if "has captured the full meaning" in bot_reply:
+            stub.my_dict[user_level_key] = level + 1
+        else:
+            stub.my_dict[user_level_key] = level - 1
 
-            yield PartialResponse(
-                text="What are other sentences with a similar structure?",
-                is_suggested_reply=True,
-            )
-            yield PartialResponse(text=NEXT_STATEMENT, is_suggested_reply=True)
+        # deliver suggsted replies
+        yield PartialResponse(
+            text="What are other sentences with a similar structure?",
+            is_suggested_reply=True,
+        )
+        yield PartialResponse(text=NEXT_STATEMENT, is_suggested_reply=True)
 
     async def get_settings(self, setting: fp.SettingsRequest) -> fp.SettingsResponse:
         return fp.SettingsResponse(

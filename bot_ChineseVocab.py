@@ -10,7 +10,6 @@ There are three states in the conversation
 
 from __future__ import annotations
 
-import unicodedata
 from typing import AsyncIterable
 
 import fastapi_poe as fp
@@ -116,11 +115,6 @@ def get_conversation_submitted_key(conversation_id):
     return f"ChineseVocab-submitted-{conversation_id}"
 
 
-def to_tone_number(s):
-    table = {0x304: ord("1"), 0x301: ord("2"), 0x30C: ord("3"), 0x300: ord("4")}
-    return unicodedata.normalize("NFD", s).translate(table)
-
-
 class GPT35TurboAllCapsBot(fp.PoeBot):
     async def get_response(
         self, request: fp.QueryRequest
@@ -134,7 +128,7 @@ class GPT35TurboAllCapsBot(fp.PoeBot):
         print(last_user_reply)
 
         # reset if the user passes or asks for the next statement
-        if last_user_reply == NEXT_STATEMENT or last_user_reply == PASS_STATEMENT:
+        if last_user_reply in (NEXT_STATEMENT, PASS_STATEMENT):
             if conversation_word_key in stub.my_dict:
                 stub.my_dict.pop(conversation_word_key)
             if conversation_submitted_key in stub.my_dict:
