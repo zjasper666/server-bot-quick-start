@@ -74,6 +74,8 @@ You will guide the conversation in ways that maximizes the learning of the Chine
 
 PASS_STATEMENT = "I will pass this sentence."
 
+NEXT_STATEMENT = "I want another sentence."
+
 
 def get_user_level_key(user_id):
     return f"ChineseVocab-level-{user_id}"
@@ -105,6 +107,10 @@ class GPT35TurboAllCapsBot(fp.PoeBot):
         )
         last_user_reply = request.query[-1].content
         print(last_user_reply)
+
+        if last_user_reply == NEXT_STATEMENT:
+            stub.my_dict.pop(conversation_statement_key)
+            stub.my_dict.pop(conversation_submitted_key)
 
         if conversation_submitted_key in stub.my_dict:
             request.query = [
@@ -148,10 +154,7 @@ class GPT35TurboAllCapsBot(fp.PoeBot):
                     statement=statement_info["statement"], level=level
                 )
             )
-            yield PartialResponse(
-                text=PASS_STATEMENT,
-                is_suggested_reply=True,
-            )
+            yield PartialResponse(text=PASS_STATEMENT, is_suggested_reply=True)
             return
 
         request.query = [
@@ -179,6 +182,7 @@ class GPT35TurboAllCapsBot(fp.PoeBot):
                 text=f"What are other sentences with a similar structure?",
                 is_suggested_reply=True,
             )
+            yield PartialResponse(text=NEXT_STATEMENT, is_suggested_reply=True)
 
     async def get_settings(self, setting: fp.SettingsRequest) -> fp.SettingsResponse:
         return fp.SettingsResponse(

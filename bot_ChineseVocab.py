@@ -97,6 +97,8 @@ The examples you provide will be as diverse as possible.
 
 PASS_STATEMENT = "I will pass this word."
 
+NEXT_STATEMENT = "I want another word."
+
 
 def get_user_level_key(user_id):
     return f"ChineseVocab-level-{user_id}"
@@ -127,6 +129,12 @@ class GPT35TurboAllCapsBot(fp.PoeBot):
         last_user_reply = request.query[-1].content
         print(last_user_reply)
 
+        if last_user_reply == NEXT_STATEMENT:
+            if conversation_word_key in stub.my_dict:
+                stub.my_dict.pop(conversation_word_key)
+            if conversation_submitted_key in stub.my_dict:
+                stub.my_dict.pop(conversation_submitted_key)
+
         if conversation_submitted_key in stub.my_dict:
             request.query = [
                 {"role": "system", "content": FREEFORM_SYSTEM_PROMPT}
@@ -155,7 +163,10 @@ class GPT35TurboAllCapsBot(fp.PoeBot):
             level = 1
             stub.my_dict[user_level_key] = level
 
-        if conversation_word_key in stub.my_dict and last_user_reply != PASS_STATEMENT:
+        if (
+            conversation_word_key in stub.my_dict
+            and last_user_reply != PASS_STATEMENT
+        ):
             word_info = stub.my_dict[conversation_word_key]
             word = word_info["simplified"]  # so that this can be used in f-string
         else:
@@ -170,10 +181,7 @@ class GPT35TurboAllCapsBot(fp.PoeBot):
                     word=word_info["simplified"], level=word_info["level"]
                 )
             )
-            yield PartialResponse(
-                text=PASS_STATEMENT,
-                is_suggested_reply=True,
-            )
+            yield PartialResponse(text=PASS_STATEMENT, is_suggested_reply=True)
             return
 
         request.query = [
@@ -237,6 +245,7 @@ class GPT35TurboAllCapsBot(fp.PoeBot):
             yield PartialResponse(
                 text=f"What are some words related to {word}?", is_suggested_reply=True
             )
+            yield PartialResponse(text=NEXT_STATEMENT, is_suggested_reply=True)
 
     async def get_settings(self, setting: fp.SettingsRequest) -> fp.SettingsResponse:
         return fp.SettingsResponse(
