@@ -26,28 +26,44 @@ with open("chinese_sentences.txt") as f:
 
 pattern = r"A\.\d\s"  # e.g. "A.1 "
 
-level_to_statements = []
+level_to_statements_and_context = []
+
+context = {}
 
 for line in srr:
+    line = line.strip()
     if re.match(pattern, line):
-        level_to_statements.append([])
-    if "/" in line:
+        level_to_statements_and_context.append([])
         continue
-    if line == "\n":
-        continue
-    if "【" in line:
-        continue
-    if "（" in line:
+    if line == "":
         continue
     if "A." in line:
+        depth = line.count(".")
+        context[f"{depth}"] = line
+        context.pop("【", None)
+        context.pop("（", None)
+        for nex_depth in range(depth + 1, 10):
+            context.pop(f"{nex_depth}", None)
         continue
+    if "【" in line:
+        context["【"] = line
+        context.pop("（", None)
+        continue
+    if "（" in line:
+        context["（"] = line
+        continue
+
+    # statement matching
     if "。" not in line and "？" not in line:
         continue
     if "甲" in line or "乙" in line:
         continue
+    if "/" in line:
+        continue
     if len(line) > 50:
         continue
-    level_to_statements[-1].append(line.strip())
+
+    level_to_statements_and_context[-1].append((line.strip(), list(context.values())))
 
 
 TEMPLATE_STARTING_REPLY = """
@@ -73,6 +89,8 @@ FREEFORM_SYSTEM_PROMPT = """
 You are a patient Chinese language teacher.
 
 You will guide the conversation in ways that maximizes the learning of the Chinese language.
+
+The context of the problem is {context}
 """
 
 PASS_STATEMENT = "I will pass this sentence."
@@ -84,7 +102,7 @@ def get_user_level_key(user_id):
     return f"ChineseVocab-level-{user_id}"
 
 
-def get_conversation_statement_key(conversation_id):
+def get_conversation_info_key(conversation_id):
     return f"ChineseVocab-statement-{conversation_id}"
 
 
@@ -97,7 +115,7 @@ class GPT35TurboAllCapsBot(fp.PoeBot):
         self, request: fp.QueryRequest
     ) -> AsyncIterable[fp.PartialResponse]:
         user_level_key = get_user_level_key(request.user_id)
-        conversation_statement_key = get_conversation_statement_key(
+        conversation_info_key = get_conversation_info_key(
             request.conversation_id
         )
         conversation_submitted_key = get_conversation_submitted_key(
@@ -108,8 +126,8 @@ class GPT35TurboAllCapsBot(fp.PoeBot):
 
         # reset if the user passes or asks for the next statement
         if last_user_reply in (NEXT_STATEMENT, PASS_STATEMENT):
-            if conversation_statement_key in stub.my_dict:
-                stub.my_dict.pop(conversation_statement_key)
+            if conversation_info_key in stub.my_dict:
+                stub.my_dict.pop(conversation_info_key)
             if conversation_submitted_key in stub.my_dict:
                 stub.my_dict.pop(conversation_submitted_key)
 
@@ -124,10 +142,10 @@ class GPT35TurboAllCapsBot(fp.PoeBot):
             stub.my_dict[user_level_key] = level
 
         # for new conversations, sample a problem
-        if conversation_statement_key not in stub.my_dict:
-            statement = random.choice(level_to_statements[level])
-            statement_info = {"statement": statement}
-            stub.my_dict[conversation_statement_key] = statement_info
+        if conversation_info_key not in stub.my_dict:
+            statement, context = random.choice(level_to_statements_and_context[level])
+            statement_info = {"statement": statement, "context": context}
+            stub.my_dict[conversation_info_key] = statement_info
             yield self.text_event(
                 TEMPLATE_STARTING_REPLY.format(
                     statement=statement_info["statement"], level=level
@@ -136,10 +154,17 @@ class GPT35TurboAllCapsBot(fp.PoeBot):
             yield PartialResponse(text=PASS_STATEMENT, is_suggested_reply=True)
             return
 
+        # retrieve the previously cached word
+        statement_info = stub.my_dict[conversation_info_key]
+        statement = statement_info["statement"]  # so that this can be used in f-string
+
         # if the submission is already made, continue as per normal
         if conversation_submitted_key in stub.my_dict:
             request.query = [
-                {"role": "system", "content": FREEFORM_SYSTEM_PROMPT}
+                {
+                    "role": "system",
+                    "content": FREEFORM_SYSTEM_PROMPT.format(context=str(statement_info["context"])),
+                }
             ] + request.query
             bot_reply = ""
             async for msg in fp.stream_request(request, "ChatGPT", request.access_key):
@@ -156,10 +181,6 @@ class GPT35TurboAllCapsBot(fp.PoeBot):
             refetch_settings=False,
             suggested_replies=False,
         )
-
-        # retrieve the previously cached word
-        statement_info = stub.my_dict[conversation_statement_key]
-        statement = statement_info["statement"]  # so that this can be used in f-string
 
         request.query = [
             {

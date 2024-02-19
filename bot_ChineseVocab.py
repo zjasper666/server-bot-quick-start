@@ -107,7 +107,7 @@ def get_user_level_key(user_id):
     return f"ChineseVocab-level-{user_id}"
 
 
-def get_conversation_word_key(conversation_id):
+def get_conversation_info_key(conversation_id):
     return f"ChineseVocab-word-{conversation_id}"
 
 
@@ -120,7 +120,7 @@ class GPT35TurboAllCapsBot(fp.PoeBot):
         self, request: fp.QueryRequest
     ) -> AsyncIterable[fp.PartialResponse]:
         user_level_key = get_user_level_key(request.user_id)
-        conversation_word_key = get_conversation_word_key(request.conversation_id)
+        conversation_info_key = get_conversation_info_key(request.conversation_id)
         conversation_submitted_key = get_conversation_submitted_key(
             request.conversation_id
         )
@@ -129,8 +129,8 @@ class GPT35TurboAllCapsBot(fp.PoeBot):
 
         # reset if the user passes or asks for the next statement
         if last_user_reply in (NEXT_STATEMENT, PASS_STATEMENT):
-            if conversation_word_key in stub.my_dict:
-                stub.my_dict.pop(conversation_word_key)
+            if conversation_info_key in stub.my_dict:
+                stub.my_dict.pop(conversation_info_key)
             if conversation_submitted_key in stub.my_dict:
                 stub.my_dict.pop(conversation_submitted_key)
 
@@ -145,13 +145,13 @@ class GPT35TurboAllCapsBot(fp.PoeBot):
             stub.my_dict[user_level_key] = level
 
         # for new conversations, sample a problem
-        if conversation_word_key not in stub.my_dict:
+        if conversation_info_key not in stub.my_dict:
             word_info = (
                 df[(df["level"] == level) & (df["exclude"] == False)]
                 .sample(n=1)
                 .to_dict(orient="records")[0]
             )
-            stub.my_dict[conversation_word_key] = word_info
+            stub.my_dict[conversation_info_key] = word_info
             yield self.text_event(
                 TEMPLATE_STARTING_REPLY.format(
                     word=word_info["simplified"], level=word_info["level"]
@@ -182,7 +182,7 @@ class GPT35TurboAllCapsBot(fp.PoeBot):
         )
 
         # retrieve the previously cached word
-        word_info = stub.my_dict[conversation_word_key]
+        word_info = stub.my_dict[conversation_info_key]
         word = word_info["simplified"]  # so that this can be used in f-string
 
         # tabluate the user's submission
