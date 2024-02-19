@@ -140,7 +140,10 @@ class GPT35TurboAllCapsBot(fp.PoeBot):
             level = 1
             stub.my_dict[user_level_key] = level
 
-        if conversation_statement_key in stub.my_dict and last_user_reply != PASS_STATEMENT:
+        if (
+            conversation_statement_key in stub.my_dict
+            and last_user_reply != PASS_STATEMENT
+        ):
             statement_info = stub.my_dict[conversation_statement_key]
             statement = statement_info[
                 "statement"
@@ -179,7 +182,7 @@ class GPT35TurboAllCapsBot(fp.PoeBot):
                 stub.my_dict[user_level_key] = level - 1
 
             yield PartialResponse(
-                text=f"What are other sentences with a similar structure?",
+                text="What are other sentences with a similar structure?",
                 is_suggested_reply=True,
             )
             yield PartialResponse(text=NEXT_STATEMENT, is_suggested_reply=True)

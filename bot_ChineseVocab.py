@@ -2,6 +2,10 @@
 
 BOT_NAME="ChineseVocab"; modal deploy --name $BOT_NAME bot_${BOT_NAME}.py; curl -X POST https://api.poe.com/bot/fetch_settings/$BOT_NAME/$POE_ACCESS_KEY
 
+There are three states in the conversation
+- Before getting the problem
+- After getting the problem, before making a submission
+- After making a submission
 """
 
 from __future__ import annotations
@@ -129,32 +133,15 @@ class GPT35TurboAllCapsBot(fp.PoeBot):
         last_user_reply = request.query[-1].content
         print(last_user_reply)
 
-        if last_user_reply == NEXT_STATEMENT:
+        # reset if the user passes or asks for the next statement
+        if last_user_reply == NEXT_STATEMENT or last_user_reply == PASS_STATEMENT:
             if conversation_word_key in stub.my_dict:
                 stub.my_dict.pop(conversation_word_key)
             if conversation_submitted_key in stub.my_dict:
                 stub.my_dict.pop(conversation_submitted_key)
 
-        if conversation_submitted_key in stub.my_dict:
-            request.query = [
-                {"role": "system", "content": FREEFORM_SYSTEM_PROMPT}
-            ] + request.query
-            bot_reply = ""
-            async for msg in fp.stream_request(request, "ChatGPT", request.access_key):
-                bot_reply += msg.text
-                yield msg.model_copy()
-            print(bot_reply)
-            return
-
-        # disable suggested replies
-        yield fp.MetaResponse(
-            text="",
-            content_type="text/markdown",
-            linkify=True,
-            refetch_settings=False,
-            suggested_replies=False,
-        )
-
+        # retrieve the level of the user
+        # TODO(when conversation starter is ready): jump to a specific level
         if user_level_key in stub.my_dict:
             level = stub.my_dict[user_level_key]
             level = max(1, level)
@@ -163,13 +150,8 @@ class GPT35TurboAllCapsBot(fp.PoeBot):
             level = 1
             stub.my_dict[user_level_key] = level
 
-        if (
-            conversation_word_key in stub.my_dict
-            and last_user_reply != PASS_STATEMENT
-        ):
-            word_info = stub.my_dict[conversation_word_key]
-            word = word_info["simplified"]  # so that this can be used in f-string
-        else:
+        # for new conversations, sample a problem
+        if conversation_word_key not in stub.my_dict:
             word_info = (
                 df[(df["level"] == level) & (df["exclude"] == False)]
                 .sample(n=1)
@@ -184,6 +166,32 @@ class GPT35TurboAllCapsBot(fp.PoeBot):
             yield PartialResponse(text=PASS_STATEMENT, is_suggested_reply=True)
             return
 
+        # if the submission is already made, continue as per normal
+        if conversation_submitted_key in stub.my_dict:
+            request.query = [
+                {"role": "system", "content": FREEFORM_SYSTEM_PROMPT}
+            ] + request.query
+            bot_reply = ""
+            async for msg in fp.stream_request(request, "ChatGPT", request.access_key):
+                bot_reply += msg.text
+                yield msg.model_copy()
+            print(bot_reply)
+            return
+
+        # otherwise, disable suggested replies
+        yield fp.MetaResponse(
+            text="",
+            content_type="text/markdown",
+            linkify=True,
+            refetch_settings=False,
+            suggested_replies=False,
+        )
+
+        # retrieve the previously cached word
+        word_info = stub.my_dict[conversation_word_key]
+        word = word_info["simplified"]  # so that this can be used in f-string
+
+        # tabluate the user's submission
         request.query = [
             {
                 "role": "system",
@@ -204,6 +212,7 @@ class GPT35TurboAllCapsBot(fp.PoeBot):
 
         yield self.text_event("\n\n")
 
+        # make a judgement on correctness
         if "-----" in bot_reply:
             stub.my_dict[conversation_submitted_key] = True
             request.query = [
@@ -238,6 +247,7 @@ class GPT35TurboAllCapsBot(fp.PoeBot):
             ):  # NB: note the space otherwise it matches incorrect
                 stub.my_dict[user_level_key] = level - 1
 
+            # deliver suggested replies
             yield PartialResponse(
                 text=f"What are some ways to use {word} in a sentence?",
                 is_suggested_reply=True,
@@ -245,6 +255,8 @@ class GPT35TurboAllCapsBot(fp.PoeBot):
             yield PartialResponse(
                 text=f"What are some words related to {word}?", is_suggested_reply=True
             )
+            yield PartialResponse(text=NEXT_STATEMENT, is_suggested_reply=True)
+        else:
             yield PartialResponse(text=NEXT_STATEMENT, is_suggested_reply=True)
 
     async def get_settings(self, setting: fp.SettingsRequest) -> fp.SettingsResponse:
