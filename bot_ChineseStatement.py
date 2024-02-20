@@ -115,9 +115,7 @@ class GPT35TurboAllCapsBot(fp.PoeBot):
         self, request: fp.QueryRequest
     ) -> AsyncIterable[fp.PartialResponse]:
         user_level_key = get_user_level_key(request.user_id)
-        conversation_info_key = get_conversation_info_key(
-            request.conversation_id
-        )
+        conversation_info_key = get_conversation_info_key(request.conversation_id)
         conversation_submitted_key = get_conversation_submitted_key(
             request.conversation_id
         )
@@ -165,7 +163,9 @@ class GPT35TurboAllCapsBot(fp.PoeBot):
             request.query = [
                 {
                     "role": "system",
-                    "content": FREEFORM_SYSTEM_PROMPT.format(context=str(statement_info["context"])),
+                    "content": FREEFORM_SYSTEM_PROMPT.format(
+                        context=str(statement_info["context"])
+                    ),
                 }
             ] + request.query
             bot_reply = ""

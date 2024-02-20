@@ -10,11 +10,12 @@ There are three states in the conversation
 
 from __future__ import annotations
 
+import re
 from typing import AsyncIterable
 
 import fastapi_poe as fp
 import pandas as pd
-from fastapi_poe.types import PartialResponse
+from fastapi_poe.types import PartialResponse, ProtocolMessage
 from modal import Dict, Image, Stub, asgi_app
 
 stub = Stub("poe-bot-ChineseVocab")
@@ -98,9 +99,52 @@ You will guide the conversation in ways that maximizes the learning of the Chine
 The examples you provide will be as diverse as possible.
 """
 
+SUGGESTED_REPLIES_SYSTEM_PROMPT = """
+You will suggest replies based on the conversation given by the user.
+"""
+
+SUGGESTED_REPLIES_USER_PROMPT = """
+Read the conversation above.
+
+Suggest three ways the user would continue the conversation.
+
+Each suggestion should be concise.
+
+The suggested replies could follow either of the following styles
+- How do I use {word} in a sentence?
+- What are some words related to {word}?
+- Could you explain the difference between {word} and (word that looks similar)?
+- What do the individual characters of {word} mean?
+- What is the origin of the word {word}?
+
+Begin each suggestion with <a> and end each suggestion with </a>.
+Do not use inverted commas. Do not prefix each suggestion.
+""".strip()
+
 PASS_STATEMENT = "I will pass this word."
 
 NEXT_STATEMENT = "I want another word."
+
+SUGGESTED_REPLIES_REGEX = re.compile(r"<a>(.+?)</a>", re.DOTALL)
+
+
+def extract_suggested_replies(raw_output: str) -> list[str]:
+    suggested_replies = [
+        suggestion.strip() for suggestion in SUGGESTED_REPLIES_REGEX.findall(raw_output)
+    ]
+    return suggested_replies
+
+
+def stringify_conversation(messages: list[ProtocolMessage]) -> str:
+    stringified_messages = ""
+
+    for message in messages:
+        # NB: system prompt is intentionally excluded
+        if message.role == "bot":
+            stringified_messages += f"User: {message.content}\n\n"
+        else:
+            stringified_messages += f"Character: {message.content}\n\n"
+    return stringified_messages
 
 
 def get_user_level_key(user_id):
@@ -160,16 +204,41 @@ class GPT35TurboAllCapsBot(fp.PoeBot):
             yield PartialResponse(text=PASS_STATEMENT, is_suggested_reply=True)
             return
 
+        # retrieve the previously cached word
+        word_info = stub.my_dict[conversation_info_key]
+        word = word_info["simplified"]  # so that this can be used in f-string
+
         # if the submission is already made, continue as per normal
         if conversation_submitted_key in stub.my_dict:
             request.query = [
-                {"role": "system", "content": FREEFORM_SYSTEM_PROMPT}
+                ProtocolMessage(role="system", content=FREEFORM_SYSTEM_PROMPT)
             ] + request.query
             bot_reply = ""
             async for msg in fp.stream_request(request, "ChatGPT", request.access_key):
                 bot_reply += msg.text
                 yield msg.model_copy()
             print(bot_reply)
+
+            request.query = request.query + [
+                ProtocolMessage(role="bot", content=bot_reply)
+            ]
+            current_conversation_string = stringify_conversation(request.query)
+
+            request.query = [
+                ProtocolMessage(role="system", content=SUGGESTED_REPLIES_SYSTEM_PROMPT),
+                ProtocolMessage(role="user", content=current_conversation_string),
+                ProtocolMessage(role="user", content=SUGGESTED_REPLIES_USER_PROMPT.format(word=word)),
+            ]
+            response_text = ""
+            async for msg in fp.stream_request(request, "ChatGPT", request.access_key):
+                response_text += msg.text
+            print("suggested_reply", response_text)
+
+            suggested_replies = extract_suggested_replies(response_text)
+
+            for suggested_reply in suggested_replies[:3]:
+                yield PartialResponse(text=suggested_reply, is_suggested_reply=True)
+            yield PartialResponse(text=NEXT_STATEMENT, is_suggested_reply=True)
             return
 
         # otherwise, disable suggested replies
@@ -180,10 +249,6 @@ class GPT35TurboAllCapsBot(fp.PoeBot):
             refetch_settings=False,
             suggested_replies=False,
         )
-
-        # retrieve the previously cached word
-        word_info = stub.my_dict[conversation_info_key]
-        word = word_info["simplified"]  # so that this can be used in f-string
 
         # tabluate the user's submission
         request.query = [

@@ -130,6 +130,13 @@ def update_statuspage_minutely():
         bot_name_to_compoenent_id=BOT_NAME_TO_COMPONENT_ID,
     )
 
+    test_bot(
+        bot_name="Solar-Mini",
+        user_message="What is 1+2?",
+        expected_reply_substring="3",
+        bot_name_to_compoenent_id=BOT_NAME_TO_COMPONENT_ID,
+    )
+
 
 @stub.function(image=image, schedule=modal.Period(minutes=10))
 def update_statuspage_ten_minutely():
