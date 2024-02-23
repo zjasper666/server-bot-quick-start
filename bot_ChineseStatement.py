@@ -131,7 +131,10 @@ class GPT35TurboAllCapsBot(fp.PoeBot):
 
         # retrieve the level of the user
         # TODO(when conversation starter is ready): jump to a specific level
-        if user_level_key in stub.my_dict:
+        if last_user_reply in "1234567":
+            level = int(last_user_reply)
+            stub.my_dict[user_level_key] = level
+        elif user_level_key in stub.my_dict:
             level = stub.my_dict[user_level_key]
             level = max(1, level)
             level = min(7, level)
