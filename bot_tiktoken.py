@@ -40,7 +40,7 @@ class EchoBot(PoeBot):
         return SettingsResponse(
             server_bot_dependencies={},
             allow_attachments=False,  # to update when ready
-            introduction_message="This bot breaks down your statement into tokens that ChatGPT reads.",
+            introduction_message="Submit a statement for it to be broken down into tokens that ChatGPT reads.",
         )
 
 

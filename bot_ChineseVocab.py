@@ -25,8 +25,6 @@ df = pd.read_csv("chinese_words.csv")
 # using https://github.com/krmanik/HSK-3.0-words-list/tree/main/HSK%20List
 # see also https://www.mdbg.net/chinese/dictionary?page=cedict
 
-df = df[df["simplified"].str.len() > 1]
-
 TEMPLATE_STARTING_REPLY = """
 The word sampled from HSK level {level} is
 
@@ -125,6 +123,10 @@ PASS_STATEMENT = "I will pass this word."
 
 NEXT_STATEMENT = "I want another word."
 
+TRADITIONAL_STATEMENT = "I prefer traditional characters."
+
+SIMPLIFIED_STATEMENT = "I prefer simplified characters."
+
 SUGGESTED_REPLIES_REGEX = re.compile(r"<a>(.+?)</a>", re.DOTALL)
 
 
@@ -147,6 +149,11 @@ def stringify_conversation(messages: list[ProtocolMessage]) -> str:
     return stringified_messages
 
 
+def get_user_format_key(user_id):
+    # simplified or traditional
+    return f"ChineseVocab-format-{user_id}"
+
+
 def get_user_level_key(user_id):
     return f"ChineseVocab-level-{user_id}"
 
@@ -164,12 +171,25 @@ class GPT35TurboAllCapsBot(fp.PoeBot):
         self, request: fp.QueryRequest
     ) -> AsyncIterable[fp.PartialResponse]:
         user_level_key = get_user_level_key(request.user_id)
+        user_format_key = get_conversation_submitted_key(request.conversation_id)
         conversation_info_key = get_conversation_info_key(request.conversation_id)
         conversation_submitted_key = get_conversation_submitted_key(
             request.conversation_id
         )
         last_user_reply = request.query[-1].content
         print(last_user_reply)
+
+        if last_user_reply in TRADITIONAL_STATEMENT:
+            stub.my_dict[user_format_key] = "traditional"
+
+        if last_user_reply in SIMPLIFIED_STATEMENT:
+            stub.my_dict[user_format_key] = "simplified"
+
+        if user_format_key in stub.my_dict:
+            format = stub.my_dict[user_format_key]
+        else:
+            stub.my_dict[user_format_key] = "simplified"
+            format = stub.my_dict[user_format_key]
 
         # reset if the user passes or asks for the next statement
         if last_user_reply in (NEXT_STATEMENT, PASS_STATEMENT):
@@ -201,15 +221,34 @@ class GPT35TurboAllCapsBot(fp.PoeBot):
             stub.my_dict[conversation_info_key] = word_info
             yield self.text_event(
                 TEMPLATE_STARTING_REPLY.format(
-                    word=word_info["simplified"], level=word_info["level"]
+                    word=word_info[format], level=word_info["level"]
                 )
             )
+
+            if format == "simplified":
+                yield PartialResponse(
+                    text=TRADITIONAL_STATEMENT, is_suggested_reply=True
+                )
+            else:
+                yield PartialResponse(
+                    text=SIMPLIFIED_STATEMENT, is_suggested_reply=True
+                )
+
             yield PartialResponse(text=PASS_STATEMENT, is_suggested_reply=True)
             return
 
         # retrieve the previously cached word
         word_info = stub.my_dict[conversation_info_key]
-        word = word_info["simplified"]  # so that this can be used in f-string
+        word = word_info[format]  # so that this can be used in f-string
+
+        if last_user_reply in (TRADITIONAL_STATEMENT, SIMPLIFIED_STATEMENT):
+            yield self.text_event(
+                TEMPLATE_STARTING_REPLY.format(
+                    word=word_info[format], level=word_info["level"]
+                )
+            )
+            yield PartialResponse(text=PASS_STATEMENT, is_suggested_reply=True)
+            return
 
         # if the submission is already made, continue as per normal
         if conversation_submitted_key in stub.my_dict:
@@ -230,7 +269,9 @@ class GPT35TurboAllCapsBot(fp.PoeBot):
             request.query = [
                 ProtocolMessage(role="system", content=SUGGESTED_REPLIES_SYSTEM_PROMPT),
                 ProtocolMessage(role="user", content=current_conversation_string),
-                ProtocolMessage(role="user", content=SUGGESTED_REPLIES_USER_PROMPT.format(word=word)),
+                ProtocolMessage(
+                    role="user", content=SUGGESTED_REPLIES_USER_PROMPT.format(word=word)
+                ),
             ]
             response_text = ""
             async for msg in fp.stream_request(request, "ChatGPT", request.access_key):
