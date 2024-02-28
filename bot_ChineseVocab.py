@@ -94,7 +94,11 @@ You are a patient Chinese language teacher.
 
 You will guide the conversation in ways that maximizes the learning of the Chinese language.
 
+You will always use {format} characters.
+
 The examples you provide will be as diverse as possible.
+
+REMINDER: use {format} characters. {format_repeat}
 """
 
 SUGGESTED_REPLIES_SYSTEM_PROMPT = """
@@ -150,19 +154,23 @@ def stringify_conversation(messages: list[ProtocolMessage]) -> str:
 
 
 def get_user_format_key(user_id):
+    assert user_id.startswith("u")
     # simplified or traditional
     return f"ChineseVocab-format-{user_id}"
 
 
 def get_user_level_key(user_id):
+    assert user_id.startswith("u")
     return f"ChineseVocab-level-{user_id}"
 
 
 def get_conversation_info_key(conversation_id):
+    assert conversation_id.startswith("c")
     return f"ChineseVocab-word-{conversation_id}"
 
 
 def get_conversation_submitted_key(conversation_id):
+    assert conversation_id.startswith("c")
     return f"ChineseVocab-submitted-{conversation_id}"
 
 
@@ -171,7 +179,7 @@ class GPT35TurboAllCapsBot(fp.PoeBot):
         self, request: fp.QueryRequest
     ) -> AsyncIterable[fp.PartialResponse]:
         user_level_key = get_user_level_key(request.user_id)
-        user_format_key = get_conversation_submitted_key(request.conversation_id)
+        user_format_key = get_user_format_key(request.user_id)
         conversation_info_key = get_conversation_info_key(request.conversation_id)
         conversation_submitted_key = get_conversation_submitted_key(
             request.conversation_id
@@ -190,6 +198,8 @@ class GPT35TurboAllCapsBot(fp.PoeBot):
         else:
             stub.my_dict[user_format_key] = "simplified"
             format = stub.my_dict[user_format_key]
+
+        print(format)
 
         # reset if the user passes or asks for the next statement
         if last_user_reply in (NEXT_STATEMENT, PASS_STATEMENT):
@@ -225,14 +235,15 @@ class GPT35TurboAllCapsBot(fp.PoeBot):
                 )
             )
 
-            if format == "simplified":
-                yield PartialResponse(
-                    text=TRADITIONAL_STATEMENT, is_suggested_reply=True
-                )
-            else:
-                yield PartialResponse(
-                    text=SIMPLIFIED_STATEMENT, is_suggested_reply=True
-                )
+            if word_info["simplified"] != word_info["traditional"]:
+                if format == "simplified":
+                    yield PartialResponse(
+                        text=TRADITIONAL_STATEMENT, is_suggested_reply=True
+                    )
+                else:
+                    yield PartialResponse(
+                        text=SIMPLIFIED_STATEMENT, is_suggested_reply=True
+                    )
 
             yield PartialResponse(text=PASS_STATEMENT, is_suggested_reply=True)
             return
@@ -252,8 +263,12 @@ class GPT35TurboAllCapsBot(fp.PoeBot):
 
         # if the submission is already made, continue as per normal
         if conversation_submitted_key in stub.my_dict:
+            format_repeat = "请使用简体中文。" if format == "simplified" else "請使用繁體中文。"
+
             request.query = [
-                ProtocolMessage(role="system", content=FREEFORM_SYSTEM_PROMPT)
+                ProtocolMessage(role="system", content=FREEFORM_SYSTEM_PROMPT.format(format=format, format_repeat=format_repeat))
+            ] + [
+                ProtocolMessage(role="system", content=format_repeat)
             ] + request.query
             bot_reply = ""
             async for msg in fp.stream_request(request, "ChatGPT", request.access_key):
