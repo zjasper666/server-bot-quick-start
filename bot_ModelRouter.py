@@ -19,13 +19,13 @@ class GPT35TurboAllCapsBot(fp.PoeBot):
         self, request: fp.QueryRequest
     ) -> AsyncIterable[fp.PartialResponse]:
         async for msg in fp.stream_request(
-            request, "GPT-4", request.access_key
+            request, "RekaFlash", request.access_key
         ):
             yield msg
 
     async def get_settings(self, setting: fp.SettingsRequest) -> fp.SettingsResponse:
         return fp.SettingsResponse(
-            server_bot_dependencies={"GPT-4": 1},
+            server_bot_dependencies={"RekaFlash": 1},
             allow_attachments=True,
         )
 
