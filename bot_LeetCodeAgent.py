@@ -68,8 +68,9 @@ You can debug by printing variables in the method.
 bot_PythonAgent.SIMULATED_USER_SUFFIX_PROMPT = ""
 
 bot = PythonAgentBot()
-bot.prompt_bot = "GPT-4"
+bot.prompt_bot = "Claude-3-Opus"
 bot.code_iteration_limit = 10
+bot.system_prompt_role = "user"
 
 stub = Stub("poe-bot-quickstart")
 

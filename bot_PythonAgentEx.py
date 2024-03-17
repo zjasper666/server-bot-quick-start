@@ -16,8 +16,9 @@ from modal import Stub, asgi_app
 from bot_PythonAgent import PythonAgentBot, image_bot
 
 bot = PythonAgentBot()
-bot.prompt_bot = "GPT-4"
-bot.code_iteration_limit = 10
+bot.prompt_bot = "Claude-3-Opus"
+bot.code_iteration_limit = 5
+bot.system_prompt_role = "user"
 
 stub = Stub("poe-bot-quickstart")
 

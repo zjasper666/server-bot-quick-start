@@ -2,8 +2,6 @@
 
 BOT_NAME="ModelRouter"; modal deploy --name $BOT_NAME bot_${BOT_NAME}.py; curl -X POST https://api.poe.com/bot/fetch_settings/$BOT_NAME/$POE_ACCESS_KEY
 
-Sample bot that wraps GPT-3.5-Turbo but makes responses use all-caps.
-
 """
 
 from __future__ import annotations
@@ -18,19 +16,22 @@ class GPT35TurboAllCapsBot(fp.PoeBot):
     async def get_response(
         self, request: fp.QueryRequest
     ) -> AsyncIterable[fp.PartialResponse]:
+        request.query = [
+            {"role": "system", "content": "Reply in Spanish"},
+        ] + request.query
         async for msg in fp.stream_request(
-            request, "RekaFlash", request.access_key
+            request, "Claude-3-Opus", request.access_key
         ):
             yield msg
 
     async def get_settings(self, setting: fp.SettingsRequest) -> fp.SettingsResponse:
         return fp.SettingsResponse(
-            server_bot_dependencies={"RekaFlash": 1},
+            server_bot_dependencies={"Claude-3-Opus": 1},
             allow_attachments=True,
         )
 
 
-REQUIREMENTS = ["fastapi-poe==0.0.24"]
+REQUIREMENTS = ["fastapi-poe==0.0.34"]
 image = Image.debian_slim().pip_install(*REQUIREMENTS)
 stub = Stub("turbo-allcaps-poe")
 

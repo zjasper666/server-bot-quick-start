@@ -161,6 +161,7 @@ class PythonAgentBot(PoeBot):
     code_iteration_limit = 3
     logit_bias = {"21362": -10}  # "!["
     allow_attachments = True
+    system_prompt_role = "system"  # Claude-3 does not allow system prompt yet
 
     async def get_response(
         self, request: QueryRequest
@@ -171,7 +172,7 @@ class PythonAgentBot(PoeBot):
         print(last_message)
 
         PYTHON_AGENT_SYSTEM_MESSAGE = ProtocolMessage(
-            role="system", content=PYTHON_AGENT_SYSTEM_PROMPT
+            role=self.system_prompt_role, content=PYTHON_AGENT_SYSTEM_PROMPT
         )
 
         request.query = [PYTHON_AGENT_SYSTEM_MESSAGE] + request.query
