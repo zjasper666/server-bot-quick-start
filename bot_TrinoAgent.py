@@ -93,6 +93,7 @@ def make_query(query):
 
 class TrinoAgentBot(PoeBot):
     prompt_bot = "ChatGPT"
+    iteration_count = 3
 
     async def get_response(
         self, request: QueryRequest
@@ -160,10 +161,10 @@ class TrinoAgentBot(PoeBot):
 
     async def get_settings(self, setting: SettingsRequest) -> SettingsResponse:
         return SettingsResponse(
-            server_bot_dependencies={self.prompt_bot: 3},
+            server_bot_dependencies={self.prompt_bot: self.iteration_count},
             allow_attachments=False,
             introduction_message=textwrap.dedent(
-                """Which Trino keyword do you want to learn about?"""
+                """Which SQL keyword do you want to learn about?"""
             ).strip(),
         )
 

@@ -17,6 +17,7 @@ from bot_TrinoAgent import TrinoAgentBot, image_bot
 
 bot = TrinoAgentBot()
 bot.prompt_bot = "GPT-4"
+bot.iteration_count = 10
 
 stub = Stub("poe-bot-quickstart")
 
