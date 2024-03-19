@@ -154,7 +154,7 @@ class GPT35TurboAllCapsBot(fp.PoeBot):
                 role="system",
                 content=FREEFORM_SYSTEM_PROMPT.format(
                     question=question_info["question"],
-                    answer=question_info["answer"],
+                    answer=question_info["answer"] + 1,  # this is zero-indexed
                     subject=question_info["subject"],
                     option_1=question_info["option_1"],
                     option_2=question_info["option_2"],
