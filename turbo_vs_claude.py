@@ -118,9 +118,9 @@ class GPT35TurbovsClaudeBot(fp.PoeBot):
         async for msg in combine_streams(*streams):
             yield msg
 
-    async def get_settings(self, setting: SettingsRequest) -> SettingsResponse:
-        return SettingsResponse(
-            server_bot_dependencies={"GPT-3.5-Turbo": 1, "GrandmaGPT": 1}
+    async def get_settings(self, setting: fp.SettingsRequest) -> fp.SettingsResponse:
+        return fp.SettingsResponse(
+            server_bot_dependencies={"GPT-3.5-Turbo": 1, "Claude-instant": 1}
         )
 
 
