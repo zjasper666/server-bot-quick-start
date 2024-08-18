@@ -13,7 +13,7 @@ import fastapi_poe as fp
 from modal import App, Image, asgi_app, exit
 from openai import AsyncOpenAI
 
-client = AsyncOpenAI()
+client = AsyncOpenAI(base_url="https://api.hyperbolic.xyz/v1", api_key ="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJqYXNwZXJAaHlwZXJib2xpYy54eXoifQ.DstQ0KcqORdMXBJePizW_AwEq2FoKrFGVLGTA-b8nFw")
 
 
 async def stream_chat_completion(request: fp.QueryRequest):
@@ -30,7 +30,7 @@ async def stream_chat_completion(request: fp.QueryRequest):
             raise
 
     response = await client.chat.completions.create(
-        model="gpt-4o-mini",
+        model="NousResearch/Hermes-3-Llama-3.1-70B",
         messages=messages,
         temperature=1.0,
         stream=True,
@@ -56,8 +56,8 @@ image = (
     .pip_install(*REQUIREMENTS)
     .env(
         {
-            "POE_ACCESS_KEY": os.environ["POE_ACCESS_KEY"],
-            "OPENAI_API_KEY": os.environ["OPENAI_API_KEY"],
+            "POE_ACCESS_KEY": "R4YUPdfbGhlJYfVOV2dL87NwBIf3qGpF",
+            "OPENAI_API_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJqYXNwZXJAaHlwZXJib2xpYy54eXoifQ.DstQ0KcqORdMXBJePizW_AwEq2FoKrFGVLGTA-b8nFw",
         }
     )
 )
@@ -67,7 +67,7 @@ app = App(name="wrapper-bot-poe", image=image)
 @app.cls()
 class Model:
     # See https://creator.poe.com/docs/quick-start#integrating-with-poe to find these values.
-    access_key: str | None = os.environ["POE_ACCESS_KEY"]
+    access_key: str | None = "R4YUPdfbGhlJYfVOV2dL87NwBIf3qGpF"
     bot_name: str | None = None  # REPLACE WITH YOUR BOT NAME
 
     @exit()

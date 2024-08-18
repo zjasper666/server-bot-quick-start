@@ -149,7 +149,8 @@ class EchoBot(PoeBot):
         stub.my_dict[dict_key] = calls
         print(calls)
 
-        client = OpenAI()
+        # change url
+        client = OpenAI(base_url="https://api.hyperbolic.xyz/v1")
 
         openai_messages = []
         openai_messages_no_image = []
@@ -204,11 +205,11 @@ class EchoBot(PoeBot):
 
         if conversation_has_image:
             stream = client.chat.completions.create(
-                model="gpt-4o", messages=openai_messages, stream=True, max_tokens=4096
+                model="NousResearch/Hermes-3-Llama-3.1-70B", messages=openai_messages, stream=True, max_tokens=4096
             )
         else:
             stream = client.chat.completions.create(
-                model="gpt-4o",
+                model="NousResearch/Hermes-3-Llama-3.1-70B",
                 messages=openai_messages_no_image,
                 stream=True,
                 max_tokens=4096,
@@ -222,7 +223,7 @@ class EchoBot(PoeBot):
 
     async def get_settings(self, setting: SettingsRequest) -> SettingsResponse:
         return SettingsResponse(
-            server_bot_dependencies={"GPT-4o": 1},  # not using
+            server_bot_dependencies={},  # not using
             allow_attachments=True,
             introduction_message="",
         )
@@ -235,7 +236,7 @@ image = (
     .pip_install("fastapi-poe==0.0.23", "openai==1.1.0", "tiktoken")
     .env(
         {
-            "OPENAI_API_KEY": os.environ["OPENAI_API_KEY"],
+            "OPENAI_API_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJqYXNwZXJAaHlwZXJib2xpYy54eXoifQ.DstQ0KcqORdMXBJePizW_AwEq2FoKrFGVLGTA-b8nFw",
             "POE_ACCESS_KEY": os.environ["POE_ACCESS_KEY"],
         }
     )
